@@ -1,55 +1,50 @@
-import { useState, useEffect } from 'react'
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
+import Navbar from './components/layout/Navbar';
+import Footer from './components/layout/Footer';
+import HomePage from './pages/HomePage';
+import ServicesPage from './pages/ServicesPage';
+import BookingPage from './pages/BookingPage';
+import OffersPage from './pages/OffersPage';
+import AboutPage from './pages/AboutPage';
+import ContactPage from './pages/ContactPage';
+import LoginPage from './pages/LoginPage';
 
-function App() {
-  const [backendStatus, setBackendStatus] = useState<string>('Connecting...')
-
-  useEffect(() => {
-    // Check if backend is alive
-    fetch('http://localhost:5000/api/health')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.status === 'ok') {
-          setBackendStatus('Connected to Backend!')
-        }
-      })
-      .catch(() => {
-        setBackendStatus('Backend is offline')
-      })
-  }, [])
+function AnimatedRoutes() {
+  const location = useLocation();
+  const isLoginPage = location.pathname === '/login';
 
   return (
-    <div className="app-container">
-      <div className="glass-card">
-        <h1>Welcome to Saloon</h1>
-        <p style={{ fontSize: '1.2em', color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
-          Your fresh React + Node.js application.
-        </p>
-        
-        <div style={{
-          display: 'inline-block',
-          padding: '0.8rem 1.5rem',
-          borderRadius: '24px',
-          background: 'rgba(0,0,0,0.3)',
-          border: '1px solid var(--card-border)',
-          marginTop: '1rem',
-          fontSize: '0.9em',
-          fontWeight: 500,
-          color: backendStatus === 'Connected to Backend!' ? '#3fb950' : '#f85149'
-        }}>
-          Status: {backendStatus}
-        </div>
-
-        <div>
-          <button onClick={() => alert('App is looking fresh!')}>
-            Explore the App
-          </button>
-        </div>
-      </div>
-      <p className="read-the-docs">
-        Get ready to build something amazing!
-      </p>
-    </div>
-  )
+    <>
+      {!isLoginPage && <Navbar />}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={location.pathname}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <Routes location={location}>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/services" element={<ServicesPage />} />
+            <Route path="/booking" element={<BookingPage />} />
+            <Route path="/offers" element={<OffersPage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/login" element={<LoginPage />} />
+          </Routes>
+        </motion.div>
+      </AnimatePresence>
+      {!isLoginPage && <Footer />}
+    </>
+  );
 }
 
-export default App
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AnimatedRoutes />
+    </BrowserRouter>
+  );
+}
