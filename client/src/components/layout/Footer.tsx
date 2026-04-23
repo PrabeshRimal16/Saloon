@@ -24,23 +24,26 @@ export default function Footer() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
+            className="flex flex-col"
           >
-            <h3
-              className="text-2xl mb-2"
-              style={{
-                fontFamily: 'var(--font-serif)',
-                color: '#fff',
-                fontWeight: 600,
-              }}
-            >
-              Sovereign
-            </h3>
-            <p
-              className="text-xs tracking-[0.3em] uppercase mb-4"
-              style={{ color: 'var(--color-gold)' }}
-            >
-              Grooming
-            </p>
+            <div className="h-20 mb-6 flex flex-col justify-start">
+              <h3
+                className="text-2xl mb-1 leading-none"
+                style={{
+                  fontFamily: 'var(--font-serif)',
+                  color: '#fff',
+                  fontWeight: 600,
+                }}
+              >
+                Sovereign
+              </h3>
+              <p
+                className="text-xs tracking-[0.3em] uppercase"
+                style={{ color: 'var(--color-gold)' }}
+              >
+                Grooming
+              </p>
+            </div>
             <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.5)' }}>
               Where precision meets elegance. A sanctuary for those who appreciate the art of refined grooming.
             </p>
@@ -52,13 +55,16 @@ export default function Footer() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
+            className="flex flex-col"
           >
-            <h4
-              className="text-xs tracking-[0.2em] uppercase mb-6 mt-2"
-              style={{ color: 'var(--color-gold)', fontFamily: 'var(--font-sans)', fontWeight: 600 }}
-            >
-              Navigate
-            </h4>
+            <div className="h-20 mb-6 flex flex-col justify-start pt-1">
+              <h4
+                className="text-xs tracking-[0.2em] uppercase leading-none"
+                style={{ color: 'var(--color-gold)', fontFamily: 'var(--font-sans)', fontWeight: 600 }}
+              >
+                Navigate
+              </h4>
+            </div>
             <div className="flex flex-col gap-3">
               {['Services', 'Booking', 'Offers', 'About', 'Contact'].map((item) => (
                 <Link
@@ -79,13 +85,16 @@ export default function Footer() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
+            className="flex flex-col"
           >
-            <h4
-              className="text-xs tracking-[0.2em] uppercase mb-6 mt-2"
-              style={{ color: 'var(--color-gold)', fontFamily: 'var(--font-sans)', fontWeight: 600 }}
-            >
-              Opening Hours
-            </h4>
+            <div className="h-20 mb-6 flex flex-col justify-start pt-1">
+              <h4
+                className="text-xs tracking-[0.2em] uppercase leading-none"
+                style={{ color: 'var(--color-gold)', fontFamily: 'var(--font-sans)', fontWeight: 600 }}
+              >
+                Opening Hours
+              </h4>
+            </div>
             <div className="flex flex-col gap-3 text-sm" style={{ color: 'rgba(255,255,255,0.5)' }}>
               <div className="flex items-center gap-2">
                 <Clock size={14} style={{ color: 'var(--color-gold)' }} />
@@ -108,13 +117,16 @@ export default function Footer() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.3 }}
+            className="flex flex-col"
           >
-            <h4
-              className="text-xs tracking-[0.2em] uppercase mb-6 mt-2"
-              style={{ color: 'var(--color-gold)', fontFamily: 'var(--font-sans)', fontWeight: 600 }}
-            >
-              Get in Touch
-            </h4>
+            <div className="h-20 mb-6 flex flex-col justify-start pt-1">
+              <h4
+                className="text-xs tracking-[0.2em] uppercase leading-none"
+                style={{ color: 'var(--color-gold)', fontFamily: 'var(--font-sans)', fontWeight: 600 }}
+              >
+                Get in Touch
+              </h4>
+            </div>
             <div className="flex flex-col gap-3 text-sm" style={{ color: 'rgba(255,255,255,0.5)' }}>
               <div className="flex items-center gap-2">
                 <MapPin size={14} style={{ color: 'var(--color-gold)' }} />
