@@ -33,7 +33,7 @@ export default function AboutPage() {
 
       {/* Philosophy */}
       <section className="section">
-        <div className="max-w-3xl mx-auto text-center">
+        <div className="max-w-3xl mx-auto">
           <AnimatedSection>
             <p className="text-lg leading-relaxed mb-6" style={{ color: 'var(--color-muted)' }}>
               Founded in 2024, Sovereign Grooming was born from a simple belief: grooming should be more than a routine — it should be a ritual. A moment of intentional self-care in an otherwise relentless world.
@@ -98,11 +98,11 @@ export default function AboutPage() {
             <AnimatedSection key={member.name} delay={i * 0.1}>
               <motion.div
                 whileHover={{ y: -6 }}
-                className="text-center p-6 rounded-2xl border transition-shadow"
+                className="p-6 rounded-2xl border transition-shadow"
                 style={{ background: 'rgba(255,255,255,0.5)', borderColor: 'rgba(201,169,110,0.1)' }}
               >
                 <div
-                  className="w-24 h-24 rounded-full mx-auto mb-4 flex items-center justify-center text-2xl"
+                  className="w-24 h-24 rounded-full mb-4 flex items-center justify-center text-2xl"
                   style={{
                     fontFamily: 'var(--font-serif)',
                     background: 'linear-gradient(135deg, var(--color-beige), var(--color-cream))',

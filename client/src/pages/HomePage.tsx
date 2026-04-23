@@ -255,14 +255,14 @@ export default function HomePage() {
 
       {/* ═══ PHILOSOPHY BANNER ═══ */}
       <section
-        className="py-24 text-center"
+        className="py-24"
         style={{
           background: 'linear-gradient(135deg, #2C2416 0%, #1A1612 100%)',
         }}
       >
         <AnimatedSection>
           <div className="max-w-3xl mx-auto px-6">
-            <Star size={20} style={{ color: 'var(--color-gold)', margin: '0 auto 1.5rem' }} />
+            <Star size={20} style={{ color: 'var(--color-gold)', margin: '0 0 1.5rem 0' }} />
             <h2
               className="text-3xl md:text-4xl mb-6 leading-tight"
               style={{ fontFamily: 'var(--font-serif)', color: '#fff' }}
