@@ -54,7 +54,7 @@ export default function Footer() {
             transition={{ delay: 0.1 }}
           >
             <h4
-              className="text-xs tracking-[0.2em] uppercase mb-6"
+              className="text-xs tracking-[0.2em] uppercase mb-6 mt-2"
               style={{ color: 'var(--color-gold)', fontFamily: 'var(--font-sans)', fontWeight: 600 }}
             >
               Navigate
@@ -81,7 +81,7 @@ export default function Footer() {
             transition={{ delay: 0.2 }}
           >
             <h4
-              className="text-xs tracking-[0.2em] uppercase mb-6"
+              className="text-xs tracking-[0.2em] uppercase mb-6 mt-2"
               style={{ color: 'var(--color-gold)', fontFamily: 'var(--font-sans)', fontWeight: 600 }}
             >
               Opening Hours
@@ -110,7 +110,7 @@ export default function Footer() {
             transition={{ delay: 0.3 }}
           >
             <h4
-              className="text-xs tracking-[0.2em] uppercase mb-6"
+              className="text-xs tracking-[0.2em] uppercase mb-6 mt-2"
               style={{ color: 'var(--color-gold)', fontFamily: 'var(--font-sans)', fontWeight: 600 }}
             >
               Get in Touch
