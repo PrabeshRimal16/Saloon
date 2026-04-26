@@ -1,10 +1,26 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 // Login/Register auth page
 import { Eye, EyeOff, LogIn } from 'lucide-react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export default function LoginPage() {
-  const [tab, setTab] = useState<'login' | 'register'>('login');
+  const location = useLocation();
+  const navigate = useNavigate();
+  
+  const [tab, setTab] = useState<'login' | 'register'>(
+    location.pathname === '/register' ? 'register' : 'login'
+  );
+
+  useEffect(() => {
+    setTab(location.pathname === '/register' ? 'register' : 'login');
+  }, [location.pathname]);
+
+  const handleTabChange = (t: 'login' | 'register') => {
+    setTab(t);
+    navigate(`/${t}`);
+  };
+
   const [showPassword, setShowPassword] = useState(false);
   const [loginForm, setLoginForm] = useState({ email: '', password: '' });
   const [registerForm, setRegisterForm] = useState({ name: '', email: '', phone: '', password: '', confirm: '' });
@@ -67,7 +83,7 @@ export default function LoginPage() {
             {(['login', 'register'] as const).map((t) => (
               <button
                 key={t}
-                onClick={() => setTab(t)}
+                onClick={() => handleTabChange(t)}
                 className="flex-1 py-3 text-xs tracking-[0.15em] uppercase font-semibold bg-transparent border-0 cursor-pointer transition-colors relative"
                 style={{ color: tab === t ? 'var(--color-brown)' : 'var(--color-muted-light)' }}
               >
@@ -184,9 +200,9 @@ export default function LoginPage() {
           {/* Bottom Link */}
           <p className="text-center text-sm mt-6" style={{ color: 'var(--color-muted)' }}>
             {tab === 'login' ? (
-              <>New to the Atelier? <button onClick={() => setTab('register')} className="bg-transparent border-0 cursor-pointer font-semibold" style={{ color: 'var(--color-gold)' }}>Request Access</button></>
+              <>New to the Atelier? <button onClick={() => handleTabChange('register')} className="bg-transparent border-0 cursor-pointer font-semibold" style={{ color: 'var(--color-gold)' }}>Request Access</button></>
             ) : (
-              <>Already have an account? <button onClick={() => setTab('login')} className="bg-transparent border-0 cursor-pointer font-semibold" style={{ color: 'var(--color-gold)' }}>Login</button></>
+              <>Already have an account? <button onClick={() => handleTabChange('login')} className="bg-transparent border-0 cursor-pointer font-semibold" style={{ color: 'var(--color-gold)' }}>Login</button></>
             )}
           </p>
         </div>

@@ -12,11 +12,11 @@ import LoginPage from './pages/LoginPage';
 
 function AnimatedRoutes() {
   const location = useLocation();
-  const isLoginPage = location.pathname === '/login';
+  const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
 
   return (
     <>
-      {!isLoginPage && <Navbar />}
+      {!isAuthPage && <Navbar />}
       <AnimatePresence mode="wait">
         <motion.div
           key={location.pathname}
@@ -33,10 +33,11 @@ function AnimatedRoutes() {
             <Route path="/about" element={<AboutPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<LoginPage />} />
           </Routes>
         </motion.div>
       </AnimatePresence>
-      {!isLoginPage && <Footer />}
+      {!isAuthPage && <Footer />}
     </>
   );
 }
