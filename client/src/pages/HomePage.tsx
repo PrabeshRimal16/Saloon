@@ -74,14 +74,13 @@ export default function HomePage() {
           }}
         />
 
-        <div className="relative z-10 text-center px-6 max-w-4xl">
+        <div className="relative z-10 text-left px-6 max-w-4xl">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="flex items-center justify-center gap-3 mb-6"
+            className="flex items-center justify-start gap-3 mb-6"
           >
-            <div className="h-px w-12" style={{ background: 'var(--color-gold)' }} />
             <Sparkles size={16} style={{ color: 'var(--color-gold)' }} />
             <span
               className="text-xs tracking-[0.35em] uppercase"
@@ -89,7 +88,6 @@ export default function HomePage() {
             >
               Est. 2024
             </span>
-            <Sparkles size={16} style={{ color: 'var(--color-gold)' }} />
             <div className="h-px w-12" style={{ background: 'var(--color-gold)' }} />
           </motion.div>
 
@@ -121,7 +119,7 @@ export default function HomePage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.5 }}
-            className="text-lg md:text-xl mb-10 max-w-2xl mx-auto leading-relaxed"
+            className="text-lg md:text-xl mb-10 max-w-2xl leading-relaxed"
             style={{ color: 'rgba(255,255,255,0.55)' }}
           >
             A sanctuary for those who appreciate the art of refined grooming.
@@ -132,7 +130,7 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.7 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+            className="flex flex-col sm:flex-row gap-4 justify-start items-center"
           >
             <Link to="/booking" className="btn-gold flex items-center gap-2 no-underline">
               Book Your Experience
@@ -166,7 +164,7 @@ export default function HomePage() {
 
       {/* ═══ FEATURED SERVICES ═══ */}
       <section className="section">
-        <AnimatedSection className="text-center mb-16">
+        <AnimatedSection className="text-left mb-16">
           <span
             className="text-xs tracking-[0.3em] uppercase"
             style={{ color: 'var(--color-gold)', fontWeight: 500 }}
@@ -179,9 +177,9 @@ export default function HomePage() {
           >
             Signature Services
           </h2>
-          <div className="divider-gold mt-4" />
+          <div className="divider-gold-left mt-4" />
           <p
-            className="mt-4 text-base max-w-xl mx-auto"
+            className="mt-4 text-base max-w-xl"
             style={{ color: 'var(--color-muted)' }}
           >
             Each service is a carefully curated experience, designed to leave you looking and feeling extraordinary.
@@ -287,7 +285,7 @@ export default function HomePage() {
 
       {/* ═══ TESTIMONIALS ═══ */}
       <section className="section">
-        <AnimatedSection className="text-center mb-16">
+        <AnimatedSection className="text-left mb-16">
           <span
             className="text-xs tracking-[0.3em] uppercase"
             style={{ color: 'var(--color-gold)', fontWeight: 500 }}
@@ -300,7 +298,7 @@ export default function HomePage() {
           >
             What Our Clients Say
           </h2>
-          <div className="divider-gold mt-4" />
+          <div className="divider-gold-left mt-4" />
         </AnimatedSection>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -355,9 +353,9 @@ export default function HomePage() {
       </section>
 
       {/* ═══ CTA ═══ */}
-      <section className="py-24 text-center" style={{ background: 'var(--color-beige)' }}>
+      <section className="py-24 text-left" style={{ background: 'var(--color-beige)' }}>
         <AnimatedSection>
-          <div className="max-w-2xl mx-auto px-6">
+          <div className="max-w-2xl px-6 mx-auto md:mx-0 md:pl-20">
             <h2
               className="text-3xl md:text-4xl mb-4"
               style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-brown)' }}

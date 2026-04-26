@@ -39,23 +39,26 @@ export default function LoginPage() {
       >
         {/* Left Image Panel */}
         <div
-          className="relative hidden lg:flex flex-col justify-end p-10"
+          className="relative hidden lg:flex flex-col justify-end p-12"
           style={{
-            background: 'linear-gradient(135deg, #2C2416 0%, #1A1612 100%)',
+            backgroundImage: 'url("https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?q=80&w=1470&auto=format&fit=crop")',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
           }}
         >
-          <div className="absolute inset-0 opacity-10"
-            style={{ backgroundImage: 'radial-gradient(circle at 30% 70%, rgba(201,169,110,0.3) 0%, transparent 50%)' }}
+          <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.1) 100%)' }} />
+          <div className="absolute inset-0 opacity-20"
+            style={{ backgroundImage: 'radial-gradient(circle at 30% 70%, rgba(201,169,110,0.5) 0%, transparent 60%)' }}
           />
           <div className="relative z-10">
-            <p className="text-xs tracking-[0.3em] uppercase mb-3" style={{ color: 'var(--color-gold)' }}>
+            <p className="text-xs tracking-[0.3em] uppercase mb-3 font-semibold" style={{ color: 'var(--color-gold)' }}>
               Est. 2024
             </p>
-            <h2 className="text-3xl leading-tight mb-3" style={{ fontFamily: 'var(--font-serif)', color: '#fff' }}>
-              Refinement as a{' '}
+            <h2 className="text-4xl leading-tight mb-4" style={{ fontFamily: 'var(--font-serif)', color: '#fff' }}>
+              Refinement as a{' '}<br />
               <span style={{ fontStyle: 'italic', color: 'var(--color-gold)' }}>Ritual.</span>
             </h2>
-            <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.5)' }}>
+            <p className="text-sm leading-relaxed max-w-sm" style={{ color: 'rgba(255,255,255,0.7)' }}>
               Enter a sanctuary where traditional craft meets contemporary luxury. Your chair is waiting.
             </p>
           </div>
@@ -63,15 +66,15 @@ export default function LoginPage() {
 
         {/* Right Form Panel */}
         <div className="p-10 md:p-12 flex flex-col justify-center" style={{ background: '#fff' }}>
-          <div className="text-center mb-8">
+          <div className="text-left mb-8">
             <p className="text-xs tracking-[0.3em] uppercase" style={{ color: 'var(--color-gold)', fontWeight: 600, fontStyle: 'italic', fontFamily: 'var(--font-serif)' }}>
               Sovereign Grooming
             </p>
-            <div className="divider-gold mt-3 mb-4" />
-            <h1 className="text-3xl" style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-brown)' }}>
+            <div className="divider-gold-left mt-3 mb-4" />
+            <h1 className="text-4xl mb-2" style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-brown)' }}>
               {tab === 'login' ? 'Welcome Back' : 'Join the Atelier'}
             </h1>
-            <p className="text-sm mt-2" style={{ color: 'var(--color-muted)' }}>
+            <p className="text-sm" style={{ color: 'var(--color-muted)' }}>
               {tab === 'login'
                 ? 'Step back into the sanctuary of intentional refinement.'
                 : 'Create your account to curate your experience.'}

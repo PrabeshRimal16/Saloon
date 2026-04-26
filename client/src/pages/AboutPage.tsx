@@ -19,15 +19,15 @@ export default function AboutPage() {
   return (
     <div>
       {/* Hero */}
-      <section className="pt-32 pb-20 text-center" style={{ background: 'linear-gradient(135deg, #2C2416 0%, #1A1612 100%)' }}>
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
+      <section className="pt-32 pb-20 text-left px-6 md:px-16" style={{ background: 'linear-gradient(135deg, #2C2416 0%, #1A1612 100%)' }}>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} className="max-w-4xl">
           <span className="text-xs tracking-[0.3em] uppercase" style={{ color: 'var(--color-gold)', fontWeight: 500 }}>
             Our Story
           </span>
           <h1 className="text-4xl md:text-6xl mt-3" style={{ fontFamily: 'var(--font-serif)', color: '#fff' }}>
             The Art of <span style={{ fontStyle: 'italic', color: 'var(--color-gold)' }}>Refinement</span>
           </h1>
-          <div className="divider-gold mt-4" />
+          <div className="divider-gold-left mt-4" />
         </motion.div>
       </section>
 
@@ -51,21 +51,21 @@ export default function AboutPage() {
       {/* Values */}
       <section className="py-20" style={{ background: 'var(--color-beige)' }}>
         <div className="section !py-0">
-          <AnimatedSection className="text-center mb-14">
+          <AnimatedSection className="text-left mb-14">
             <span className="text-xs tracking-[0.3em] uppercase" style={{ color: 'var(--color-gold)', fontWeight: 500 }}>
               What Defines Us
             </span>
             <h2 className="text-3xl md:text-4xl mt-3" style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-brown)' }}>
               Our Pillars
             </h2>
-            <div className="divider-gold mt-4" />
+            <div className="divider-gold-left mt-4" />
           </AnimatedSection>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {values.map((value, i) => (
               <AnimatedSection key={value.title} delay={i * 0.15}>
-                <div className="text-center p-8">
-                  <div className="w-16 h-16 rounded-full mx-auto mb-5 flex items-center justify-center" style={{ background: 'rgba(201,169,110,0.1)' }}>
+                <div className="text-left p-8">
+                  <div className="w-16 h-16 rounded-full mb-5 flex items-center justify-center" style={{ background: 'rgba(201,169,110,0.1)' }}>
                     <value.icon size={28} style={{ color: 'var(--color-gold)' }} />
                   </div>
                   <h3 className="text-xl mb-3" style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-brown)' }}>
@@ -83,14 +83,14 @@ export default function AboutPage() {
 
       {/* Team */}
       <section className="section">
-        <AnimatedSection className="text-center mb-14">
+        <AnimatedSection className="text-left mb-14">
           <span className="text-xs tracking-[0.3em] uppercase" style={{ color: 'var(--color-gold)', fontWeight: 500 }}>
             The Artisans
           </span>
           <h2 className="text-3xl md:text-4xl mt-3" style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-brown)' }}>
             Meet Our Team
           </h2>
-          <div className="divider-gold mt-4" />
+          <div className="divider-gold-left mt-4" />
         </AnimatedSection>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
