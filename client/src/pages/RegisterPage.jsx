@@ -13,6 +13,7 @@ const RegisterPage = () => {
         console.log({ name, email, password });
     };
 
+
     return (
         <div className="section-sm flex items-center justify-center min-h-screen">
             <div className="card w-full max-w-md p-8 md:p-12">
@@ -77,6 +78,7 @@ const RegisterPage = () => {
                     <Link to="/login" className="font-semibold text-gold hover:underline">
                         Log In
                     </Link>
+
                 </p>
             </div>
         </div>
