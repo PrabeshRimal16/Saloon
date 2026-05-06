@@ -147,19 +147,33 @@ body.dark .card {
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  transition: background-position 0.5s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  transition: background-position 0.6s ease, transform 0.3s cubic-bezier(.23,1,.32,1), box-shadow 0.35s ease;
   box-shadow: 0 4px 20px rgba(201, 169, 110, 0.28);
   text-decoration: none;
+  position: relative;
+  overflow: hidden;
 }
+
+.btn-gold::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, rgba(255,255,255,0) 30%, rgba(255,255,255,0.12) 50%, rgba(255,255,255,0) 70%);
+  transform: translateX(-100%);
+  transition: transform 0.55s ease;
+}
+
+.btn-gold:hover::after { transform: translateX(100%); }
 
 .btn-gold:hover {
   background-position: right center;
   transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(201, 169, 110, 0.42);
+  box-shadow: 0 10px 36px rgba(201, 169, 110, 0.48);
 }
 
 .btn-gold:active {
   transform: translateY(0);
+  box-shadow: 0 4px 16px rgba(201, 169, 110, 0.28);
 }
 
 .btn-outline {
@@ -218,20 +232,26 @@ body.dark .card {
 .input-field {
   width: 100%;
   padding: 0.875rem 1.1rem;
-  border: 1.5px solid rgba(201, 169, 110, 0.2);
-  border-radius: 8px;
+  border: 1.5px solid rgba(201, 169, 110, 0.18);
+  border-radius: 10px;
   font-family: var(--font-sans);
   font-size: 0.9rem;
   background: rgba(255, 255, 255, 0.8);
   color: var(--color-brown);
-  transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+  transition: border-color 0.3s ease, box-shadow 0.35s ease, background 0.3s ease, transform 0.2s ease;
   outline: none;
+}
+
+.input-field:hover {
+  border-color: rgba(201, 169, 110, 0.35);
+  background: rgba(255, 255, 255, 0.95);
 }
 
 .input-field:focus {
   border-color: var(--color-gold);
   background: #fff;
-  box-shadow: 0 0 0 4px rgba(201, 169, 110, 0.1);
+  box-shadow: 0 0 0 4px rgba(201, 169, 110, 0.1), 0 2px 12px rgba(201, 169, 110, 0.08);
+  transform: translateY(-1px);
 }
 
 .input-field::placeholder {
@@ -244,9 +264,14 @@ body.dark .input-field {
   color: #EAE4DB;
 }
 
+body.dark .input-field:hover {
+  border-color: rgba(201, 169, 110, 0.25);
+}
+
 body.dark .input-field:focus {
   background: var(--color-dark-card);
   border-color: var(--color-gold);
+  box-shadow: 0 0 0 4px rgba(201, 169, 110, 0.08);
 }
 
 /* ─── Labels ─── */
@@ -408,4 +433,59 @@ body.dark .input-field:focus {
 
 .animate-float {
   animation: float 5s ease-in-out infinite;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.4s cubic-bezier(.23,1,.32,1) forwards;
+}
+
+/* ─── Icon Wrapper ─── */
+.icon-box-gold {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 12px;
+  background: rgba(201,169,110,0.1);
+  border: 1px solid rgba(201,169,110,0.18);
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+.icon-box-gold:hover {
+  background: rgba(201,169,110,0.18);
+  transform: scale(1.05);
+}
+
+/* ─── Page Hero Gradient ─── */
+.hero-dark {
+  background: linear-gradient(135deg, #2C2416 0%, #1A1612 60%, #2C2416 100%);
+}
+
+/* ─── Stat number ─── */
+.stat-number {
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--color-gold);
+  line-height: 1;
+}
+
+/* ─── FAQ item ─── */
+.faq-item {
+  border-radius: 14px;
+  overflow: hidden;
+  transition: border-color 0.3s ease, background 0.3s ease;
+  cursor: pointer;
+}
+
+/* ─── Card highlight on dark bg ─── */
+.card-dark {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 16px;
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+.card-dark:hover {
+  background: rgba(201,169,110,0.07);
+  border-color: rgba(201,169,110,0.18);
 }
