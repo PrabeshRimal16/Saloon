@@ -99,67 +99,73 @@ export default function ServicesPage() {
         </AnimatedSection>
 
         {/* Service Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filtered.map((service, index) => (
-            <AnimatedSection key={service.name} delay={index * 0.05}>
-              <motion.div
-                whileHover={{ y: -4, boxShadow: '0 12px 40px rgba(201,169,110,0.12)' }}
-                className="p-7 rounded-2xl border h-full flex flex-col"
-                style={{
-                  background: 'rgba(255,255,255,0.6)',
-                  borderColor: 'rgba(201,169,110,0.12)',
-                }}
-              >
-                <div className="flex justify-between items-start mb-3">
-                  <span
-                    className="text-xs tracking-[0.12em] uppercase px-3 py-1 rounded-full"
-                    style={{
-                      background: 'rgba(201,169,110,0.1)',
-                      color: 'var(--color-gold)',
-                      fontWeight: 600,
-                    }}
-                  >
-                    {service.category}
-                  </span>
-                  <span
-                    className="text-lg font-semibold"
-                    style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-gold)' }}
-                  >
-                    {service.price_display}
-                  </span>
-                </div>
-
-                <h3
-                  className="text-lg mb-2"
-                  style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-brown)' }}
+        {loading ? (
+          <div className="text-center py-12">
+            <p>Loading services...</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filtered.map((service, index) => (
+              <AnimatedSection key={service.id} delay={index * 0.05}>
+                <motion.div
+                  whileHover={{ y: -4, boxShadow: '0 12px 40px rgba(201,169,110,0.12)' }}
+                  className="p-7 rounded-2xl border h-full flex flex-col"
+                  style={{
+                    background: 'rgba(255,255,255,0.6)',
+                    borderColor: 'rgba(201,169,110,0.12)',
+                  }}
                 >
-                  {service.name}
-                </h3>
+                  <div className="flex justify-between items-start mb-3">
+                    <span
+                      className="text-xs tracking-[0.12em] uppercase px-3 py-1 rounded-full"
+                      style={{
+                        background: 'rgba(201,169,110,0.1)',
+                        color: 'var(--color-gold)',
+                        fontWeight: 600,
+                      }}
+                    >
+                      {service.category}
+                    </span>
+                    <span
+                      className="text-lg font-semibold"
+                      style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-gold)' }}
+                    >
+                      {service.price_display}
+                    </span>
+                  </div>
 
-                <div className="flex items-center gap-1.5 mb-3">
-                  <Clock size={13} style={{ color: 'var(--color-muted)' }} />
-                  <span className="text-xs" style={{ color: 'var(--color-muted)' }}>
-                    {service.duration}
-                  </span>
-                </div>
+                  <h3
+                    className="text-lg mb-2"
+                    style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-brown)' }}
+                  >
+                    {service.name}
+                  </h3>
 
-                <p className="text-sm leading-relaxed flex-grow mb-5" style={{ color: 'var(--color-muted)' }}>
-                  {service.description}
-                </p>
+                  <div className="flex items-center gap-1.5 mb-3">
+                    <Clock size={13} style={{ color: 'var(--color-muted)' }} />
+                    <span className="text-xs" style={{ color: 'var(--color-muted)' }}>
+                      {service.duration}
+                    </span>
+                  </div>
 
-                <Link
-                  to="/booking"
-                  className="inline-flex items-center gap-2 text-xs tracking-[0.12em] uppercase no-underline font-semibold transition-all duration-300"
-                  style={{ color: 'var(--color-gold)' }}
-                >
-                  Book This Service <ArrowRight size={14} />
-                </Link>
-              </motion.div>
-            </AnimatedSection>
-          ))}
-        </div>
+                  <p className="text-sm leading-relaxed flex-grow mb-5" style={{ color: 'var(--color-muted)' }}>
+                    {service.description}
+                  </p>
 
-        {filtered.length === 0 && (
+                  <Link
+                    to="/booking"
+                    className="inline-flex items-center gap-2 text-xs tracking-[0.12em] uppercase no-underline font-semibold transition-all duration-300"
+                    style={{ color: 'var(--color-gold)' }}
+                  >
+                    Book This Service <ArrowRight size={14} />
+                  </Link>
+                </motion.div>
+              </AnimatedSection>
+            ))}
+          </div>
+        )}
+
+        {filtered.length === 0 && !loading && (
           <div className="text-center py-16" style={{ color: 'var(--color-muted)' }}>
             <p className="text-lg">No services match your search.</p>
           </div>
