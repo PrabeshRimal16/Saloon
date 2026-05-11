@@ -1,35 +1,41 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Clock, ArrowRight, Search } from 'lucide-react';
 import AnimatedSection from '../components/shared/AnimatedSection';
 
-const allServices = [
-  { name: 'Wash & Blowout', price: 65, priceDisplay: '$65', duration: '45 min', category: 'hair', description: 'A revitalizing cleanse followed by a precision blowout.' },
-  { name: 'Hair Balayage', price: 265, priceDisplay: '$265', duration: '3 hr 15 min', category: 'hair', description: 'Hand-painted, sun-kissed highlights for a natural look.' },
-  { name: 'Full Hair Highlights', price: 265, priceDisplay: '$265', duration: '3 hr 40 min', category: 'hair', description: 'Expertly placed foils for all-over luminosity and depth.' },
-  { name: 'Eyebrow Threading', price: 14, priceDisplay: '$14', duration: '15 min', category: 'waxing', description: 'Precise threading for perfectly shaped brows.' },
-  { name: 'Eyebrow Waxing', price: 14, priceDisplay: '$14', duration: '15 min', category: 'waxing', description: 'Quick, clean waxing for defined eyebrows.' },
-  { name: 'Brazilian Waxing (Hard Wax)', price: 60, priceDisplay: '$60', duration: '25 min', category: 'waxing', description: 'Smooth results with premium hard wax for comfort.' },
-  { name: 'Brazilian Waxing (Chocolate Wax)', price: 55, priceDisplay: '$55', duration: '25 min', category: 'waxing', description: 'Gentle chocolate wax for sensitive skin.' },
-  { name: 'Full-Body Waxing', price: null, priceDisplay: 'Price varies', duration: '1 hr', category: 'waxing', description: 'Head-to-toe smoothness with our premium wax.' },
-  { name: 'Eyebrow + Upper Lip + Chin', price: 26, priceDisplay: '$26', duration: '30 min', category: 'waxing', description: 'Complete facial trio for a flawless finish.' },
-  { name: 'Full Face', price: 40, priceDisplay: '$40', duration: '45 min', category: 'waxing', description: 'Complete facial hair removal using our gentlest techniques.' },
-  { name: 'Lash Lift + Tint', price: 85, priceDisplay: '$85', duration: '1 hr 15 min', category: 'lashes', description: 'Semi-permanent lift and customized tint for effortless beauty.' },
-  { name: 'Lash Tint', price: 25, priceDisplay: '$25', duration: '15 min', category: 'lashes', description: 'A subtle tint to define and darken your natural lashes.' },
-  { name: 'Full Leg + Full Arms + Underarm', price: 115, priceDisplay: '$115', duration: '1 hr 15 min', category: 'waxing', description: 'Complete package for silky smooth limbs.' },
-  { name: 'Full Back Waxing', price: 50, priceDisplay: '$50', duration: '20 min', category: 'waxing', description: 'Clean, thorough back waxing for a smooth finish.' },
-  { name: 'Bikini Wax', price: 35, priceDisplay: '$35', duration: '15 min', category: 'waxing', description: 'Precise bikini line waxing for clean results.' },
-  { name: 'Stomach Wax', price: 35, priceDisplay: '$35', duration: '20 min', category: 'waxing', description: 'Smooth stomach with gentle waxing techniques.' },
-];
+interface Service {
+  id: string;
+  name: string;
+  price: number | null;
+  price_display: string;
+  duration: string;
+  category: string;
+  description: string;
+}
 
 const categories = ['all', 'hair', 'waxing', 'lashes'];
 
 export default function ServicesPage() {
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [services, setServices] = useState<Service[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const filtered = allServices.filter((s) => {
+  useEffect(() => {
+    fetch('/api/services')
+      .then(res => res.json())
+      .then(data => {
+        setServices(data);
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error('Failed to fetch services:', error);
+        setLoading(false);
+      });
+  }, []);
+
+  const filtered = services.filter((s) => {
     const matchCategory = activeCategory === 'all' || s.category === activeCategory;
     const matchSearch = s.name.toLowerCase().includes(searchQuery.toLowerCase());
     return matchCategory && matchSearch;
@@ -119,7 +125,7 @@ export default function ServicesPage() {
                     className="text-lg font-semibold"
                     style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-gold)' }}
                   >
-                    {service.priceDisplay}
+                    {service.price_display}
                   </span>
                 </div>
 

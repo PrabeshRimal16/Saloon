@@ -70,9 +70,36 @@ export default function BookingPage() {
     return true;
   };
 
-  const handleConfirm = () => {
-    // In production, this would call the API to save to Supabase
-    setBooked(true);
+  const handleConfirm = async () => {
+    try {
+      const response = await fetch('/api/bookings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          client_name: form.name,
+          client_email: form.email,
+          client_phone: form.phone,
+          services: selectedServices.map(s => ({
+            service_id: s.id,
+            name: s.name,
+            price: s.price,
+            quantity: s.quantity,
+          })),
+          date: selectedDate,
+          time_slot: selectedTime,
+          total_price: total,
+        }),
+      });
+
+      if (response.ok) {
+        setBooked(true);
+      } else {
+        alert('Failed to book appointment. Please try again.');
+      }
+    } catch (error) {
+      console.error('Booking error:', error);
+      alert('Failed to book appointment. Please try again.');
+    }
   };
 
   // Generate next 14 days

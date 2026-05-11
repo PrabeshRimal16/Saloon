@@ -10,6 +10,7 @@ import OffersPage from './pages/OffersPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -34,7 +35,7 @@ function AnimatedRoutes() {
             <Route path="/about" element={<AboutPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
           </Routes>
         </motion.div>
       </AnimatePresence>
