@@ -1,11 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Eye, EyeOff, UserPlus, AlertCircle, CheckCircle2, Loader2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
-
-type AuthStatus = 'idle' | 'loading' | 'success' | 'error';
 
 const RegisterPage = () => {
     const navigate = useNavigate();
@@ -18,7 +16,7 @@ const RegisterPage = () => {
 
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
-    const [status, setStatus] = useState(AuthStatus.idle);
+    const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
     const [message, setMessage] = useState('');
 
     const [form, setForm] = useState({
@@ -30,7 +28,7 @@ const RegisterPage = () => {
         agreed: false,
     });
 
-    const handleRegister = async (e) => {
+    const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
         const { name, email, phone, password, confirm, agreed } = form;
 
@@ -91,6 +89,8 @@ const RegisterPage = () => {
         if (data.session) {
             setTimeout(() => navigate('/'), 1200);
         }
+    };
+
     const FeedbackBanner = () => {
         if (status === 'idle' || status === 'loading') return null;
         const isError = status === 'error';
