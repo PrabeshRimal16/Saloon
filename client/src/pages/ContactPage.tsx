@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   MapPin, Phone, Mail, Clock, Send, Check,
-  Instagram, Facebook, Twitter, ChevronDown, ChevronUp,
+  Hash, ChevronDown, ChevronUp,
   MessageSquare, Scissors, Star
 } from 'lucide-react';
 import AnimatedSection from '../components/shared/AnimatedSection';
@@ -68,9 +68,9 @@ const faqs = [
 ];
 
 const socialLinks = [
-  { icon: Instagram, label: 'Instagram', handle: '@sovereigngrooming', url: '#' },
-  { icon: Facebook, label: 'Facebook', handle: 'Sovereign Grooming NYC', url: '#' },
-  { icon: Twitter, label: 'Twitter / X', handle: '@sovereigngroom', url: '#' },
+  { icon: Hash, label: 'Instagram', handle: '@sovereigngrooming', url: '#' },
+  { icon: Hash, label: 'Facebook', handle: 'Sovereign Grooming NYC', url: '#' },
+  { icon: Hash, label: 'Twitter / X', handle: '@sovereigngroom', url: '#' },
 ];
 
 export default function ContactPage() {
