@@ -5,6 +5,39 @@
 -- Enable UUID generation
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
+-- ─── User Profiles ───
+-- Mirrors auth.users with extra columns for name and phone.
+CREATE TABLE IF NOT EXISTS profiles (
+  id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
+  full_name TEXT,
+  email TEXT,
+  phone TEXT,
+  avatar_url TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Auto-create a profile row whenever a new auth user signs up
+CREATE OR REPLACE FUNCTION handle_new_user()
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO profiles (id, full_name, email, phone)
+  VALUES (
+    NEW.id,
+    NEW.raw_user_meta_data->>'full_name',
+    NEW.email,
+    NEW.raw_user_meta_data->>'phone'
+  )
+  ON CONFLICT (id) DO NOTHING;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE PROCEDURE handle_new_user();
+
 -- ─── Services ───
 CREATE TABLE IF NOT EXISTS services (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
@@ -114,6 +147,7 @@ ALTER TABLE bookings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE offers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE employees ENABLE ROW LEVEL SECURITY;
 ALTER TABLE contacts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 
 -- Public read access for services and offers
 CREATE POLICY "Public read services" ON services FOR SELECT USING (true);
@@ -125,3 +159,9 @@ CREATE POLICY "Public read bookings" ON bookings FOR SELECT USING (true);
 CREATE POLICY "Public insert contacts" ON contacts FOR INSERT WITH CHECK (true);
 CREATE POLICY "Public read contacts" ON contacts FOR SELECT USING (true);
 CREATE POLICY "Public read employees" ON employees FOR SELECT USING (true);
+
+-- Profiles: users can read and update only their own row
+CREATE POLICY "Users read own profile" ON profiles FOR SELECT USING (auth.uid() = id);
+CREATE POLICY "Users update own profile" ON profiles FOR UPDATE USING (auth.uid() = id);
+CREATE POLICY "Users insert own profile" ON profiles FOR INSERT WITH CHECK (auth.uid() = id);
+
