@@ -4,6 +4,10 @@ import Login from "./pages/Login";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import CustomerDashboard from "./pages/customer/CustomerDashboard";
 import CustomerServices from "./pages/customer/CustomerServices";
+import CustomerOffers from "./pages/customer/CustomerOffers";
+import CustomerAppointment from "./pages/customer/CustomerAppointment";
+import CustomerSetting from "./pages/customer/CustomerSetting";
+import CustomerContactus from "./pages/customer/CustomerContactus";
 import Register from "./pages/Register";
 import CompleteProfile from "./pages/CompleteProfile";
 
@@ -41,6 +45,22 @@ const AppRoutes = () => {
       <Route
         path="/services"
         element={<CustomerServices />}
+      />
+      <Route
+        path="/offers"
+        element={<CustomerOffers />}
+      />
+      <Route
+        path="/appointments"
+        element={<CustomerAppointment />}
+      />
+      <Route
+        path="/contact"
+        element={<CustomerContactus />}
+      />
+      <Route
+        path="/settings"
+        element={<CustomerSetting />}
       />
       <Route
         path="/"

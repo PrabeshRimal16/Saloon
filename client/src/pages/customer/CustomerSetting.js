@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
+import CustomerNavbar from '../../components/CustomerNavbar';
 
-const ClientProfilePage = () => {
+const CustomerSetting = () => {
   // ── Preferences State ──
   const [prefs, setPrefs] = useState({
     emailReminders: true,
@@ -92,64 +93,7 @@ const ClientProfilePage = () => {
 
   return (
     <div className="bg-surface text-on-surface antialiased min-h-screen flex flex-col">
-      {/* ── Header / Navbar ── */}
-      <header className="fixed top-0 w-full z-50 bg-surface/90 dark:bg-inverse-surface/90 backdrop-blur-xl border-b border-outline-variant/30 glass-nav">
-        <div className="flex justify-between items-center px-12 py-6 max-w-[1280px] mx-auto">
-          <div className="font-headline-md text-headline-md text-primary dark:text-primary-fixed tracking-tighter">
-            The Modern Atelier
-          </div>
-          <nav className="hidden md:flex gap-8">
-            <a
-              className="font-body-md text-body-md tracking-wider uppercase text-on-surface-variant dark:text-surface-variant pb-1 hover:text-secondary transition-colors duration-300"
-              href="#"
-            >
-              Services
-            </a>
-            <a
-              className="font-body-md text-body-md tracking-wider uppercase text-on-surface-variant dark:text-surface-variant pb-1 hover:text-secondary transition-colors duration-300"
-              href="#"
-            >
-              Appointments
-            </a>
-            <a
-              className="font-body-md text-body-md tracking-wider uppercase text-on-surface-variant dark:text-surface-variant pb-1 hover:text-secondary transition-colors duration-300"
-              href="#"
-            >
-              Offers
-            </a>
-            <a
-              className="font-body-md text-body-md tracking-wider uppercase text-on-surface-variant dark:text-surface-variant pb-1 hover:text-secondary transition-colors duration-300"
-              href="#"
-            >
-              Contact Us
-            </a>
-          </nav>
-          <div className="flex gap-6 text-primary dark:text-primary-fixed">
-            <button
-              aria-label="Notifications"
-              className="hover:text-secondary transition-colors duration-300"
-            >
-              <span
-                className="material-symbols-outlined"
-                style={{ fontVariationSettings: "'FILL' 0" }}
-              >
-                notifications
-              </span>
-            </button>
-            <button
-              aria-label="Profile"
-              className="text-secondary opacity-80 transition-all duration-200"
-            >
-              <span
-                className="material-symbols-outlined"
-                style={{ fontVariationSettings: "'FILL' 1" }}
-              >
-                person
-              </span>
-            </button>
-          </div>
-        </div>
-      </header>
+      <CustomerNavbar />
 
       {/* ── Main Content ── */}
       <main className="flex-grow pt-32 pb-section-gap-desktop px-6 md:px-12 max-w-[1280px] mx-auto w-full">

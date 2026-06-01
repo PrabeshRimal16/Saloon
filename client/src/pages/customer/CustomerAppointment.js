@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import CustomerNavbar from '../../components/CustomerNavbar';
 
 // Helper function to get status badge styling
 const getStatusConfig = (status) => {
@@ -114,54 +115,7 @@ const AppointmentsPage = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Top Navigation Bar */}
-      <nav className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-gutter py-4 bg-surface/95 backdrop-blur-xl border-b border-outline-variant/30 shadow-sm">
-        <div className="flex items-center gap-12">
-          <span className="font-headline-md text-headline-md font-bold text-primary uppercase tracking-widest">
-            L'Atelier
-          </span>
-          <div className="hidden md:flex items-center gap-8">
-            <a href="#" className="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md">
-              Services
-            </a>
-            <a href="#" className="text-secondary font-bold border-b-2 border-secondary pb-1 font-label-md text-label-md">
-              Appointments
-            </a>
-            <a href="#" className="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md">
-              Offers
-            </a>
-            <a href="#" className="text-secondary font-label-md text-label-md border-b border-secondary pb-1">
-              Contact Us
-            </a>
-          </div>
-        </div>
-        <div className="flex items-center gap-6">
-          <div className="hidden lg:flex items-center gap-3">
-            <span className="font-label-md text-label-md text-on-surface-variant">Welcome, Alexander</span>
-            <button 
-              onClick={handleNotification}
-              className="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors"
-            >
-              notifications
-            </button>
-          </div>
-          <div className="flex items-center gap-4 pl-6 border-l border-outline-variant/30">
-            <div className="w-10 h-10 rounded-full overflow-hidden border border-outline-variant/50">
-              <img 
-                alt="User Profile" 
-                className="w-full h-full object-cover" 
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjvMGpCYJX7KiPOx0Tl73v3JPmuR27YxvJ0ZBrNevGn8lEfNIhOwPvv_SrdW59S1DWD856ZLnrnF9CEr22PP82f5Pm4phqaQho3uVjXG_abdRIlOJ5iIjh5RYxpt9eSYCGyhCwap_mZ5H51ZFV2_zYbDkaQjeRkzCEFYO7ObURwzQAnC2RLYhHXucZjlcJ2s3wjAb8O7i5tmW2ELUjNv0KKsbDlmz19BIRGFcg93v2QOBDDKLoepKqz4yRrDdiF7ggZ5VFxY13u66q"
-              />
-            </div>
-            <button 
-              onClick={handleLogout}
-              className="material-symbols-outlined text-outline hover:text-error transition-colors"
-            >
-              logout
-            </button>
-          </div>
-        </div>
-      </nav>
+      <CustomerNavbar />
 
       {/* Main Content */}
       <main className="pt-[140px] pb-section-gap-desktop px-gutter max-w-container-max-width mx-auto">

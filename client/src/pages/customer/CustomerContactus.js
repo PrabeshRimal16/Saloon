@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import CustomerNavbar from '../../components/CustomerNavbar';
 
 const ContactUsPage = () => {
   // State for form fields
@@ -56,66 +57,7 @@ const ContactUsPage = () => {
 
   return (
     <div className="bg-background font-body-md text-on-surface selection:bg-secondary-container selection:text-on-secondary-container">
-      {/* Top Navigation Bar */}
-      <nav className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-gutter py-4 bg-surface/95 backdrop-blur-xl border-b border-outline-variant/30 shadow-sm">
-        <div className="flex items-center gap-12">
-          <span className="font-headline-md text-headline-md font-bold text-primary uppercase tracking-widest">
-            L'Atelier
-          </span>
-          <div className="hidden md:flex items-center gap-8">
-            <button 
-              onClick={() => handleNavigation('services')}
-              className="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md"
-            >
-              Services
-            </button>
-            <button 
-              onClick={() => handleNavigation('appointments')}
-              className="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md"
-            >
-              Appointments
-            </button>
-            <button 
-              onClick={() => handleNavigation('offers')}
-              className="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md"
-            >
-              Offers
-            </button>
-            <button 
-              onClick={() => handleNavigation('contact')}
-              className="text-secondary font-bold border-b-2 border-secondary pb-1 font-label-md text-label-md"
-            >
-              Contact Us
-            </button>
-          </div>
-        </div>
-        <div className="flex items-center gap-6">
-          <div className="hidden lg:flex items-center gap-3">
-            <span className="font-label-md text-label-md text-on-surface-variant">Welcome, Alexander</span>
-            <button 
-              onClick={handleNotification}
-              className="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors"
-            >
-              notifications
-            </button>
-          </div>
-          <div className="flex items-center gap-4 pl-6 border-l border-outline-variant/30">
-            <div className="w-10 h-10 rounded-full overflow-hidden border border-outline-variant/50">
-              <img 
-                alt="User Profile" 
-                className="w-full h-full object-cover" 
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjvMGpCYJX7KiPOx0Tl73v3JPmuR27YxvJ0ZBrNevGn8lEfNIhOwPvv_SrdW59S1DWD856ZLnrnF9CEr22PP82f5Pm4phqaQho3uVjXG_abdRIlOJ5iIjh5RYxpt9eSYCGyhCwap_mZ5H51ZFV2_zYbDkaQjeRkzCEFYO7ObURwzQAnC2RLYhHXucZjlcJ2s3wjAb8O7i5tmW2ELUjNv0KKsbDlmz19BIRGFcg93v2QOBDDKLoepKqz4yRrDdiF7ggZ5VFxY13u66q"
-              />
-            </div>
-            <button 
-              onClick={handleLogout}
-              className="material-symbols-outlined text-outline hover:text-error transition-colors"
-            >
-              logout
-            </button>
-          </div>
-        </div>
-      </nav>
+      <CustomerNavbar />
 
       {/* Main Content */}
       <main className="pt-32 pb-section-gap-desktop max-w-container-max-width mx-auto px-gutter">

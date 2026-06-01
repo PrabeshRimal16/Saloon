@@ -1,80 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-
-/* ──────────────────────────────────────────────
-   CustomerNavbar Component
-   ────────────────────────────────────────────── */
-const CustomerNavbar = ({
-  userName = "Alexander",
-  userAvatar = "https://lh3.googleusercontent.com/aida-public/AB6AXuDjvMGpCYJX7KiPOx0Tl73v3JPmuR27YxvJ0ZBrNevGn8lEfNIhOwPvv_SrdW59S1DWD856ZLnrnF9CEr22PP82f5Pm4phqaQho3uVjXG_abdRIlOJ5iIjh5RYxpt9eSYCGyhCwap_mZ5H51ZFV2_zYbDkaQjeRkzCEFYO7ObURwzQAnC2RLYhHXucZjlcJ2s3wjAb8O7i5tmW2ELUjNv0KKsbDlmz19BIRGFcg93v2QOBDDKLoepKqz4yRrDdiF7ggZ5VFxY13u66q",
-  onLogout,
-  onNotificationsClick,
-}) => {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  const handleLogout = (e) => {
-    e.preventDefault();
-    if (onLogout) onLogout();
-  };
-
-  const handleNotifications = (e) => {
-    e.preventDefault();
-    if (onNotificationsClick) onNotificationsClick();
-  };
-
-  return (
-    <nav className="fixed top-0 left-0 w-full z-50 flex flex-wrap justify-between items-center px-gutter py-4 bg-surface/95 backdrop-blur-xl border-b border-outline-variant/30 shadow-sm">
-      {/* Brand & desktop links */}
-      <div className="flex items-center gap-12">
-        <span className="font-headline-md text-headline-md font-bold text-primary uppercase tracking-widest">
-          L'Atelier
-        </span>
-        <div className="hidden md:flex items-center gap-8">
-          <a className="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md" href="#">Services</a>
-          <a className="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md" href="#">Appointments</a>
-          <a className="text-secondary font-bold border-b-2 border-secondary pb-1 font-label-md text-label-md" href="#">Offers</a>
-          <a className="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md" href="#">Contact Us</a>
-        </div>
-      </div>
-
-      {/* User area & mobile toggle */}
-      <div className="flex items-center gap-6">
-        <div className="hidden lg:flex items-center gap-3">
-          <span className="font-label-md text-label-md text-on-surface-variant">Welcome, {userName}</span>
-          <button className="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors" onClick={handleNotifications} aria-label="Notifications">
-            notifications
-          </button>
-        </div>
-
-        <div className="flex items-center gap-4 pl-6 border-l border-outline-variant/30">
-          <div className="w-10 h-10 rounded-full overflow-hidden border border-outline-variant/50">
-            <img alt={`${userName}'s profile`} className="w-full h-full object-cover" src={userAvatar} />
-          </div>
-          <button className="material-symbols-outlined text-outline hover:text-error transition-colors" onClick={handleLogout} aria-label="Logout">
-            logout
-          </button>
-        </div>
-
-        <button className="md:hidden material-symbols-outlined text-on-surface-variant text-3xl" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Toggle menu">
-          {mobileMenuOpen ? "close" : "menu"}
-        </button>
-      </div>
-
-      {/* Mobile dropdown */}
-      {mobileMenuOpen && (
-        <div className="w-full mt-4 flex flex-col gap-4 md:hidden bg-surface/95 backdrop-blur-xl border-t border-outline-variant/20 pt-4">
-          <a className="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md" href="#" onClick={() => setMobileMenuOpen(false)}>Services</a>
-          <a className="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md" href="#" onClick={() => setMobileMenuOpen(false)}>Appointments</a>
-          <a className="text-secondary font-bold font-label-md text-label-md" href="#" onClick={() => setMobileMenuOpen(false)}>Offers</a>
-          <a className="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md" href="#" onClick={() => setMobileMenuOpen(false)}>Contact Us</a>
-          <div className="flex items-center gap-3 lg:hidden">
-            <span className="font-label-md text-label-md text-on-surface-variant">Welcome, {userName}</span>
-            <button className="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors" onClick={handleNotifications}>notifications</button>
-          </div>
-        </div>
-      )}
-    </nav>
-  );
-};
+import CustomerNavbar from '../../components/CustomerNavbar';
 
 /* ──────────────────────────────────────────────
    Offers & Rituals Page Component
@@ -200,11 +125,7 @@ const OffersAndRitualsPage = () => {
   /* ── Main render ──────────────────── */
   return (
     <div className="bg-surface text-on-surface font-body-md overflow-x-hidden">
-      <CustomerNavbar
-        userName="Alexander"
-        onLogout={handleLogout}
-        onNotificationsClick={handleNotifications}
-      />
+      <CustomerNavbar />
 
       <main className="pt-24">
         {/* Hero */}
