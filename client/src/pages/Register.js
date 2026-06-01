@@ -1,6 +1,8 @@
 // RegisterPage.jsx
 import { useEffect, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -16,6 +18,25 @@ export default function RegisterPage() {
     window.addEventListener("mousemove", handler);
     return () => window.removeEventListener("mousemove", handler);
   }, []);
+
+  const navigate = useNavigate();
+  const { loginWithGoogle, apiBaseUrl } = useAuth();
+
+  const [form, setForm] = useState({ full_name: "", email: "", phone: "", password: "" });
+
+  const handleChange = (e) => setForm((s) => ({ ...s, [e.target.name]: e.target.value }));
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // For now, route to CompleteProfile to finish registration flow (server-side integration can replace this)
+    const params = new URLSearchParams({ name: form.full_name, email: form.email, avatar_url: "", google_id: "" });
+    navigate(`/complete-profile?${params.toString()}`);
+  };
+
+  const handleGoogle = () => {
+    if (typeof loginWithGoogle === "function") return loginWithGoogle();
+    window.location.assign(`${apiBaseUrl}/auth/google`);
+  };
 
   return (
     <div
@@ -113,9 +134,10 @@ export default function RegisterPage() {
             </p>
           </div>
 
-          <form className="space-y-8" onSubmit={(e) => e.preventDefault()}>
-            <Field id="full_name" label="Full Name" placeholder="Evelyn Harper" type="text" />
-            <Field id="phone" label="Phone Number" placeholder="+1 (555) 000-0000" type="tel" />
+          <form className="space-y-8" onSubmit={handleSubmit}>
+            <LabelledField id="full_name" name="full_name" value={form.full_name} onChange={handleChange} label="Full Name" placeholder="Evelyn Harper" type="text" />
+            <LabelledField id="email" name="email" value={form.email} onChange={handleChange} label="Email" placeholder="you@latelier.com" type="email" />
+            <LabelledField id="phone" name="phone" value={form.phone} onChange={handleChange} label="Phone Number" placeholder="+1 (555) 000-0000" type="tel" />
 
             <div className="group">
               <label
@@ -130,6 +152,8 @@ export default function RegisterPage() {
                   id="password"
                   name="password"
                   required
+                  value={form.password}
+                  onChange={handleChange}
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
                   className="form-input-atelier"
@@ -163,19 +187,30 @@ export default function RegisterPage() {
             <div style={{ flex: 1, height: 1, backgroundColor: "rgba(207,196,197,0.3)" }} />
           </div>
 
-          <button
-            type="button"
-            className="w-full py-4 flex items-center justify-center gap-3 text-[14px] font-semibold uppercase tracking-wider transition-all duration-300 hover:bg-gray-50"
-            style={{ border: "1px solid rgba(207,196,197,0.6)" }}
-          >
-            <GoogleIcon />
-            Continue with Google
-          </button>
+          <div style={{ display: 'flex', gap: 12, marginTop: 8 }}>
+            <button
+              type="button"
+              onClick={handleGoogle}
+              className="w-full py-4 flex items-center justify-center gap-3 text-[14px] font-semibold uppercase tracking-wider transition-all duration-300 hover:bg-gray-50"
+              style={{ border: "1px solid rgba(207,196,197,0.6)", flex: 1 }}
+            >
+              <GoogleIcon />
+              Continue with Google
+            </button>
+
+            <button
+              type="button"
+              onClick={() => navigate('/complete-profile')}
+              style={{ padding: '12px 16px', borderRadius: 6, border: '1px solid #cfc4c5', background: '#fff', cursor: 'pointer', fontWeight: 600 }}
+            >
+              Complete Profile
+            </button>
+          </div>
 
           <footer className="mt-10 text-center">
             <p className="text-[16px]" style={{ color: "#4c4546" }}>
               Already a member?
-              <a href="#" className="font-bold ml-1 hover:underline" style={{ color: "#735c00" }}>
+              <a href="#" onClick={(e) => { e.preventDefault(); navigate('/login'); }} className="font-bold ml-1 hover:underline" style={{ color: "#735c00", cursor: 'pointer' }}>
                 Login here
               </a>
             </p>
@@ -220,17 +255,17 @@ export default function RegisterPage() {
   );
 }
 
-function Field({ id, label, placeholder, type }) {
+function LabelledField({ id, name, label, placeholder, type, value, onChange }) {
   return (
-    <div className="group">
+    <div className="group" style={{ marginBottom: 12 }}>
       <label
         htmlFor={id}
         className="text-[12px] font-medium tracking-wider uppercase mb-1 block"
-        style={{ color: "#4c4546" }}
+        style={{ color: "#4c4546", display: 'block', marginBottom: 6 }}
       >
         {label}
       </label>
-      <input id={id} name={id} type={type} required placeholder={placeholder} className="form-input-atelier" />
+      <input id={id} name={name || id} type={type} required placeholder={placeholder} className="form-input-atelier" value={value} onChange={onChange} />
     </div>
   );
 }

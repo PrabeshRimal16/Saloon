@@ -1,151 +1,149 @@
-import { useAuth } from "../context/AuthContext";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 import axios from "axios";
+import { Eye, EyeOff } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 
-const Login = () => {
+export default function Login() {
+  const { refreshUser, loginWithGoogle, apiBaseUrl } = useAuth();
   const navigate = useNavigate();
-  const { loginWithGoogle, refreshUser } = useAuth();
-  const [form, setForm] = useState({ email: "", password: "" });
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
-
-  const handleLogin = async (e) => {
-    e?.preventDefault?.();
+  const submit = async (e) => {
+    e.preventDefault();
     setError("");
+    setLoading(true);
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/users/login",
-        { email: form.email, password: form.password },
+        `${apiBaseUrl}/users/login`,
+        { email, password },
         { withCredentials: true }
       );
 
-      const user = res.data;
-      // Refresh client auth state (reads /auth/me) so other components update
-      try {
-        await refreshUser();
-      } catch {}
-      const dest = user?.role === "admin" ? "/admin" : "/customer";
-      navigate(dest);
+      await refreshUser();
+      const role = res.data?.role || "customer";
+      navigate(role === "admin" ? "/admin" : "/customer");
     } catch (err) {
-      setError(err.response?.data?.error || "Login failed");
+      setError(err.response?.data?.message || err.response?.data?.error || "Invalid credentials");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleGoogleLogin = () => {
-    window.open("http://localhost:5000/auth/google", "_self");
+  const handleGoogle = () => {
+    // Prefer auth hook if provided, fallback to direct URL
+    if (typeof loginWithGoogle === "function") return loginWithGoogle();
+    window.location.assign(`${apiBaseUrl}/auth/google`);
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.card}>
-        <h2 style={styles.title}>Saloon Login</h2>
-        {error && <p style={styles.error}>{error}</p>}
-        <table style={styles.table}>
-          <tbody>
-            <tr>
-              <td style={styles.label}>Email</td>
-              <td>
-                <input style={styles.input} name="email" value={form.email} onChange={handleChange} type="email" placeholder="Enter email" />
-              </td>
-            </tr>
-            <tr>
-              <td style={styles.label}>Password</td>
-              <td>
-                <input style={styles.input} name="password" value={form.password} onChange={handleChange} type="password" placeholder="Enter password" />
-              </td>
-            </tr>
-            <tr>
-              <td colSpan={2}>
-                <button style={styles.button} onClick={handleLogin}>Login</button>
-              </td>
-            </tr>
-            <tr>
-              <td colSpan={2} style={styles.or}>── or ──</td>
-            </tr>
-            <tr>
-              <td colSpan={2}>
-                <button style={styles.googleButton} onClick={handleGoogleLogin}>
-                  Login with Google
-                </button>
-              </td>
-            </tr>
-            <tr>
-              <td colSpan={2} style={{ textAlign: "center", paddingTop: "10px", color: "#555" }}>
-                Don't have an account? <span style={{ color: "#4285F4", cursor: "pointer" }} onClick={() => navigate("/register")}>Register</span>
-               </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <div style={pageStyles.wrap}>
+      <form style={pageStyles.card} onSubmit={submit} aria-labelledby="login-heading">
+        <h1 id="login-heading" style={pageStyles.brand}>L'Atelier</h1>
+        <p style={pageStyles.tag}>The Modern Haute Beauty</p>
+
+        {error && <div role="alert" style={pageStyles.error}>{error}</div>}
+
+        <label style={pageStyles.label} htmlFor="email">Email</label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          autoComplete="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          style={pageStyles.input}
+          required
+        />
+
+        <div style={{ marginTop: 12 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <label style={pageStyles.label} htmlFor="password">Password</label>
+            <a href="#" onClick={(e) => { e.preventDefault(); navigate('/complete-profile'); }} style={pageStyles.forgot}>Forgot?</a>
+          </div>
+          <div style={pageStyles.pwWrap}>
+            <input
+              id="password"
+              name="password"
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              style={{ ...pageStyles.input, paddingRight: 44 }}
+              autoComplete="current-password"
+              required
+            />
+            <button
+              type="button"
+              aria-label={showPassword ? "Hide password" : "Show password"}
+              onClick={() => setShowPassword((s) => !s)}
+              style={pageStyles.eyeButton}
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" disabled={loading} style={{ ...pageStyles.primary, opacity: loading ? 0.7 : 1 }}>
+          {loading ? "Signing in…" : "Sign In"}
+        </button>
+
+        <div style={pageStyles.sep} aria-hidden>
+          <span style={pageStyles.sepText}>Or</span>
+        </div>
+
+        <button type="button" onClick={handleGoogle} style={pageStyles.google}>
+          Continue with Google
+        </button>
+
+        <div style={pageStyles.footer}>
+          New here? <button type="button" onClick={() => navigate('/register')} style={pageStyles.link}>Create an account</button>
+        </div>
+      </form>
     </div>
   );
-};
+}
 
-const styles = {
-  container: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    height: "100vh",
-    backgroundColor: "#f5f5f5",
+const pageStyles = {
+  wrap: {
+    minHeight: '100vh',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '32px',
+    background: '#fff',
+    fontFamily: "Montserrat, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial",
   },
   card: {
-    backgroundColor: "#fff",
-    padding: "40px",
-    borderRadius: "10px",
-    boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-    width: "350px",
+    width: '100%',
+    maxWidth: 440,
+    background: '#fff',
+    border: '1px solid rgba(207,196,197,0.3)',
+    padding: '28px',
+    borderRadius: 10,
+    boxShadow: '0 20px 50px -12px rgba(0,0,0,0.05)'
   },
-  title: {
-    textAlign: "center",
-    marginBottom: "20px",
-    color: "#333",
+  brand: {
+    fontFamily: "'Playfair Display', serif",
+    fontSize: 32,
+    margin: 0,
+    color: '#000'
   },
-  table: {
-    width: "100%",
-    borderCollapse: "collapse",
-  },
-  label: {
-    padding: "10px",
-    fontWeight: "bold",
-    color: "#555",
-    width: "35%",
-  },
-  input: {
-    width: "100%",
-    padding: "8px",
-    borderRadius: "5px",
-    border: "1px solid #ddd",
-    fontSize: "14px",
-  },
-  button: {
-    width: "100%",
-    padding: "10px",
-    marginTop: "10px",
-    backgroundColor: "#333",
-    color: "#fff",
-    border: "none",
-    borderRadius: "5px",
-    cursor: "pointer",
-    fontSize: "16px",
-  },
-  googleButton: {
-    width: "100%",
-    padding: "10px",
-    backgroundColor: "#4285F4",
-    color: "#fff",
-    border: "none",
-    borderRadius: "5px",
-    cursor: "pointer",
-    fontSize: "16px",
-  },
-  or: {
-    textAlign: "center",
-    padding: "10px",
-    color: "#aaa",
-  },
+  tag: { fontSize: 12, letterSpacing: '.12em', color: '#4c4546', marginTop: 6, marginBottom: 18 },
+  label: { display: 'block', fontSize: 13, fontWeight: 600, color: '#4c4546' },
+  input: { width: '100%', padding: '10px 12px', fontSize: 15, border: '1px solid #e6e6e6', borderRadius: 6, boxSizing: 'border-box' },
+  primary: { width: '100%', padding: '12px', marginTop: 18, background: '#000', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer', fontWeight: 600 },
+  google: { width: '100%', padding: '12px', marginTop: 8, background: '#fff', color: '#000', border: '1px solid #cfc4c5', borderRadius: 6, cursor: 'pointer', fontWeight: 600 },
+  sep: { display: 'flex', alignItems: 'center', gap: 12, marginTop: 16 },
+  sepText: { color: '#cfc4c5', fontSize: 12, textTransform: 'uppercase', letterSpacing: '.08em' },
+  pwWrap: { position: 'relative' },
+  eyeButton: { position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', border: 'none', background: 'transparent', cursor: 'pointer', color: '#7e7576' },
+  footer: { marginTop: 16, textAlign: 'center', color: '#4c4546' },
+  link: { background: 'transparent', border: 'none', color: '#000', fontWeight: 700, cursor: 'pointer' },
+  forgot: { fontSize: 13, color: '#735c00', textDecoration: 'none' },
+  error: { background: '#fdecea', color: '#b04545', padding: '8px 10px', borderRadius: 6, marginBottom: 12 }
 };
-
-export default Login;
