@@ -8,15 +8,30 @@ dotenv.config();
 
 const app = express();
 
+const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:3000";
+const allowedOrigins = Array.from(
+  new Set([CLIENT_URL, "http://localhost:3000", "http://localhost:5173"])
+);
+
+const sessionSecret =
+  process.env.SESSION_SECRET ||
+  (process.env.NODE_ENV === "production" ? null : "dev_session_secret_change_me");
+
+if (!sessionSecret) {
+  throw new Error("SESSION_SECRET must be set when NODE_ENV=production");
+}
+
 // Middleware
 app.use(express.json());
-app.use(cors({
-  origin: "http://localhost:3000",
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: allowedOrigins,
+    credentials: true,
+  })
+);
 
 app.use(session({
-  secret: process.env.SESSION_SECRET,
+  secret: sessionSecret,
   resave: false,
   saveUninitialized: false
 }));
