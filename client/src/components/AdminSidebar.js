@@ -23,8 +23,8 @@ export default function AdminSidebar() {
 						<div className="w-10 h-10 rounded-full bg-gray-700 animate-pulse" />
 					) : (
 						<>
-							{(user && (user.photo || user.avatar || user.avatarUrl || user.picture)) ? (
-								<img src={user.photo || user.avatar || user.avatarUrl || user.picture} alt={user.name || user.email} className="w-10 h-10 rounded-full object-cover" />
+								{(user && (user.avatar_url || user.photo || user.avatar || user.avatarUrl || user.picture)) ? (
+									<img src={user.avatar_url || user.photo || user.avatar || user.avatarUrl || user.picture} alt={user.name || user.email} className="w-10 h-10 rounded-full object-cover" />
 							) : (
 								<div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center text-sm font-medium">{(user && (user.name || user.email)) ? (user.name ? user.name.split(' ').map(p=>p[0]).slice(0,2).join('').toUpperCase() : (user.email[0]||'U').toUpperCase()) : 'U'}</div>
 							)}

@@ -1,6 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import AdminSidebar from '../../components/AdminSidebar';
 import AdminHeader from '../../components/AdminHeader';
+import axios from 'axios';
+import { useAuth } from '../../context/AuthContext';
 
 // Initial users data with realistic examples
 const initialUsers = [
@@ -70,6 +72,9 @@ const AdminUserManagement = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchFocus, setSearchFocus] = useState(false);
   const itemsPerPage = 5;
+  const [loadingUsers, setLoadingUsers] = useState(false);
+  const [error, setError] = useState(null);
+  const { apiBaseUrl } = useAuth();
 
   // Derived data: filtered users based on search and tab
   const filteredUsers = useMemo(() => {
@@ -110,25 +115,58 @@ const AdminUserManagement = () => {
     setCurrentPage(1);
   };
 
-  // User actions
-  const handleRestrictToggle = (userId) => {
-    setUsers((prevUsers) =>
-      prevUsers.map((user) =>
-        user.id === userId
-          ? {
-              ...user,
-              status: user.status === 'Active' ? 'Restricted' : 'Active',
-            }
-          : user
-      )
-    );
-  };
-
-  const handleRemoveUser = (userId) => {
-    if (window.confirm('Are you sure you want to remove this user?')) {
-      setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
+  // User actions (call server)
+  const handleRestrictToggle = async (userId, currentStatus) => {
+    try {
+      const shouldRestrict = currentStatus === 'Active';
+      const url = `${apiBaseUrl}/api/users/${userId}/${shouldRestrict ? 'restrict' : 'unrestrict'}`;
+      const res = await axios.post(url, {}, { withCredentials: true });
+      setUsers((prev) => prev.map(u => u.id === userId ? { ...u, status: res.data.role === 'restricted' ? 'Restricted' : 'Active' } : u));
+    } catch (err) {
+      console.error(err);
+      alert('Failed to update user status');
     }
   };
+
+  const handleRemoveUser = async (userId) => {
+    if (!window.confirm('Are you sure you want to remove this user?')) return;
+    try {
+      await axios.delete(`${apiBaseUrl}/api/users/${userId}`, { withCredentials: true });
+      setUsers((prev) => prev.filter((u) => u.id !== userId));
+    } catch (err) {
+      console.error(err);
+      alert('Failed to remove user');
+    }
+  };
+
+  // Fetch users from server on mount
+  useEffect(() => {
+    let mounted = true;
+    const fetchUsers = async () => {
+      setLoadingUsers(true);
+      setError(null);
+      try {
+        const res = await axios.get(`${apiBaseUrl}/api/users`, { withCredentials: true });
+        if (!mounted) return;
+        const mapped = res.data.map(u => ({
+          id: u.id,
+          name: u.name,
+          email: u.email,
+          avatarUrl: u.avatar_url || u.avatarUrl || u.photo || '',
+          joinedDate: u.created_at ? new Date(u.created_at).toLocaleDateString() : '',
+          status: (u.role === 'restricted') ? 'Restricted' : 'Active'
+        }));
+        setUsers(mapped);
+      } catch (err) {
+        console.error(err);
+        setError('Failed to load users');
+      } finally {
+        setLoadingUsers(false);
+      }
+    };
+    fetchUsers();
+    return () => { mounted = false; };
+  }, [apiBaseUrl]);
 
   // Metrics
   const totalUsers = users.length;
@@ -298,14 +336,14 @@ const AdminUserManagement = () => {
                       <div className="flex justify-end gap-3">
                         {user.status === 'Active' ? (
                           <button
-                            onClick={() => handleRestrictToggle(user.id)}
+                            onClick={() => handleRestrictToggle(user.id, user.status)}
                             className="px-4 py-2 border border-outline text-on-surface-variant font-label-sm uppercase text-[10px] tracking-widest hover:bg-inverse-surface hover:text-surface transition-all"
                           >
                             Restrict
                           </button>
                         ) : (
                           <button
-                            onClick={() => handleRestrictToggle(user.id)}
+                            onClick={() => handleRestrictToggle(user.id, user.status)}
                             className="px-4 py-2 border border-secondary text-secondary font-label-sm uppercase text-[10px] tracking-widest hover:bg-secondary hover:text-on-secondary transition-all"
                           >
                             Unrestrict

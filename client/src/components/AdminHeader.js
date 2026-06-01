@@ -14,7 +14,7 @@ export default function AdminHeader({ title }) {
   const { user, loading } = useAuth();
 
   const displayName = user?.name || user?.displayName || user?.email || '';
-  const avatarSrc = user?.photo || user?.avatar || user?.avatarUrl || user?.picture || null;
+  const avatarSrc = user?.avatar_url || user?.photo || user?.avatar || user?.avatarUrl || user?.picture || null;
 
   return (
     <header className="w-full bg-white border-b border-gray-200 py-4 px-6 lg:px-10">

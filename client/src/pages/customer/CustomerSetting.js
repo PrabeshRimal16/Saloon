@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import CustomerNavbar from '../../components/CustomerNavbar';
+import { useAuth } from '../../context/AuthContext';
 
 const CustomerSetting = () => {
   // ── Preferences State ──
@@ -9,6 +10,11 @@ const CustomerSetting = () => {
     newsletterOffers: false,
   });
 
+  const { user, loading } = useAuth();
+
+  // local editable profile state
+  const [profile, setProfile] = useState({ firstName: '', lastName: '', email: '', phone: '', avatar: '' });
+
   // Toggle handlers
   const handlePrefChange = (e) => {
     const { name, checked } = e.target;
@@ -17,6 +23,18 @@ const CustomerSetting = () => {
 
   // ── Inject Custom CSS ──
   useEffect(() => {
+    // populate profile from auth user when available
+    if (!loading && user) {
+      const parts = (user.name || user.displayName || '').split(' ');
+      setProfile({
+        firstName: parts.slice(0, -1).join(' ') || parts[0] || '',
+        lastName: parts.length > 1 ? parts.slice(-1).join(' ') : '',
+        email: user.email || '',
+        phone: user.phone || user.phoneNumber || '',
+        avatar: user.photo || user.avatar || user.avatarUrl || user.picture || '',
+      });
+    }
+
     const style = document.createElement("style");
     style.textContent = `
       .glass-nav { backdrop-filter: blur(30px); }
@@ -114,13 +132,13 @@ const CustomerSetting = () => {
             <div className="bg-surface-container-lowest border border-outline-variant/50 p-8 flex flex-col items-center text-center rounded-xl shadow-sm">
               <div className="w-32 h-32 rounded-full overflow-hidden mb-6 border-2 border-surface">
                 <img
-                  alt="A close-up, high-fashion editorial portrait of a sophisticated man with well-groomed dark hair and a subtle beard. The lighting is soft, natural, and directional, highlighting his strong jawline against a pristine, minimalist white background. He is wearing a tailored charcoal turtleneck. The overall aesthetic is clean, luxurious, and modern, fitting for a high-end salon profile picture."
+                  alt={profile.firstName || user?.name || 'User avatar'}
                   className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtXcmHpmJJuTzqW08-oneYkb0H_R4NiqipqSPwdrTelKsHRLcuqCjpupVXvQ06ufwnJVHWhwE0tHYCLvPPAM0KD5zwEjbwHzEPY02XGPOA4cX-wTxwA03M9yZZ6VCqc_2-5r-tPCG2dkpggHjzTvCV39oAr2dHAftvU5Snl3lzhZIAGOLe2SFqQf_La3c9pg_v0pEBbK_yH3aVISOEbOGWzPyCrpz1OCp_iqR6vTjrV3vRdN7Dz44_MN205rB0tj_VBYJSrN_pCZBH"
+                  src={profile.avatar || user?.avatar_url || user?.photo || 'https://via.placeholder.com/150'}
                 />
               </div>
               <h2 className="font-headline-md text-headline-md text-primary mb-1">
-                Alexander V.
+                {`${profile.firstName || user?.name || ''} ${profile.lastName || ''}`.trim() || user?.email || 'User'}
               </h2>
               <p className="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-6">
                 Client since 2021
@@ -180,43 +198,46 @@ const CustomerSetting = () => {
                 Personal Details
               </h2>
               <form className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10">
-                <div className="relative">
-                  <input
-                    className="input-minimal w-full bg-transparent border-0 border-b border-outline-variant focus:border-primary focus:ring-0 py-2 font-body-lg text-body-lg text-primary transition-colors peer"
-                    id="firstName"
-                    placeholder=" "
-                    type="text"
-                    defaultValue="Alexander"
-                  />
-                  <label
-                    className="absolute left-0 top-2 font-label-sm text-label-sm uppercase tracking-[0.1em] text-on-surface-variant transition-all duration-300 origin-left pointer-events-none -translate-y-6 scale-85 text-primary"
-                    htmlFor="firstName"
-                  >
-                    First Name
-                  </label>
-                </div>
-                <div className="relative">
-                  <input
-                    className="input-minimal w-full bg-transparent border-0 border-b border-outline-variant focus:border-primary focus:ring-0 py-2 font-body-lg text-body-lg text-primary transition-colors peer"
-                    id="lastName"
-                    placeholder=" "
-                    type="text"
-                    defaultValue="V."
-                  />
-                  <label
-                    className="absolute left-0 top-2 font-label-sm text-label-sm uppercase tracking-[0.1em] text-on-surface-variant transition-all duration-300 origin-left pointer-events-none -translate-y-6 scale-85 text-primary"
-                    htmlFor="lastName"
-                  >
-                    Last Name
-                  </label>
-                </div>
+                  <div className="relative">
+                    <input
+                      className="input-minimal w-full bg-transparent border-0 border-b border-outline-variant focus:border-primary focus:ring-0 py-2 font-body-lg text-body-lg text-primary transition-colors peer"
+                      id="firstName"
+                      placeholder=" "
+                      type="text"
+                      value={profile.firstName}
+                      onChange={(e)=>setProfile(p=>({...p, firstName: e.target.value}))}
+                    />
+                    <label
+                      className="absolute left-0 top-2 font-label-sm text-label-sm uppercase tracking-[0.1em] text-on-surface-variant transition-all duration-300 origin-left pointer-events-none -translate-y-6 scale-85 text-primary"
+                      htmlFor="firstName"
+                    >
+                      First Name
+                    </label>
+                  </div>
+                  <div className="relative">
+                    <input
+                      className="input-minimal w-full bg-transparent border-0 border-b border-outline-variant focus:border-primary focus:ring-0 py-2 font-body-lg text-body-lg text-primary transition-colors peer"
+                      id="lastName"
+                      placeholder=" "
+                      type="text"
+                      value={profile.lastName}
+                      onChange={(e)=>setProfile(p=>({...p, lastName: e.target.value}))}
+                    />
+                    <label
+                      className="absolute left-0 top-2 font-label-sm text-label-sm uppercase tracking-[0.1em] text-on-surface-variant transition-all duration-300 origin-left pointer-events-none -translate-y-6 scale-85 text-primary"
+                      htmlFor="lastName"
+                    >
+                      Last Name
+                    </label>
+                  </div>
                 <div className="relative md:col-span-2">
                   <input
                     className="input-minimal w-full bg-transparent border-0 border-b border-outline-variant focus:border-primary focus:ring-0 py-2 font-body-lg text-body-lg text-primary transition-colors peer"
                     id="email"
                     placeholder=" "
                     type="email"
-                    defaultValue="alexander.v@example.com"
+                    value={profile.email}
+                    onChange={(e)=>setProfile(p=>({...p, email: e.target.value}))}
                   />
                   <label
                     className="absolute left-0 top-2 font-label-sm text-label-sm uppercase tracking-[0.1em] text-on-surface-variant transition-all duration-300 origin-left pointer-events-none -translate-y-6 scale-85 text-primary"
@@ -231,7 +252,8 @@ const CustomerSetting = () => {
                     id="phone"
                     placeholder=" "
                     type="tel"
-                    defaultValue="+1 (555) 019-8234"
+                    value={profile.phone}
+                    onChange={(e)=>setProfile(p=>({...p, phone: e.target.value}))}
                   />
                   <label
                     className="absolute left-0 top-2 font-label-sm text-label-sm uppercase tracking-[0.1em] text-on-surface-variant transition-all duration-300 origin-left pointer-events-none -translate-y-6 scale-85 text-primary"
