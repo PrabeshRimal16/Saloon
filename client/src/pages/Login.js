@@ -1,7 +1,10 @@
 import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+const navigate = useNavigate();
   const { loginWithGoogle } = useAuth();
+
 
   return (
     <div style={styles.container}>
@@ -35,6 +38,11 @@ const Login = () => {
                   Login with Google
                 </button>
               </td>
+              <tr>
+                <td colSpan={2} style={{ textAlign: "center", paddingTop: "10px", color: "#555" }}>
+                  Don't have an account? <span style={{ color: "#4285F4", cursor: "pointer" }} onClick={() => navigate("/register")}>Register</span>
+                 </td>
+            </tr>
             </tr>
           </tbody>
         </table>

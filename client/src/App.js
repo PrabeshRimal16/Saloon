@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import Login from "./pages/Login";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import CustomerDashboard from "./pages/customer/CustomerDashboard";
+import Register from "./pages/Register";
 
 const AppRoutes = () => {
   const { user, loading } = useAuth();
@@ -38,6 +39,10 @@ const AppRoutes = () => {
       <Route
         path="*"
         element={<Navigate to={isLoggedIn ? defaultAuthedPath : "/login"} />}
+      />
+      <Route 
+      path="/register" 
+      element={<Register />} 
       />
     </Routes>
   );
