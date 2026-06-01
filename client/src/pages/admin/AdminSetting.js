@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const AdminSettings = () => {
+const AdminSetting = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleSearchChange = (e) => setSearchTerm(e.target.value);
@@ -345,4 +345,4 @@ const AdminSettings = () => {
   );
 };
 
-export default AdminSettings;
+export default AdminSetting;

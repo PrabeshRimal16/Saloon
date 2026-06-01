@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import AdminNavbar from '../../components/AdminNavbar';
 
 // Initial users data with realistic examples
 const initialUsers = [
@@ -60,7 +61,7 @@ const initialUsers = [
   }
 ];
 
-const AdminClientManagement = () => {
+const AdminUserManagement = () => {
   // State
   const [users, setUsers] = useState(initialUsers);
   const [searchTerm, setSearchTerm] = useState('');
@@ -168,88 +169,10 @@ const AdminClientManagement = () => {
 
   return (
     <div className="bg-background text-on-background font-body-md overflow-x-hidden">
-      {/* Sidebar */}
-      <aside className="h-screen w-64 fixed left-0 top-0 border-r border-outline-variant bg-surface flex flex-col py-8 px-6 z-50">
-        <div className="mb-12">
-          <h1 className="font-headline-md text-headline-md font-bold text-primary">L'Atelier</h1>
-          <p className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mt-1">Admin Suite</p>
-        </div>
-        <nav className="flex-1 space-y-4">
-          {navItems.map((item) => (
-            <button
-              key={item.label}
-              onClick={item.onClick}
-              className={`flex items-center gap-4 py-2 w-full text-left transition-colors duration-200 ease-in-out font-body-md text-body-md ${
-                item.active
-                  ? 'text-secondary font-bold border-r-2 border-secondary'
-                  : 'text-on-surface-variant hover:text-primary hover:bg-surface-container-low'
-              }`}
-            >
-              <span className="material-symbols-outlined">{item.icon}</span>
-              <span>{item.label}</span>
-            </button>
-          ))}
-        </nav>
-        <div className="mt-auto">
-          <button
-            onClick={handleNewAppointment}
-            className="w-full py-4 bg-primary text-on-primary font-label-md text-label-md uppercase tracking-widest hover:bg-secondary-container hover:text-on-secondary-container transition-all duration-300"
-          >
-            New Appointment
-          </button>
-        </div>
-      </aside>
+      <AdminNavbar />
 
       {/* Main Content */}
       <main className="ml-64 min-h-screen">
-        {/* Top Navigation Bar */}
-        <header className="fixed top-0 right-0 w-[calc(100%-16rem)] border-b border-outline-variant bg-surface/90 backdrop-blur-md flex justify-between items-center h-20 px-gutter z-40">
-          <div className="flex items-center flex-1 max-w-md">
-            <div className={`relative w-full transition-transform duration-300 ${searchFocus ? 'scale-105' : ''}`}>
-              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">
-                search
-              </span>
-              <input
-                type="text"
-                value={searchTerm}
-                onChange={handleSearchChange}
-                onFocus={() => setSearchFocus(true)}
-                onBlur={() => setSearchFocus(false)}
-                className="w-full pl-10 pr-4 py-2 bg-transparent border-b border-outline-variant focus:border-primary focus:ring-0 transition-colors font-body-md text-body-md outline-none"
-                placeholder="Search users by name or email..."
-              />
-            </div>
-          </div>
-          <div className="flex items-center gap-8">
-            <div className="flex items-center gap-4">
-              <button
-                onClick={handleNotifications}
-                className="text-on-surface-variant hover:text-secondary transition-all scale-95 active:scale-100"
-              >
-                <span className="material-symbols-outlined">notifications</span>
-              </button>
-              <button
-                onClick={handleHelp}
-                className="text-on-surface-variant hover:text-secondary transition-all scale-95 active:scale-100"
-              >
-                <span className="material-symbols-outlined">help</span>
-              </button>
-            </div>
-            <div className="h-8 w-px bg-outline-variant"></div>
-            <div className="flex items-center gap-3">
-              <img
-                alt="Administrator Profile"
-                className="w-10 h-10 rounded-full object-cover border border-outline-variant"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAOeRFVZQBbm3lDkyI9Py_jOmmn0iMUsu6OKBFh-5KC5AHTN__zDzBAcHFQvyQf-0QpDsNGKE2DKbl9ifVo3XTaF-P4zOpu2iJX8tFIfAxwcaG02FlUphMZkQOFCdVsNBpDa-c1dHrzD8ZScZNmZ9YIG2MC9hxHr3B5E0xQMfRHTCsij4N-d4eUEEe7-Mh496S2AsCG2vqlnTdPSGbipiATgMKSycrsZNQ0y_6Nn3Mhigrc3RTBdNjEZXxhKxHVWFuKxDYYoNv-DvSl"
-              />
-              <div>
-                <p className="font-label-md text-label-md text-primary">Admin Jane</p>
-                <p className="text-[10px] text-on-surface-variant uppercase tracking-tighter">Chief of Style</p>
-              </div>
-            </div>
-          </div>
-        </header>
-
         {/* Content Area */}
         <section className="pt-32 pb-section-gap-desktop px-gutter max-w-container-max-width mx-auto">
           {/* Page Header & Metrics */}

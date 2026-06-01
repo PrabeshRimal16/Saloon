@@ -2,6 +2,11 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Login from "./pages/Login";
 import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminServicesManagement from "./pages/admin/AdminServicesManagement";
+import AdminAppointmentManagement from "./pages/admin/AdminAppointmentManagement";
+import AdminOfferManagement from "./pages/admin/AdminOfferManagement";
+import AdminUserManagement from "./pages/admin/AdminUserManagement";
+import AdminSetting from "./pages/admin/AdminSetting";
 import CustomerDashboard from "./pages/customer/CustomerDashboard";
 import CustomerServices from "./pages/customer/CustomerServices";
 import CustomerOffers from "./pages/customer/CustomerOffers";
@@ -33,6 +38,26 @@ const AppRoutes = () => {
         element={
           isAdmin ? <AdminDashboard /> : <Navigate to={isLoggedIn ? "/customer" : "/login"} />
         }
+      />
+      <Route
+        path="/admin/services"
+        element={isAdmin ? <AdminServicesManagement /> : <Navigate to={isLoggedIn ? "/customer" : "/login"} />}
+      />
+      <Route
+        path="/admin/appointments"
+        element={isAdmin ? <AdminAppointmentManagement /> : <Navigate to={isLoggedIn ? "/customer" : "/login"} />}
+      />
+      <Route
+        path="/admin/offers"
+        element={isAdmin ? <AdminOfferManagement /> : <Navigate to={isLoggedIn ? "/customer" : "/login"} />}
+      />
+      <Route
+        path="/admin/users"
+        element={isAdmin ? <AdminUserManagement /> : <Navigate to={isLoggedIn ? "/customer" : "/login"} />}
+      />
+      <Route
+        path="/admin/settings"
+        element={isAdmin ? <AdminSetting /> : <Navigate to={isLoggedIn ? "/customer" : "/login"} />}
       />
       <Route
         path="/customer"

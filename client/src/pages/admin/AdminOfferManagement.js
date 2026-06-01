@@ -1,8 +1,8 @@
 import React, { useState, useRef } from "react";
+import AdminNavbar from "../../components/AdminNavbar";
 
-const OffersAndPromotionsPage = () => {
+const AdminOfferManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activePage, setActivePage] = useState(1);
   const editIconRefs = useRef([]);
 
@@ -108,118 +108,7 @@ const OffersAndPromotionsPage = () => {
         }
       `}</style>
 
-      {/* ── SideNavBar ── */}
-      <aside className="fixed left-0 top-0 h-full flex flex-col py-8 px-6 z-50 bg-surface dark:bg-surface-container border-r border-outline-variant/30 w-64 md:flex hidden">
-        <div className="mb-8">
-          <h1 className="font-headline-md text-headline-md text-primary dark:text-primary-fixed">
-            L'Atelier
-          </h1>
-          <p className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-[0.2em]">
-            Admin Suite
-          </p>
-        </div>
-        <nav className="flex-1 space-y-2">
-          {[
-            { icon: "dashboard", label: "Overview", active: false },
-            { icon: "content_cut", label: "Services", active: false },
-            { icon: "calendar_today", label: "Appointments", active: false },
-            { icon: "group", label: "Clients", active: false },
-            { icon: "local_offer", label: "Offers", active: true },
-            { icon: "settings", label: "Settings", active: false },
-          ].map((item) => (
-            <a
-              key={item.label}
-              className={`flex items-center gap-4 py-3 transition-all duration-200 pl-4 ${
-                item.active
-                  ? "text-primary dark:text-primary-fixed font-bold border-l-2 border-secondary"
-                  : "text-on-surface-variant hover:bg-surface-container-low hover:text-secondary"
-              }`}
-              href="#"
-            >
-              <span className="material-symbols-outlined">{item.icon}</span>
-              <span className="font-label-md text-label-md">{item.label}</span>
-            </a>
-          ))}
-        </nav>
-        <div className="mt-auto space-y-4 pt-6">
-          <button className="w-full py-4 bg-primary text-on-primary font-label-md text-label-md transition-transform active:scale-95">
-            Book New Service
-          </button>
-        </div>
-      </aside>
-
-      {/* ── TopAppBar ── */}
-      <header className="flex justify-between items-center w-full px-gutter h-20 sticky top-0 z-40 bg-surface/90 dark:bg-surface-container/90 backdrop-blur-[30px] border-b border-outline-variant/30 md:pl-72">
-        <div className="flex items-center gap-4 md:hidden">
-          <span
-            className="material-symbols-outlined text-primary cursor-pointer"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
-            menu
-          </span>
-          <span className="font-headline-md text-headline-md text-primary tracking-tight">
-            L'Atelier
-          </span>
-        </div>
-        <div className="hidden md:flex items-center bg-surface-container-low px-4 py-2 gap-3 w-96 border-outline rounded-full">
-          <span className="material-symbols-outlined text-on-surface-variant">
-            search
-          </span>
-          <input
-            className="bg-transparent border-none focus:ring-0 text-body-md w-full"
-            placeholder="Search promotions..."
-            type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-        <div className="flex items-center gap-6">
-          <button className="text-on-surface-variant hover:text-secondary transition-colors">
-            <span className="material-symbols-outlined">help_outline</span>
-          </button>
-          <button className="relative text-on-surface-variant hover:text-secondary transition-colors">
-            <span className="material-symbols-outlined">notifications</span>
-            <span className="absolute top-0 right-0 w-2 h-2 bg-secondary rounded-full border border-surface"></span>
-          </button>
-          <div className="flex items-center gap-3 pl-4 border-l border-outline-variant/30">
-            <div className="text-right hidden lg:block">
-              <p className="text-label-sm font-bold text-primary">Admin User</p>
-              <p className="text-[10px] text-on-surface-variant uppercase tracking-tighter">
-                Managing Director
-              </p>
-            </div>
-            <div className="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center border border-outline-variant/30 overflow-hidden">
-              <img
-                alt="Administrator Profile"
-                className="w-full h-full object-cover"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCjsKMAtUsG8IobPyZkAi1CwkZBFxmgzLb87r1cF5IGu5SG-_l70WIJ921jIgl3X1Fkg5ks1L4yPpSGh0NshKMbEwXifhVz5UP7kSOTRT82eS_2anPFlDdqRMsJUlJ5vXt3VNlfYi74QQSwgS370vOQksd0JsI-AqVaqg4sNkPygTjnjc8fK8-_eh7EjwV48ofKpMkhbxPyl1W3bZzQ_ErpsGywuCvrNSXKkgfbsU8jam40Cb0h6HUdUdb47_kbaGnTp_-WRNB3k0WQ"
-              />
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* ── Mobile Dropdown Menu ── */}
-      {mobileMenuOpen && (
-        <div className="md:hidden fixed top-20 left-0 w-full bg-surface border-b border-outline-variant/30 z-50 p-4 space-y-2">
-          {["Overview", "Services", "Appointments", "Clients", "Offers", "Settings"].map(
-            (item) => (
-              <a
-                key={item}
-                className={`block py-2 px-4 font-label-md text-label-md ${
-                  item === "Offers"
-                    ? "text-primary font-bold border-l-2 border-secondary"
-                    : "text-on-surface-variant"
-                }`}
-                href="#"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                {item}
-              </a>
-            )
-          )}
-        </div>
-      )}
+      <AdminNavbar />
 
       {/* ── Main Content ── */}
       <main className="md:ml-64 p-gutter max-w-container-max-width mx-auto">
@@ -449,4 +338,4 @@ const OffersAndPromotionsPage = () => {
   );
 };
 
-export default OffersAndPromotionsPage;
+export default AdminOfferManagement;

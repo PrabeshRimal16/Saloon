@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
+import AdminNavbar from '../../components/AdminNavbar';
 
-const ServiceCatalogManagement = () => {
+const AdminServicesManagement = () => {
   // Sample services data
   const initialServices = [
     {
@@ -136,86 +137,7 @@ const ServiceCatalogManagement = () => {
 
   return (
     <div className="bg-surface font-body-md text-on-surface">
-      {/* Sidebar */}
-      <aside className="fixed left-0 top-0 h-full w-64 bg-surface-container-lowest flex flex-col py-gutter border-r border-outline-variant/20 z-40">
-        <div className="px-6 mb-12">
-          <h1 className="font-headline-md text-headline-md text-primary tracking-widest uppercase">L'Atelier</h1>
-          <p className="font-label-sm text-label-sm text-outline mt-1 uppercase tracking-tighter">Admin Suite</p>
-        </div>
-        <nav className="flex-1 space-y-1">
-          <a className="flex items-center gap-4 text-on-surface-variant p-3 mx-2 hover:bg-surface-container-high transition-all" href="#">
-            <span className="material-symbols-outlined">dashboard</span>
-            <span className="font-label-md text-label-md">Overview</span>
-          </a>
-          <a className="flex items-center gap-4 bg-secondary-container text-on-secondary-container rounded-lg p-3 mx-2 translate-x-1 transition-transform" href="#">
-            <span className="material-symbols-outlined">content_cut</span>
-            <span className="font-label-md text-label-md">Services</span>
-          </a>
-          <a className="flex items-center gap-4 text-on-surface-variant p-3 mx-2 hover:bg-surface-container-high transition-all" href="#">
-            <span className="material-symbols-outlined">calendar_today</span>
-            <span className="font-label-md text-label-md">Appointments</span>
-          </a>
-          <a className="flex items-center gap-4 text-on-surface-variant p-3 mx-2 hover:bg-surface-container-high transition-all" href="#">
-            <span className="material-symbols-outlined">group</span>
-            <span className="font-label-md text-label-md">Clients</span>
-          </a>
-          <a className="flex items-center gap-4 text-on-surface-variant p-3 mx-2 hover:bg-surface-container-high transition-all" href="#">
-            <span className="material-symbols-outlined">local_offer</span>
-            <span className="font-label-md text-label-md">Offers</span>
-          </a>
-          <a className="flex items-center gap-4 text-on-surface-variant p-3 mx-2 hover:bg-surface-container-high transition-all" href="#">
-            <span className="material-symbols-outlined">settings</span>
-            <span className="font-label-md text-label-md">Settings</span>
-          </a>
-        </nav>
-        <div className="px-4 mt-8">
-          <button onClick={handleNewAppointment} className="w-full bg-primary text-on-primary py-4 px-2 font-label-md text-label-md uppercase tracking-widest hover:bg-secondary transition-colors duration-300">
-            New Appointment
-          </button>
-        </div>
-        <div className="mt-auto border-t border-outline-variant/10 pt-4">
-          <button onClick={handleSignOut} className="flex items-center gap-4 text-on-surface-variant p-3 mx-2 hover:bg-surface-container-high transition-all w-full">
-            <span className="material-symbols-outlined">logout</span>
-            <span className="font-label-md text-label-md">Sign Out</span>
-          </button>
-        </div>
-      </aside>
-
-      {/* Top Navigation Bar */}
-      <nav className="fixed top-0 right-0 left-64 h-20 bg-surface-container-lowest border-b border-outline-variant/20 z-30 px-gutter flex items-center justify-between">
-        <div className="flex items-center gap-8 flex-1">
-          <h1 className="font-label-md text-label-md text-primary uppercase tracking-widest">L'Atelier Admin</h1>
-          <div className="max-w-md w-full relative">
-            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">search</span>
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={handlePortalSearch}
-              className="w-full pl-10 pr-4 py-2 bg-surface-container-low border-none focus:ring-1 focus:ring-secondary/30 font-body-md text-body-md"
-              placeholder="Search portal..."
-            />
-          </div>
-        </div>
-        <div className="flex items-center gap-6">
-          <button onClick={handleHelp} className="text-outline hover:text-primary transition-colors">
-            <span className="material-symbols-outlined">help_outline</span>
-          </button>
-          <button onClick={handleNotification} className="text-outline hover:text-primary transition-colors relative">
-            <span className="material-symbols-outlined">notifications</span>
-            <span className="absolute top-0 right-0 w-2 h-2 bg-secondary rounded-full"></span>
-          </button>
-          <div className="w-px h-6 bg-outline-variant/30"></div>
-          <div className="flex items-center gap-3">
-            <div className="text-right">
-              <p className="font-label-md text-label-md text-primary">Admin User</p>
-              <p className="font-label-sm text-label-sm text-outline">Super Admin</p>
-            </div>
-            <div className="w-10 h-10 rounded-full bg-surface-container overflow-hidden border border-outline-variant/20">
-              <img alt="Profile" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtEjzDUZaQdNbyI9xBLd4ZSFy9y__8_njveJ2aRgD49eJwk2w2_Dx5-HO4r3hT7Iqs31Pnn-q-xib9yT3YSHeIoumK5-lOZG_lrxjD8th_YPb9PfeWBNAucbTn28PJZSjEKoGUA2ORS6oENPHVgVtQk7-bXJSV_nqcLLg1Xxu-0Rs1xFEypZM_oleVmrJ3j7gY2Z55GwQk5KD2SUzRf1o22VLD2DdXyd5W01EPRg3GTnvsF4z_UvwNACBl6UFhHVRzzkTXyV8rBu_7" />
-            </div>
-          </div>
-        </div>
-      </nav>
+      <AdminNavbar />
 
       {/* Main Content */}
       <main className="ml-64 min-h-screen p-12 pt-32">
@@ -376,4 +298,4 @@ const ServiceCatalogManagement = () => {
   );
 };
 
-export default ServiceCatalogManagement;
+export default AdminServicesManagement;

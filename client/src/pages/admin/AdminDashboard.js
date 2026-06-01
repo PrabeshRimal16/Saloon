@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import AdminNavbar from "../../components/AdminNavbar";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
 
@@ -85,35 +86,8 @@ const AdminDashboard = () => {
 
   return (
     <div className="app">
-      <aside className="sidebar">
-        <div className="logo">
-          <h2>L'Atelier</h2>
-          <span>Admin Panel</span>
-        </div>
-        <ul className="nav-menu">
-          <li className="active"><span className="material-icons">dashboard</span><span>Overview</span></li>
-          <li><span className="material-icons">event</span><span>Bookings</span></li>
-          <li><span className="material-icons">people</span><span>Clients</span></li>
-          <li><span className="material-icons">inventory_2</span><span>Services</span></li>
-          <li><span className="material-icons">local_offer</span><span>Offers</span></li>
-        </ul>
-        <div className="sign-out" onClick={logout} role="button">
-          <span className="material-icons">logout</span>
-          <span>Sign out</span>
-        </div>
-      </aside>
-
+      <AdminNavbar />
       <div className="main">
-        <header className="top-bar">
-          <div className="admin-title">Dashboard</div>
-          <div className="header-actions">
-            <div className="user-info">
-              <div className="avatar">{(user?.name || 'U').charAt(0).toUpperCase()}</div>
-              <div>{user?.name || 'Admin'}</div>
-            </div>
-          </div>
-        </header>
-
         <div className="content">
           <h3 className="page-title">Overview</h3>
 

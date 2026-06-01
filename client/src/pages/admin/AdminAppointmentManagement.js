@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
+import AdminNavbar from "../../components/AdminNavbar";
 
-const AdminAppointmentsPage = () => {
+const AdminAppointmentManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const searchContainerRef = useRef(null);
 
@@ -47,78 +48,7 @@ const AdminAppointmentsPage = () => {
         }
       `}</style>
 
-      {/* SideNavBar */}
-      <aside className="bg-surface dark:bg-inverse-surface h-screen w-64 fixed left-0 top-0 border-r border-outline-variant dark:border-outline flex flex-col h-full py-8 px-6 z-50" id="sidebar">
-        <div className="mb-12">
-          <h1 className="font-headline-md text-headline-md font-bold text-primary dark:text-secondary-fixed-dim">L'Atelier</h1>
-          <p className="font-label-sm text-label-sm text-on-surface-variant tracking-widest uppercase mt-1">Admin Suite</p>
-        </div>
-        <nav className="flex-1 space-y-4">
-          <a className="flex items-center gap-4 px-3 py-2 text-on-surface-variant dark:text-on-surface-variant hover:text-primary hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors duration-200 ease-in-out group" href="#">
-            <span className="material-symbols-outlined text-[20px]">dashboard</span>
-            <span className="font-body-md text-body-md">Overview</span>
-          </a>
-          <a className="flex items-center gap-4 px-3 py-2 text-on-surface-variant dark:text-on-surface-variant hover:text-primary hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors duration-200 ease-in-out group" href="#">
-            <span className="material-symbols-outlined text-[20px]">content_cut</span>
-            <span className="font-body-md text-body-md">Services</span>
-          </a>
-          {/* Active State: Appointments */}
-          <a className="flex items-center gap-4 px-3 py-2 text-secondary dark:text-secondary-fixed-dim font-bold border-r-2 border-secondary hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors duration-200 ease-in-out group" href="#">
-            <span className="material-symbols-outlined text-[20px]">calendar_month</span>
-            <span className="font-body-md text-body-md">Appointments</span>
-          </a>
-          <a className="flex items-center gap-4 px-3 py-2 text-on-surface-variant dark:text-on-surface-variant hover:text-primary hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors duration-200 ease-in-out group" href="#">
-            <span className="material-symbols-outlined text-[20px]">group</span>
-            <span className="font-body-md text-body-md">Clients</span>
-          </a>
-          <a className="flex items-center gap-4 px-3 py-2 text-on-surface-variant dark:text-on-surface-variant hover:text-primary hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors duration-200 ease-in-out group" href="#">
-            <span className="material-symbols-outlined text-[20px]">local_offer</span>
-            <span className="font-body-md text-body-md">Offers</span>
-          </a>
-          <a className="flex items-center gap-4 px-3 py-2 text-on-surface-variant dark:text-on-surface-variant hover:text-primary hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors duration-200 ease-in-out group" href="#">
-            <span className="material-symbols-outlined text-[20px]">settings</span>
-            <span className="font-body-md text-body-md">Settings</span>
-          </a>
-        </nav>
-        <button className="mt-auto w-full bg-primary text-on-primary py-4 px-4 font-label-md text-label-md flex items-center justify-center gap-2 hover:bg-secondary-container hover:text-on-secondary-container transition-all active:scale-95 border border-primary">
-          <span className="material-symbols-outlined text-[18px]">add</span>
-          New Appointment
-        </button>
-      </aside>
-
-      {/* TopNavBar */}
-      <header className="fixed top-0 right-0 w-[calc(100%-16rem)] bg-surface/90 dark:bg-inverse-surface/90 backdrop-blur-md border-b border-outline-variant dark:border-outline flex justify-between items-center h-20 px-gutter z-40">
-        <div className="flex items-center gap-8 w-1/2">
-          <h2 className="font-headline-sm text-headline-sm text-primary dark:text-secondary-fixed-dim whitespace-nowrap">L'Atelier Admin Suite</h2>
-          <div ref={searchContainerRef} className="relative w-full max-w-md transition-transform duration-300 ease">
-            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
-            <input
-              className="w-full bg-transparent border-b border-outline-variant focus:border-primary focus:ring-0 text-body-md px-10 py-1 transition-all outline-none"
-              placeholder="Search appointments..."
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              onFocus={handleSearchFocus}
-              onBlur={handleSearchBlur}
-            />
-          </div>
-        </div>
-        <div className="flex items-center gap-6">
-          <button className="text-on-surface-variant hover:text-secondary transition-all scale-95 active:scale-100">
-            <span className="material-symbols-outlined">notifications</span>
-          </button>
-          <button className="text-on-surface-variant hover:text-secondary transition-all scale-95 active:scale-100">
-            <span className="material-symbols-outlined">help</span>
-          </button>
-          <div className="h-10 w-10 rounded-full bg-surface-container border border-outline-variant overflow-hidden">
-            <img
-              alt="A professional headshot of an elegant salon administrator in her 30s with dark hair, wearing a high-fashion black blazer. The lighting is sophisticated and soft, typical of a high-end atelier, with a minimalist marble and warm gold background that maintains the luxury brand identity."
-              className="h-full w-full object-cover"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3fLXlrfSC-CpOf9EXBWyHn18iLz_o1qZADliKtYmBmoddrqWct91GzgGCV260_L2Ls3ro91RMJ55ZjN2HDLkU-BYr6J33valxUX2Bz9yLwdt_WO-LDDYp_TaJbtouHx7DriKM7LQIdckfk2J9lAmWvXB5E1xAwAjhYNPSTNJ6dK91FEEcYdaesGdJVUzyg3JoF3NVQ2M7zIPvG43EH2WPt5U7VCjVkF_WEkngIElWDSI8SSoA13qTxuPonrlJMEMkVQaTLJRYob0R"
-            />
-          </div>
-        </div>
-      </header>
+      <AdminNavbar />
 
       {/* Main Content */}
       <main className="ml-64 pt-20 min-h-screen">
@@ -399,4 +329,4 @@ const AdminAppointmentsPage = () => {
   );
 };
 
-export default AdminAppointmentsPage;
+export default AdminAppointmentManagement;
