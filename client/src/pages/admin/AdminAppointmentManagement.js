@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import AdminNavbar from "../../components/AdminNavbar";
+import AdminSidebar from "../../components/AdminSidebar";
+import AdminHeader from "../../components/AdminHeader";
 
 const AdminAppointmentManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -48,10 +49,11 @@ const AdminAppointmentManagement = () => {
         }
       `}</style>
 
-      <AdminNavbar />
+      <AdminSidebar />
 
       {/* Main Content */}
-      <main className="ml-64 pt-20 min-h-screen">
+      <main className="md:ml-64 pt-20 min-h-screen">
+        <AdminHeader title="Appointment Management" />
         <div className="p-gutter max-w-container-max-width mx-auto">
           {/* Breadcrumb & Title */}
           <section className="mb-12">

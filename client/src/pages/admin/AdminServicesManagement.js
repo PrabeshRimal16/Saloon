@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import AdminNavbar from '../../components/AdminNavbar';
+import AdminSidebar from '../../components/AdminSidebar';
+import AdminHeader from '../../components/AdminHeader';
 
 const AdminServicesManagement = () => {
   // Sample services data
@@ -137,10 +138,11 @@ const AdminServicesManagement = () => {
 
   return (
     <div className="bg-surface font-body-md text-on-surface">
-      <AdminNavbar />
+      <AdminSidebar />
 
       {/* Main Content */}
-      <main className="ml-64 min-h-screen p-12 pt-32">
+      <main className="md:ml-64 min-h-screen p-12 pt-32">
+        <AdminHeader title="Service Catalog Management" />
         {/* Header */}
         <header className="flex justify-between items-end mb-16">
           <div>

@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import AdminNavbar from '../../components/AdminNavbar';
+import AdminSidebar from '../../components/AdminSidebar';
+import AdminHeader from '../../components/AdminHeader';
 
 // Initial users data with realistic examples
 const initialUsers = [
@@ -169,10 +170,11 @@ const AdminUserManagement = () => {
 
   return (
     <div className="bg-background text-on-background font-body-md overflow-x-hidden">
-      <AdminNavbar />
+      <AdminSidebar />
 
       {/* Main Content */}
-      <main className="ml-64 min-h-screen">
+      <main className="md:ml-64 min-h-screen">
+        <AdminHeader title="Client Management" />
         {/* Content Area */}
         <section className="pt-32 pb-section-gap-desktop px-gutter max-w-container-max-width mx-auto">
           {/* Page Header & Metrics */}

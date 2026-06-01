@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
-import AdminNavbar from "../../components/AdminNavbar";
+import AdminSidebar from "../../components/AdminSidebar";
+import AdminHeader from "../../components/AdminHeader";
 
 const AdminOfferManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -108,10 +109,11 @@ const AdminOfferManagement = () => {
         }
       `}</style>
 
-      <AdminNavbar />
+      <AdminSidebar />
 
       {/* ── Main Content ── */}
       <main className="md:ml-64 p-gutter max-w-container-max-width mx-auto">
+        <AdminHeader title="Offers & Promotions Management" />
         {/* Hero Header */}
         <section className="mb-16 flex flex-col md:flex-row md:items-end justify-between gap-8">
           <div className="max-w-2xl">

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import AdminNavbar from "../../components/AdminNavbar";
+import AdminSidebar from "../../components/AdminSidebar";
+import AdminHeader from "../../components/AdminHeader";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
 
@@ -86,10 +87,10 @@ const AdminDashboard = () => {
 
   return (
     <div className="app">
-      <AdminNavbar />
-      <div className="main">
+      <AdminSidebar />
+      <div className="main md:ml-64">
+        <AdminHeader title="Overview" />
         <div className="content">
-          <h3 className="page-title">Overview</h3>
 
           <section className="performance">
             <div className="stats-grid">
