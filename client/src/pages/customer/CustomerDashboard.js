@@ -39,7 +39,7 @@ export default function CustomerDashboard() {
     <div>
       <CustomerNavbar />
 
-      <main className="pt-24 pb-section-gap-desktop px-gutter max-w-container-max-width mx-auto">
+      <main className="pb-section-gap-desktop px-gutter max-w-container-max-width mx-auto">
         <section className="mb-section-gap-desktop">
           <div className="relative w-full h-[60vh] overflow-hidden rounded-lg">
             <img className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDKooKxy_b_oOWcyexhYfY0nuRsR9xj68RF2a-MdqP0nsB0QdjgvagQQOcdAZxGmAcz_R3Gd9_zXrBz4Q8_ThoRD185UdjfjHs_Zb90vsA3fCYVlD3FYhsqNp_R1wUL24nId52-auYHYAsV7BLw5LCIxHyoMF_mAeCKyGsB0kFmbjtmhTImuvbtnuDRN_vozgHvF8lYc8ypJolM3bgk2Bw4eOgug-o0rF8d2EFnxvBAIp-2ZHJej83op3mOR6iwj74Tm5w4Dwa72nPop" alt="Salon interior" />

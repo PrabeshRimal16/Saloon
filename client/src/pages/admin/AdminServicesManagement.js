@@ -178,22 +178,25 @@ const AdminServicesManagement = () => {
       <AdminSidebar />
 
       {/* Main Content */}
-      <main className="md:ml-64 min-h-screen p-12 pt-32">
+      <main className="md:ml-64 min-h-screen p-12">
         <AdminHeader title="Service Catalog Management" />
         {/* Header */}
-        <header className="flex justify-between items-end mb-16">
-          <div>
-            <nav className="flex gap-2 mb-4">
+        <header className="flex justify-between items-end mb-10">
+          <div className="hero prose">
+            <nav className="flex gap-2 mb-2">
               <span className="font-label-sm text-label-sm text-outline uppercase">Admin</span>
               <span className="font-label-sm text-label-sm text-outline">/</span>
               <span className="font-label-sm text-label-sm text-primary uppercase">Service Catalog</span>
             </nav>
-            <h2 className="font-headline-lg text-headline-lg text-primary">Service Catalog Management</h2>
+            <h2 className="hero-title">Service Catalog Management</h2>
+            <p className="hero-sub lead">Manage your service offerings — add descriptions, pricing, and visuals to delight customers.</p>
           </div>
-          <button onClick={openCreateForm} className="flex items-center gap-3 bg-primary text-on-primary px-8 py-4 border border-primary hover:bg-white hover:text-primary transition-all duration-500 group">
-            <span className="material-symbols-outlined text-[20px]">add</span>
-            <span className="font-label-md text-label-md uppercase tracking-widest">Add New Service</span>
-          </button>
+          <div className="flex items-center gap-4">
+            <button onClick={openCreateForm} className="btn-accent flex items-center gap-3">
+              <span className="material-symbols-outlined text-[20px]">add</span>
+              <span className="font-label-md text-label-md uppercase tracking-widest">Add New Service</span>
+            </button>
+          </div>
         </header>
 
         {/* Filters & Search */}
@@ -206,7 +209,7 @@ const AdminServicesManagement = () => {
               onChange={handleSearchChange}
               onFocus={() => setSearchFocus(true)}
               onBlur={() => setSearchFocus(false)}
-              className={`w-full pl-12 pr-12 py-3 bg-surface-container-lowest border border-outline-variant/10 focus:border-secondary focus:ring-0 transition-all font-body-md text-body-md outline-none ${searchFocus ? 'ring-1 ring-secondary/30' : ''}`}
+              className={`w-full pl-12 pr-12 py-3 bg-surface-container-lowest border border-outline-variant/10 focus:border-secondary focus:ring-0 transition-all font-body-md text-body-md outline-none search-input ${searchFocus ? 'ring-1 ring-secondary/30' : ''}`}
               placeholder="Search services by name or description..."
             />
             {searchTerm && <button onClick={()=>{ setSearchTerm(''); setCurrentPage(1); }} className="absolute right-3 top-1/2 -translate-y-1/2 text-outline">✕</button>}
@@ -215,7 +218,7 @@ const AdminServicesManagement = () => {
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
               <label className="font-label-sm text-label-sm text-outline">Category</label>
-              <select value={selectedCategory} onChange={(e)=>handleFilterChange(e.target.value)} className="p-2 border">
+              <select value={selectedCategory} onChange={(e)=>handleFilterChange(e.target.value)} className="p-2 border search-input">
                 {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
               </select>
             </div>
@@ -227,7 +230,7 @@ const AdminServicesManagement = () => {
                 <option value="price_desc">Price: High → Low</option>
               </select>
             </div>
-            <button onClick={()=>{ setSearchTerm(''); setSelectedCategory('All'); fetchServices(); }} className="px-4 py-2 border">Reset</button>
+            <button onClick={()=>{ setSearchTerm(''); setSelectedCategory('All'); fetchServices(); }} className="btn">Reset</button>
           </div>
         </section>
 
@@ -296,7 +299,7 @@ const AdminServicesManagement = () => {
         )}
 
         {/* Service Table */}
-        <div className="bg-white border border-outline-variant/20 overflow-hidden">
+        <div className="card bg-white border border-outline-variant/20 overflow-hidden">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-surface-container-low border-b border-outline-variant/30">

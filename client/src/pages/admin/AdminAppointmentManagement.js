@@ -7,6 +7,7 @@ const AdminAppointmentManagement = () => {
   const searchContainerRef = useRef(null);
   const [filterStatus, setFilterStatus] = useState('All');
   const [query, setQuery] = useState('');
+  const [appointments, setAppointments] = useState([]);
   useEffect(() => {
     const API_BASE = process.env.REACT_APP_API_URL || '';
     fetch(`${API_BASE}/api/appointments`)
@@ -94,7 +95,7 @@ const AdminAppointmentManagement = () => {
       <AdminSidebar />
 
       {/* Main Content */}
-      <main className="md:ml-64 pt-20 min-h-screen">
+      <main className="md:ml-64 min-h-screen p-12">
         <AdminHeader title="Appointment Management" />
         <div className="p-gutter max-w-container-max-width mx-auto">
           {/* Breadcrumb & Title */}
@@ -105,19 +106,19 @@ const AdminAppointmentManagement = () => {
               <span className="font-label-sm text-label-sm text-primary uppercase tracking-widest font-bold">Appointments</span>
             </nav>
             <div className="flex justify-between items-end">
-              <div>
-                <h1 className="font-headline-lg text-headline-lg text-primary">Appointment Management</h1>
-                <p className="font-body-lg text-body-lg text-on-surface-variant mt-2 max-w-2xl">
+              <div className="hero prose">
+                <h1 className="hero-title">Appointment Management</h1>
+                <p className="hero-sub lead">
                   Oversee and coordinate every luxury experience. From master stylists to exclusive spa treatments, manage the flow of the modern atelier.
                 </p>
               </div>
               <div className="flex gap-4 items-center">
-                <div className="flex items-center gap-2 bg-surface-container-low border border-outline-variant px-4 py-2 rounded">
+                <button className="pill" aria-label="This week">
                   <span className="material-symbols-outlined text-secondary">calendar_today</span>
-                  <span className="font-label-md text-label-md uppercase">This Week</span>
-                </div>
+                  <span className="font-label-md text-label-md uppercase">THIS WEEK</span>
+                </button>
                 <div className="flex items-center gap-2">
-                  <input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search by name, service or email" className="input" />
+                  <input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search appointments by name, service, or email" className="input search-input" />
                 </div>
                 <div className="flex items-center gap-2">
                   <select value={filterStatus} onChange={e=>setFilterStatus(e.target.value)} className="input">
@@ -156,6 +157,8 @@ const AdminAppointmentManagement = () => {
               </div>
               <div className="badge bg-green-100 text-green-800">Approved</div>
             </div>
+
+          </section>
 
           {/* Load appointments on mount */}
 

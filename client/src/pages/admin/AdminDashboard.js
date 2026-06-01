@@ -56,8 +56,8 @@ const AdminDashboard = () => {
 
   const revenueThisMonth = appointments.reduce((sum, a) => {
     const d = a.appointment_date ? new Date(a.appointment_date) : null;
-    const price = Number(a.price || a.price || 0) || Number(a.price || 0) || Number(a.service_price || 0) || Number(a.price || 0);
-    if (d && d >= startOfMonth && d <= endOfMonth) return sum + (price || 0);
+    const price = Number(a.price ?? a.service_price ?? a.service_price ?? 0) || 0;
+    if (d && d >= startOfMonth && d <= endOfMonth) return sum + price;
     return sum;
   }, 0);
 

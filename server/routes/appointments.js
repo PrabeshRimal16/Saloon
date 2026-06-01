@@ -34,7 +34,7 @@ router.get("/my/:user_id", async (req, res) => {
 router.get("/", async (req, res) => {
   try {
     const result = await pool.query(
-      "SELECT a.*, s.name as service_name, s.duration as service_duration, u.name as customer_name, u.email FROM appointments a JOIN services s ON a.service_id = s.id JOIN users u ON a.user_id = u.id"
+      "SELECT a.*, s.name as service_name, s.duration as service_duration, s.price as service_price, u.name as customer_name, u.email FROM appointments a JOIN services s ON a.service_id = s.id JOIN users u ON a.user_id = u.id"
     );
     res.json(result.rows);
   } catch (err) {

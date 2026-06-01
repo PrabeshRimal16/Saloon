@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
@@ -12,28 +12,43 @@ function avatarInitials(name, email) {
 
 export default function AdminHeader({ title }) {
   const { user, loading } = useAuth();
+  const headerRef = useRef(null);
+
+  useEffect(() => {
+    const setHeaderHeight = () => {
+      try {
+        const h = headerRef.current ? headerRef.current.offsetHeight : 96;
+        document.documentElement.style.setProperty('--app-header-height', `${h}px`);
+      } catch (e) {
+        document.documentElement.style.setProperty('--app-header-height', `96px`);
+      }
+    };
+    setHeaderHeight();
+    window.addEventListener('resize', setHeaderHeight);
+    return () => window.removeEventListener('resize', setHeaderHeight);
+  }, []);
 
   const displayName = user?.name || user?.displayName || user?.email || '';
   const avatarSrc = user?.avatar_url || user?.photo || user?.avatar || user?.avatarUrl || user?.picture || null;
 
   return (
-    <header className="w-full bg-white border-b border-gray-200 py-4 px-6 lg:px-10">
-      <div className="max-w-screen-xl mx-auto flex items-center justify-between">
+    <header ref={headerRef} className="app-header w-full fixed top-0 left-0 right-0 z-50 border-b border-transparent">
+      <div className="max-w-screen-xl mx-auto flex items-center justify-between px-4 lg:px-10 h-full">
         <div>
           <h1 className="text-2xl font-serif text-gray-900">{title || 'Admin'}</h1>
           <p className="text-sm text-gray-500">Manage site settings and content</p>
         </div>
 
-        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4">
           <div className="hidden md:block">
             <input
               aria-label="Search"
-              placeholder="Search admin..."
-              className="px-3 py-2 border rounded-md text-sm w-64"
+                placeholder="Search admin..."
+                className="px-3 py-2 border rounded-md text-sm w-64 search-input"
             />
           </div>
           <div className="flex items-center gap-3">
-            <button className="hidden md:inline-block px-3 py-2 rounded-md bg-gray-100 text-sm">Notifications</button>
+            <button className="hidden md:inline-block px-3 py-2 rounded-md bg-white/80 text-sm shadow-sm">Notifications</button>
             {loading ? (
               <div className="w-9 h-9 rounded-full bg-gray-200 animate-pulse" />
             ) : (

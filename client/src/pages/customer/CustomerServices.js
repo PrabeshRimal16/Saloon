@@ -97,7 +97,7 @@ export default function CustomerServices() {
     <>
       <CustomerNavbar />
 
-      <main className="pt-24 md:pt-32">
+      <main>
         {/* Hero Section */}
         <section className="px-gutter max-w-container-max-width mx-auto mb-16 md:mb-24">
           <div className="max-w-3xl">

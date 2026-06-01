@@ -127,7 +127,7 @@ const OffersAndRitualsPage = () => {
     <div className="bg-surface text-on-surface font-body-md overflow-x-hidden">
       <CustomerNavbar />
 
-      <main className="pt-24">
+      <main>
         {/* Hero */}
         <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden bg-primary text-on-primary px-gutter">
           <div className="absolute inset-0 opacity-40">

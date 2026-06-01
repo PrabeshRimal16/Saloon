@@ -60,7 +60,7 @@ const ContactUsPage = () => {
       <CustomerNavbar />
 
       {/* Main Content */}
-      <main className="pt-32 pb-section-gap-desktop max-w-container-max-width mx-auto px-gutter">
+      <main className="pb-section-gap-desktop max-w-container-max-width mx-auto px-gutter">
         {/* Header Section */}
         <header className="mb-section-gap-mobile md:mb-20 text-center md:text-left">
           <h1 className="font-headline-xl text-headline-xl mb-4 text-primary leading-tight">

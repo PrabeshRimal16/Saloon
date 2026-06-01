@@ -114,7 +114,7 @@ const CustomerSetting = () => {
       <CustomerNavbar />
 
       {/* ── Main Content ── */}
-      <main className="flex-grow pt-32 pb-section-gap-desktop px-6 md:px-12 max-w-[1280px] mx-auto w-full">
+      <main className="flex-grow pb-section-gap-desktop px-6 md:px-12 max-w-[1280px] mx-auto w-full">
         <header className="mb-16">
           <h1 className="font-headline-xl text-headline-xl text-primary md:font-headline-xl text-headline-lg-mobile md:text-headline-xl mb-4">
             Account Profile

@@ -115,7 +115,7 @@ const AppointmentsPage = () => {
       <CustomerNavbar />
 
       {/* Main Content */}
-      <main className="pt-[140px] pb-section-gap-desktop px-gutter max-w-container-max-width mx-auto">
+      <main className="pb-section-gap-desktop px-gutter max-w-container-max-width mx-auto">
         {/* Breadcrumb & Back Action */}
         <div className="mb-12 flex justify-between items-end">
           <div className="space-y-2">

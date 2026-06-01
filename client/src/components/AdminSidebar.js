@@ -6,7 +6,7 @@ export default function AdminSidebar() {
  	const { logout, user, loading } = useAuth();
 
 	const linkClass = ({ isActive }) =>
-		`block px-4 py-2 rounded-md transition-colors ${isActive ? 'bg-gray-700 font-semibold' : 'text-gray-200 hover:bg-gray-700'}`;
+		`block px-4 py-2 rounded-md transition-colors ${isActive ? 'bg-gradient-to-r from-indigo-600 via-violet-600 to-cyan-500 text-white font-semibold shadow-md' : 'text-gray-200 hover:bg-gray-800 hover:text-white'}`;
 
 	const handleLogout = (e) => {
 		e.preventDefault();
@@ -14,7 +14,7 @@ export default function AdminSidebar() {
 	};
 
 	return (
-		<aside className="hidden md:flex fixed left-0 top-0 h-full w-64 bg-gray-900 text-white flex-col z-40">
+		<aside className="hidden md:flex fixed left-0 top-0 h-full w-64 bg-gradient-to-b from-gray-900/95 to-gray-900 text-white flex-col z-40">
 			<div className="p-6 border-b border-gray-800">
 				<NavLink to="/admin" className="text-2xl font-serif text-white">Admin</NavLink>
 				{/* user preview */}
