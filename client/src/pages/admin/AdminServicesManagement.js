@@ -1,48 +1,55 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import AdminSidebar from '../../components/AdminSidebar';
 import AdminHeader from '../../components/AdminHeader';
 
 const AdminServicesManagement = () => {
-  // Sample services data
-  const initialServices = [
-    {
-      id: 1,
-      name: 'Signature Balayage',
-      description: 'Hand-painted highlights for a natural, sun-kissed look.',
-      category: 'Hair Color',
-      duration: '180 min',
-      price: 350.00,
-      imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCsIzWp0GDVuBfUhpvGaIA9jhtmDNVnu1YWsBShKuWKqD6D1D2xMxoAKXI356-jEt7xDiApkUKNieViCafae3zL_iBJrmKEfHulzLFV5IxkHR9LI8AHhHfVT464xz1lE2EvbwOmQxNj0jhTuxEWL3TmZs5MR4PKqRVGPMaLzCt6UWcTE0qHC_d7YXbZE3KRhF8g_xy4D0DrCLURlWFfXJoeVmJnCR_allqUHyAGmQ_8Di7Wv-k-D9SJLQ4s23V4FSCN1ixKh6bzuKHe'
-    },
-    {
-      id: 2,
-      name: 'HydraFacial Elite',
-      description: 'Deep cleansing, exfoliation, and hydration with antioxidants.',
-      category: 'Skincare',
-      duration: '60 min',
-      price: 225.00,
-      imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA7jd2kkswMUlHQUP3Ro5zp9iaIi2MYir0O21kMczmjnJ729ZwE3up1XIkgDRr8U3hyxi-nEecbZ4DNLtThrvfL7T6Pe5-r2BQwTUwKhbO6X5CtaX6m_Bd_F4HSIRZ_Q9zV9zuwbidlc97HMjW3GXmNsMMN9x6SDNvy7aEeB3otLuatpgicG4OoOslCln1GJLdj7TKfH7Vrjkhbuk53l4lPUx33lpLZZtuRGUtH59e_movHJ-zmdD-nBwoEukurJIX7FPb3ozo6vs_x'
-    },
-    {
-      id: 3,
-      name: 'Executive Grooming',
-      description: 'Precision cut, hot towel shave, and scalp massage.',
-      category: "Men's Care",
-      duration: '45 min',
-      price: 85.00,
-      imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC5fyQakwYNbpA3V3mXisfyAo_t8GJESCbbL3yyGERETNMiKEO8GZiox3lE1GofFWbgGG_z4N6deynrQ1E__sRHUADSEcU24fj0GUeUEmMbxrBs12OgrW0AR5xjT_rTrZIrsmvvcoqKgOmE2b6vcd0-wjaWfLc3pnin5Z1rJ_z3sPg4fLDMdTkVoH4lJd_qwFZsbL-3kYd10gaahOha5zAXjKZKXATAypQSnJXtq-6jVMSTfVVYmBZcuH7eQygbYDqpOxFVmLY9mOfF'
-    }
-  ];
-
-  const [services, setServices] = useState(initialServices);
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [editingService, setEditingService] = useState(null);
+  const [formData, setFormData] = useState({ name: '', description: '', category: '', duration: '', price: '', image: null });
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [currentPage, setCurrentPage] = useState(1);
   const [searchFocus, setSearchFocus] = useState(false);
   const itemsPerPage = 3;
 
+  const getBadgeColor = (category) => {
+    if (!category) return 'bg-surface-container';
+    const key = category.toLowerCase();
+    if (key.includes('hair')) return 'bg-amber-100 text-amber-800';
+    if (key.includes('skin') || key.includes('facial')) return 'bg-pink-100 text-pink-800';
+    if (key.includes('nail')) return 'bg-sky-100 text-sky-800';
+    if (key.includes('men')) return 'bg-slate-100 text-slate-800';
+    return 'bg-surface-container';
+  };
+
+  useEffect(() => {
+    fetchServices();
+  }, []);
+
+  const fetchServices = async () => {
+    setLoading(true);
+    try {
+      const API_BASE = process.env.REACT_APP_API_URL || '';
+      const res = await fetch(`${API_BASE}/api/services`);
+      const data = await res.json();
+      // map backend image_url to imageUrl for existing UI
+      const mapped = data.map(s => ({
+        ...s,
+        imageUrl: s.image_url || s.imageUrl || '/uploads/placeholder.png',
+        price: s.price == null ? 0 : Number(s.price)
+      }));
+      setServices(mapped);
+    } catch (err) {
+      console.error('Failed to fetch services', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Get unique categories for filter
-  const categories = ['All', ...new Set(services.map(s => s.category))];
+  const categories = ['All', ...new Set(services.map(s => s.category || '').filter(Boolean))];
 
   // Filter services based on search and category
   const filteredServices = useMemo(() => {
@@ -80,47 +87,77 @@ const AdminServicesManagement = () => {
   };
 
   // CRUD operations
-  const handleAddService = () => {
-    const name = prompt('Enter service name:');
-    if (!name) return;
-    const description = prompt('Enter description:');
-    const category = prompt('Enter category (Hair Color/Skincare/Men\'s Care):');
-    const duration = prompt('Enter duration (e.g., 60 min):');
-    const price = parseFloat(prompt('Enter price:'));
-    if (isNaN(price)) return;
-    const newId = Math.max(...services.map(s => s.id), 0) + 1;
-    const newService = {
-      id: newId,
-      name,
-      description,
-      category,
-      duration,
-      price,
-      imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCsIzWp0GDVuBfUhpvGaIA9jhtmDNVnu1YWsBShKuWKqD6D1D2xMxoAKXI356-jEt7xDiApkUKNieViCafae3zL_iBJrmKEfHulzLFV5IxkHR9LI8AHhHfVT464xz1lE2EvbwOmQxNj0jhTuxEWL3TmZs5MR4PKqRVGPMaLzCt6UWcTE0qHC_d7YXbZE3KRhF8g_xy4D0DrCLURlWFfXJoeVmJnCR_allqUHyAGmQ_8Di7Wv-k-D9SJLQ4s23V4FSCN1ixKh6bzuKHe'
-    };
-    setServices([...services, newService]);
-    setCurrentPage(totalPages + 1); // go to last page
+  const openCreateForm = () => {
+    setEditingService(null);
+    setFormData({ name: '', description: '', category: '', duration: '', price: '', image: null });
+    setShowForm(true);
   };
 
-  const handleEditService = (id) => {
-    const service = services.find(s => s.id === id);
-    if (!service) return;
-    const newName = prompt('Edit name:', service.name);
-    if (newName) service.name = newName;
-    const newDesc = prompt('Edit description:', service.description);
-    if (newDesc) service.description = newDesc;
-    const newCategory = prompt('Edit category:', service.category);
-    if (newCategory) service.category = newCategory;
-    const newDuration = prompt('Edit duration:', service.duration);
-    if (newDuration) service.duration = newDuration;
-    const newPrice = parseFloat(prompt('Edit price:', service.price));
-    if (!isNaN(newPrice)) service.price = newPrice;
-    setServices([...services]); // force re-render
+  const handleCreateOrUpdate = async (e) => {
+    e.preventDefault();
+    const fd = new FormData();
+    fd.append('name', formData.name);
+    fd.append('description', formData.description);
+    fd.append('category', formData.category);
+    fd.append('duration', formData.duration);
+    fd.append('price', formData.price);
+    if (formData.image) fd.append('image', formData.image);
+
+    try {
+      const API_BASE = process.env.REACT_APP_API_URL || '';
+      if (editingService) {
+        const res = await fetch(`${API_BASE}/api/services/${editingService.id}`, { method: 'PUT', body: fd });
+        if (!res.ok) {
+          const text = await res.text();
+          console.error('Save failed', res.status, text);
+          alert(`Save failed: ${res.status} ${text}`);
+          return;
+        }
+        const updated = await res.json();
+        await fetchServices();
+        setShowForm(false);
+        setEditingService(null);
+        setFormData({ name: '', description: '', category: '', duration: '', price: '', image: null });
+      } else {
+        const res = await fetch(`${API_BASE}/api/services`, { method: 'POST', body: fd });
+        if (!res.ok) {
+          const text = await res.text();
+          console.error('Create failed', res.status, text);
+          alert(`Create failed: ${res.status} ${text}`);
+          return;
+        }
+        const created = await res.json();
+        await fetchServices();
+        // go to last page
+        setCurrentPage(Math.ceil((services.length + 1) / itemsPerPage));
+        setShowForm(false);
+        setFormData({ name: '', description: '', category: '', duration: '', price: '', image: null });
+      }
+    } catch (err) {
+      console.error('Failed to save service', err);
+    }
   };
 
-  const handleDeleteService = (id) => {
-    if (window.confirm('Are you sure you want to delete this service?')) {
-      setServices(services.filter(service => service.id !== id));
+  const handleEditService = (service) => {
+    setEditingService(service);
+    setFormData({ name: service.name || '', description: service.description || '', category: service.category || '', duration: service.duration || '', price: service.price || '', image: null });
+    setShowForm(true);
+  };
+
+  const handleDeleteService = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this service?')) return;
+    try {
+      const API_BASE = process.env.REACT_APP_API_URL || '';
+      const res = await fetch(`${API_BASE}/api/services/${id}`, { method: 'DELETE' });
+      if (!res.ok) {
+        const text = await res.text();
+        console.error('Delete failed', res.status, text);
+        alert(`Delete failed: ${res.status} ${text}`);
+        return;
+      }
+      await fetchServices();
+    } catch (err) {
+      console.error('Failed to delete', err);
     }
   };
 
@@ -153,15 +190,15 @@ const AdminServicesManagement = () => {
             </nav>
             <h2 className="font-headline-lg text-headline-lg text-primary">Service Catalog Management</h2>
           </div>
-          <button onClick={handleAddService} className="flex items-center gap-3 bg-primary text-on-primary px-8 py-4 border border-primary hover:bg-white hover:text-primary transition-all duration-500 group">
+          <button onClick={openCreateForm} className="flex items-center gap-3 bg-primary text-on-primary px-8 py-4 border border-primary hover:bg-white hover:text-primary transition-all duration-500 group">
             <span className="material-symbols-outlined text-[20px]">add</span>
             <span className="font-label-md text-label-md uppercase tracking-widest">Add New Service</span>
           </button>
         </header>
 
         {/* Filters & Search */}
-        <section className="flex gap-gutter mb-10 items-center flex-wrap">
-          <div className="flex-1 relative group">
+        <section className="flex gap-gutter mb-8 items-center flex-wrap">
+          <div className="flex-1 relative">
             <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">search</span>
             <input
               type="text"
@@ -169,33 +206,94 @@ const AdminServicesManagement = () => {
               onChange={handleSearchChange}
               onFocus={() => setSearchFocus(true)}
               onBlur={() => setSearchFocus(false)}
-              className={`w-full pl-12 pr-4 py-4 bg-surface-container-lowest border-b border-outline-variant/30 focus:border-secondary focus:ring-0 transition-all font-body-md text-body-md outline-none ${searchFocus ? 'scale-[1.01]' : ''}`}
-              placeholder="Search services..."
+              className={`w-full pl-12 pr-12 py-3 bg-surface-container-lowest border border-outline-variant/10 focus:border-secondary focus:ring-0 transition-all font-body-md text-body-md outline-none ${searchFocus ? 'ring-1 ring-secondary/30' : ''}`}
+              placeholder="Search services by name or description..."
             />
+            {searchTerm && <button onClick={()=>{ setSearchTerm(''); setCurrentPage(1); }} className="absolute right-3 top-1/2 -translate-y-1/2 text-outline">✕</button>}
           </div>
-          <div className="flex gap-4">
-            <div className="relative group">
-              <button className="flex items-center gap-2 px-6 py-4 border border-outline-variant/30 font-label-md text-label-md uppercase hover:border-secondary transition-all">
-                <span className="material-symbols-outlined text-[18px]">filter_list</span>
-                Category
-              </button>
-              <div className="absolute top-full left-0 mt-2 bg-white border border-outline-variant/30 shadow-lg hidden group-hover:block z-10 min-w-[160px]">
-                {categories.map(cat => (
-                  <button
-                    key={cat}
-                    onClick={() => handleFilterChange(cat)}
-                    className={`block w-full text-left px-4 py-2 hover:bg-surface-container-low ${selectedCategory === cat ? 'bg-secondary-container text-on-secondary-container' : ''}`}
-                  >
-                    {cat}
-                  </button>
-                ))}
-              </div>
+
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <label className="font-label-sm text-label-sm text-outline">Category</label>
+              <select value={selectedCategory} onChange={(e)=>handleFilterChange(e.target.value)} className="p-2 border">
+                {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+              </select>
             </div>
-            <button className="flex items-center gap-2 px-6 py-4 border border-outline-variant/30 font-label-md text-label-md uppercase hover:border-secondary transition-all">
-              Price Range
-            </button>
+            <div className="flex items-center gap-2">
+              <label className="font-label-sm text-label-sm text-outline">Sort</label>
+              <select onChange={(e)=>{ const v=e.target.value; if(v==='price_asc') setServices(prev=>[...prev].sort((a,b)=>a.price-b.price)); if(v==='price_desc') setServices(prev=>[...prev].sort((a,b)=>b.price-a.price)); }} className="p-2 border">
+                <option value="">Default</option>
+                <option value="price_asc">Price: Low → High</option>
+                <option value="price_desc">Price: High → Low</option>
+              </select>
+            </div>
+            <button onClick={()=>{ setSearchTerm(''); setSelectedCategory('All'); fetchServices(); }} className="px-4 py-2 border">Reset</button>
           </div>
         </section>
+
+        {/* Create / Edit Form Modal */}
+        {showForm && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+            <form onSubmit={handleCreateOrUpdate} className="bg-white p-6 w-full max-w-3xl rounded shadow-lg grid grid-cols-3 gap-6">
+              <div className="col-span-2">
+                <h3 className="font-headline-md mb-3">{editingService ? 'Edit Service' : 'Create Service'}</h3>
+                <label className="block mb-2 font-label-sm">Name</label>
+                <input required className="w-full p-3 border mb-3" value={formData.name} onChange={(e)=>setFormData({...formData, name: e.target.value})} />
+
+                <label className="block mb-2 font-label-sm">Description</label>
+                <textarea required className="w-full p-3 border mb-3" value={formData.description} onChange={(e)=>setFormData({...formData, description: e.target.value})} />
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block mb-2 font-label-sm">Category</label>
+                    <select required className="w-full p-2 border" value={formData.category} onChange={(e)=>setFormData({...formData, category: e.target.value})}>
+                      <option value="">Select category</option>
+                      {Array.from(new Set([...(services.map(s=>s.category).filter(Boolean)), 'Hair Color', 'Skincare', "Men's Care", 'Grooming', 'Nail Artistry', 'Facial Therapy'])).map(cat=> (
+                        <option key={cat} value={cat}>{cat}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block mb-2 font-label-sm">Duration</label>
+                    <input required className="w-full p-2 border" value={formData.duration} onChange={(e)=>setFormData({...formData, duration: e.target.value})} placeholder="e.g., 60" />
+                    <p className="text-xs text-on-surface-variant mt-1">Duration in minutes</p>
+                  </div>
+                </div>
+
+                <div className="mt-3">
+                  <label className="block mb-2 font-label-sm">Price</label>
+                  <input required type="number" step="0.01" className="w-40 p-2 border" value={formData.price} onChange={(e)=>setFormData({...formData, price: e.target.value})} />
+                </div>
+              </div>
+
+              <div className="col-span-1">
+                <div className="mb-4">
+                  <label className="block mb-2 font-label-sm">Image</label>
+                  <input type="file" accept="image/*" onChange={(e)=>setFormData({...formData, image: e.target.files[0]})} />
+                </div>
+                <div className="w-full h-48 bg-surface-container border border-outline-variant/10 flex items-center justify-center overflow-hidden">
+                  {(() => {
+                    const API_BASE = process.env.REACT_APP_API_URL || '';
+                    if (formData.image) {
+                      const url = URL.createObjectURL(formData.image);
+                      return <img src={url} alt="preview" className="w-full h-full object-cover" />;
+                    }
+                    if (editingService && (editingService.image_url || editingService.imageUrl)) {
+                      const imgPath = editingService.image_url && editingService.image_url.startsWith('/') ? `${API_BASE}${editingService.image_url}` : (editingService.imageUrl || editingService.image_url);
+                      return <img src={imgPath} alt="current" className="w-full h-full object-cover" />;
+                    }
+                    return <div className="text-on-surface-variant p-4">No image selected</div>;
+                  })()}
+                </div>
+
+                <div className="mt-6 flex justify-end gap-3">
+                  <button type="button" onClick={()=>{ setShowForm(false); setEditingService(null); setFormData({ name: '', description: '', category: '', duration: '', price: '', image: null }); }} className="px-4 py-2 border">Cancel</button>
+                  <button type="submit" className="px-6 py-2 bg-primary text-on-primary">Save</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        )}
 
         {/* Service Table */}
         <div className="bg-white border border-outline-variant/20 overflow-hidden">
@@ -215,7 +313,11 @@ const AdminServicesManagement = () => {
                   <td className="px-8 py-8">
                     <div className="flex items-center gap-6">
                       <div className="w-16 h-16 bg-surface-container flex-shrink-0 overflow-hidden border border-outline-variant/10">
-                        <img className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" src={service.imageUrl} alt={service.name} />
+                            {(() => {
+                              const API_BASE = process.env.REACT_APP_API_URL || '';
+                              const src = service.imageUrl && service.imageUrl.startsWith('/') ? `${API_BASE}${service.imageUrl}` : service.imageUrl;
+                              return <img className="w-full h-full object-cover transition-all duration-700" src={src} alt={service.name} />;
+                            })()}
                       </div>
                       <div>
                         <p className="font-headline-md text-[20px] text-primary mb-1">{service.name}</p>
@@ -223,18 +325,18 @@ const AdminServicesManagement = () => {
                       </div>
                     </div>
                   </td>
-                  <td className="px-8 py-8">
-                    <span className="px-4 py-1.5 border border-outline-variant/40 rounded-full font-label-sm text-label-sm uppercase">{service.category}</span>
-                  </td>
+                      <td className="px-8 py-8">
+                        <span className={`px-4 py-1.5 rounded-full font-label-sm text-label-sm uppercase ${getBadgeColor(service.category)}`}>{service.category}</span>
+                      </td>
                   <td className="px-8 py-8">
                     <p className="font-body-md text-body-md">{service.duration}</p>
                   </td>
                   <td className="px-8 py-8">
-                    <p className="font-label-md text-label-md font-bold text-secondary">${service.price.toFixed(2)}</p>
+                    <p className="font-label-md text-label-md font-bold text-secondary">${(Number(service.price) || 0).toFixed(2)}</p>
                   </td>
                   <td className="px-8 py-8 text-right">
                     <div className="flex justify-end gap-3">
-                      <button onClick={() => handleEditService(service.id)} className="flex items-center gap-2 bg-primary text-on-primary px-4 py-2 hover:bg-secondary transition-all duration-300">
+                      <button onClick={() => handleEditService(service)} className="flex items-center gap-2 bg-primary text-on-primary px-4 py-2 hover:bg-secondary transition-all duration-300">
                         <span className="material-symbols-outlined text-[18px]">edit</span>
                         <span className="font-label-sm text-label-sm uppercase tracking-wider">Edit</span>
                       </button>
@@ -247,7 +349,14 @@ const AdminServicesManagement = () => {
               ))}
               {paginatedServices.length === 0 && (
                 <tr>
-                  <td colSpan="5" className="text-center py-12 text-on-surface-variant">No services found.</td>
+                  <td colSpan="5" className="text-center py-12 text-on-surface-variant">
+                    <div className="space-y-4">
+                      <div>No services found.</div>
+                      <div>
+                        <button onClick={openCreateForm} className="px-4 py-2 bg-primary text-on-primary">Add your first service</button>
+                      </div>
+                    </div>
+                  </td>
                 </tr>
               )}
             </tbody>

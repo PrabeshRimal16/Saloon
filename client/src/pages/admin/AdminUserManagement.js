@@ -76,6 +76,30 @@ const AdminUserManagement = () => {
   const [error, setError] = useState(null);
   const { apiBaseUrl } = useAuth();
 
+  // Fetch users function (reusable)
+  const fetchUsers = async () => {
+    setLoadingUsers(true);
+    setError(null);
+    try {
+      // cache-bust with timestamp
+      const res = await axios.get(`${apiBaseUrl}/api/users?_t=${Date.now()}`, { withCredentials: true });
+      const mapped = res.data.map(u => ({
+        id: u.id,
+        name: u.name,
+        email: u.email,
+        avatarUrl: u.avatar_url || u.avatarUrl || u.photo || '',
+        joinedDate: u.created_at ? new Date(u.created_at).toLocaleDateString() : '',
+        status: (u.role === 'restricted') ? 'Restricted' : 'Active'
+      }));
+      setUsers(mapped);
+    } catch (err) {
+      console.error(err);
+      setError('Failed to load users');
+    } finally {
+      setLoadingUsers(false);
+    }
+  };
+
   // Derived data: filtered users based on search and tab
   const filteredUsers = useMemo(() => {
     let filtered = users;
@@ -121,7 +145,8 @@ const AdminUserManagement = () => {
       const shouldRestrict = currentStatus === 'Active';
       const url = `${apiBaseUrl}/api/users/${userId}/${shouldRestrict ? 'restrict' : 'unrestrict'}`;
       const res = await axios.post(url, {}, { withCredentials: true });
-      setUsers((prev) => prev.map(u => u.id === userId ? { ...u, status: res.data.role === 'restricted' ? 'Restricted' : 'Active' } : u));
+      // refresh list from server to ensure consistency
+      await fetchUsers();
     } catch (err) {
       console.error(err);
       alert('Failed to update user status');
@@ -131,8 +156,13 @@ const AdminUserManagement = () => {
   const handleRemoveUser = async (userId) => {
     if (!window.confirm('Are you sure you want to remove this user?')) return;
     try {
-      await axios.delete(`${apiBaseUrl}/api/users/${userId}`, { withCredentials: true });
-      setUsers((prev) => prev.filter((u) => u.id !== userId));
+      const res = await axios.delete(`${apiBaseUrl}/api/users/${userId}`, { withCredentials: true });
+      if (res.status === 200) {
+        // refresh from server in case other changes exist
+        await fetchUsers();
+      } else {
+        alert('Delete did not complete (server returned ' + res.status + ')');
+      }
     } catch (err) {
       console.error(err);
       alert('Failed to remove user');
@@ -142,28 +172,6 @@ const AdminUserManagement = () => {
   // Fetch users from server on mount
   useEffect(() => {
     let mounted = true;
-    const fetchUsers = async () => {
-      setLoadingUsers(true);
-      setError(null);
-      try {
-        const res = await axios.get(`${apiBaseUrl}/api/users`, { withCredentials: true });
-        if (!mounted) return;
-        const mapped = res.data.map(u => ({
-          id: u.id,
-          name: u.name,
-          email: u.email,
-          avatarUrl: u.avatar_url || u.avatarUrl || u.photo || '',
-          joinedDate: u.created_at ? new Date(u.created_at).toLocaleDateString() : '',
-          status: (u.role === 'restricted') ? 'Restricted' : 'Active'
-        }));
-        setUsers(mapped);
-      } catch (err) {
-        console.error(err);
-        setError('Failed to load users');
-      } finally {
-        setLoadingUsers(false);
-      }
-    };
     fetchUsers();
     return () => { mounted = false; };
   }, [apiBaseUrl]);
@@ -281,6 +289,14 @@ const AdminUserManagement = () => {
               >
                 <span className="material-symbols-outlined text-sm">download</span>
                 Export
+              </button>
+              <button
+                onClick={fetchUsers}
+                disabled={loadingUsers}
+                className="flex items-center gap-2 px-6 py-2 border border-outline-variant font-label-sm text-label-sm uppercase tracking-widest hover:border-primary transition-all"
+              >
+                <span className="material-symbols-outlined text-sm">refresh</span>
+                {loadingUsers ? 'Refreshing...' : 'Refresh'}
               </button>
             </div>
           </div>

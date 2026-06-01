@@ -7,6 +7,8 @@ const passport = require("./passport");
 dotenv.config();
 
 const app = express();
+const path = require('path');
+const fs = require('fs');
 
 const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:3000";
 const allowedOrigins = Array.from(
@@ -39,6 +41,11 @@ app.use(session({
 // Passport
 app.use(passport.initialize());
 app.use(passport.session());
+
+// Ensure uploads folder exists and serve it statically
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
+app.use('/uploads', express.static(uploadsDir));
 
 // Routes
 app.use("/auth", require("./routes/auth"));

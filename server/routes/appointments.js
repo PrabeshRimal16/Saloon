@@ -20,11 +20,12 @@ router.post("/", async (req, res) => {
 router.get("/my/:user_id", async (req, res) => {
   try {
     const result = await pool.query(
-      "SELECT a.*, s.name as service_name, s.price FROM appointments a JOIN services s ON a.service_id = s.id WHERE a.user_id = $1",
+      "SELECT a.*, s.name as service_name, s.price, s.duration as service_duration FROM appointments a JOIN services s ON a.service_id = s.id WHERE a.user_id = $1",
       [req.params.user_id]
     );
     res.json(result.rows);
   } catch (err) {
+    console.error(`/api/appointments/my/${req.params.user_id} error`, err);
     res.status(500).json({ error: err.message });
   }
 });
@@ -33,10 +34,11 @@ router.get("/my/:user_id", async (req, res) => {
 router.get("/", async (req, res) => {
   try {
     const result = await pool.query(
-      "SELECT a.*, s.name as service_name, u.name as customer_name, u.email FROM appointments a JOIN services s ON a.service_id = s.id JOIN users u ON a.user_id = u.id"
+      "SELECT a.*, s.name as service_name, s.duration as service_duration, u.name as customer_name, u.email FROM appointments a JOIN services s ON a.service_id = s.id JOIN users u ON a.user_id = u.id"
     );
     res.json(result.rows);
   } catch (err) {
+    console.error('GET /api/appointments error', err);
     res.status(500).json({ error: err.message });
   }
 });
@@ -51,6 +53,7 @@ router.put("/:id", async (req, res) => {
     );
     res.json(result.rows[0]);
   } catch (err) {
+    console.error(`PUT /api/appointments/${req.params.id} error`, err);
     res.status(500).json({ error: err.message });
   }
 });

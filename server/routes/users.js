@@ -8,6 +8,7 @@ router.get("/", async (req, res) => {
     const result = await pool.query(
       `SELECT id, name, email, role, avatar_url, google_id, phone, created_at FROM users ORDER BY id DESC`
     );
+    console.log(`[users] GET /api/users -> ${result.rows.length} rows`);
     res.json(result.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -19,7 +20,11 @@ router.delete('/:id', async (req, res) => {
   const { id } = req.params;
   try {
     const result = await pool.query('DELETE FROM users WHERE id = $1 RETURNING *', [id]);
-    if (result.rows.length === 0) return res.status(404).json({ error: 'User not found' });
+    if (result.rows.length === 0) {
+      console.log(`[users] DELETE ${id} -> not found`);
+      return res.status(404).json({ error: 'User not found' });
+    }
+    console.log(`[users] DELETE ${id} -> deleted`);
     res.json({ success: true, user: result.rows[0] });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -31,7 +36,11 @@ router.post('/:id/restrict', async (req, res) => {
   const { id } = req.params;
   try {
     const result = await pool.query("UPDATE users SET role = 'restricted' WHERE id = $1 RETURNING id, name, email, role", [id]);
-    if (result.rows.length === 0) return res.status(404).json({ error: 'User not found' });
+    if (result.rows.length === 0) {
+      console.log(`[users] POST ${id}/restrict -> not found`);
+      return res.status(404).json({ error: 'User not found' });
+    }
+    console.log(`[users] POST ${id}/restrict -> ok`);
     res.json(result.rows[0]);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -43,7 +52,11 @@ router.post('/:id/unrestrict', async (req, res) => {
   const { id } = req.params;
   try {
     const result = await pool.query("UPDATE users SET role = 'customer' WHERE id = $1 RETURNING id, name, email, role", [id]);
-    if (result.rows.length === 0) return res.status(404).json({ error: 'User not found' });
+    if (result.rows.length === 0) {
+      console.log(`[users] POST ${id}/unrestrict -> not found`);
+      return res.status(404).json({ error: 'User not found' });
+    }
+    console.log(`[users] POST ${id}/unrestrict -> ok`);
     res.json(result.rows[0]);
   } catch (err) {
     res.status(500).json({ error: err.message });

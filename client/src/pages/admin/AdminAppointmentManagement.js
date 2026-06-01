@@ -5,6 +5,48 @@ import AdminHeader from "../../components/AdminHeader";
 const AdminAppointmentManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const searchContainerRef = useRef(null);
+  const [filterStatus, setFilterStatus] = useState('All');
+  const [query, setQuery] = useState('');
+  useEffect(() => {
+    const API_BASE = process.env.REACT_APP_API_URL || '';
+    fetch(`${API_BASE}/api/appointments`)
+      .then(r => r.json())
+      .then(data => setAppointments(data))
+      .catch(err => console.error('Failed to load appointments', err));
+  }, []);
+
+  const updateAppointmentStatus = async (id, status) => {
+    try {
+      const API_BASE = process.env.REACT_APP_API_URL || '';
+      const res = await fetch(`${API_BASE}/api/appointments/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+      });
+      if (!res.ok) throw new Error('Failed to update');
+      const updated = await res.json();
+      setAppointments(prev => prev.map(a => a.id === id ? { ...a, status: updated.status } : a));
+    } catch (err) {
+      console.error('Update appointment status error', err);
+      alert('Failed to update appointment status');
+    }
+  };
+
+  // Derived values for UI
+  const stats = appointments.reduce((acc, a) => {
+    acc.total++;
+    const s = (a.status || 'pending').toLowerCase();
+    if (!acc.byStatus[s]) acc.byStatus[s] = 0;
+    acc.byStatus[s]++;
+    return acc;
+  }, { total: 0, byStatus: {} });
+
+  const filteredAppointments = appointments.filter(a => {
+    if (filterStatus !== 'All' && (a.status || '').toLowerCase() !== filterStatus.toLowerCase()) return false;
+    if (!query) return true;
+    const q = query.toLowerCase();
+    return (a.customer_name || '').toLowerCase().includes(q) || (a.service_name || '').toLowerCase().includes(q) || (a.email || '').toLowerCase().includes(q);
+  });
 
   // Row hover effect (translateX)
   const handleRowMouseEnter = (e) => {
@@ -69,180 +111,107 @@ const AdminAppointmentManagement = () => {
                   Oversee and coordinate every luxury experience. From master stylists to exclusive spa treatments, manage the flow of the modern atelier.
                 </p>
               </div>
-              <div className="flex gap-4">
-                <div className="flex items-center gap-2 bg-surface-container-low border border-outline-variant px-4 py-2">
+              <div className="flex gap-4 items-center">
+                <div className="flex items-center gap-2 bg-surface-container-low border border-outline-variant px-4 py-2 rounded">
                   <span className="material-symbols-outlined text-secondary">calendar_today</span>
-                  <span className="font-label-md text-label-md uppercase">Oct 24 - Oct 31, 2023</span>
-                  <span className="material-symbols-outlined text-on-surface-variant ml-2 cursor-pointer">expand_more</span>
+                  <span className="font-label-md text-label-md uppercase">This Week</span>
                 </div>
-                <div className="flex items-center gap-2 bg-surface-container-low border border-outline-variant px-4 py-2 relative group">
-                  <span className="material-symbols-outlined text-secondary">filter_list</span>
-                  <span className="font-label-md text-label-md uppercase">All Statuses</span>
-                  <span className="material-symbols-outlined text-on-surface-variant ml-2 cursor-pointer group-hover:rotate-180 transition-transform">expand_more</span>
-                  <div className="absolute top-full left-0 mt-1 w-full bg-surface border border-outline-variant shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-20">
-                    <ul className="py-2">
-                      <li className="px-4 py-2 font-label-md text-label-md uppercase hover:bg-surface-container-low hover:text-secondary cursor-pointer">All</li>
-                      <li className="px-4 py-2 font-label-md text-label-md uppercase hover:bg-surface-container-low hover:text-secondary cursor-pointer">Approved/Confirmed</li>
-                      <li className="px-4 py-2 font-label-md text-label-md uppercase hover:bg-surface-container-low hover:text-secondary cursor-pointer">New/Pending</li>
-                      <li className="px-4 py-2 font-label-md text-label-md uppercase hover:bg-surface-container-low hover:text-secondary cursor-pointer">Canceled</li>
-                    </ul>
-                  </div>
+                <div className="flex items-center gap-2">
+                  <input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search by name, service or email" className="input" />
                 </div>
-                <button className="bg-surface border border-primary text-primary px-6 py-2 font-label-md text-label-md uppercase hover:bg-primary hover:text-on-primary transition-all">
-                  Export List
-                </button>
+                <div className="flex items-center gap-2">
+                  <select value={filterStatus} onChange={e=>setFilterStatus(e.target.value)} className="input">
+                    <option>All</option>
+                    <option>pending</option>
+                    <option>approved</option>
+                    <option>cancelled</option>
+                  </select>
+                </div>
+                <button onClick={()=>{ setFilterStatus('All'); setQuery(''); }} className="btn">Reset</button>
+                <button className="btn btn-ghost" onClick={()=>alert('Exporting...')}>Export</button>
               </div>
             </div>
           </section>
+
+          {/* Quick Stats Row */}
+          <section className="grid grid-cols-3 gap-4 mb-6">
+            <div className="card flex items-center justify-between">
+              <div>
+                <div className="text-muted">Total Appointments</div>
+                <div className="text-2xl font-bold">{stats.total}</div>
+              </div>
+              <div className="text-muted">Overview</div>
+            </div>
+            <div className="card flex items-center justify-between">
+              <div>
+                <div className="text-muted">Pending</div>
+                <div className="text-xl font-semibold">{stats.byStatus.pending || 0}</div>
+              </div>
+              <div className="badge bg-amber-100 text-amber-800">Pending</div>
+            </div>
+            <div className="card flex items-center justify-between">
+              <div>
+                <div className="text-muted">Approved</div>
+                <div className="text-xl font-semibold">{stats.byStatus.approved || 0}</div>
+              </div>
+              <div className="badge bg-green-100 text-green-800">Approved</div>
+            </div>
+
+          {/* Load appointments on mount */}
 
           {/* Table Section */}
           <section className="bg-surface border border-outline-variant overflow-hidden luxury-shadow">
             <table className="w-full text-left border-collapse">
               <thead className="bg-surface-container-low border-b border-outline-variant">
                 <tr>
-                  <th className="px-6 py-6 font-label-md text-label-md text-on-surface-variant uppercase tracking-widest">Customer Name</th>
-                  <th className="px-6 py-6 font-label-md text-label-md text-on-surface-variant uppercase tracking-widest">Service Requested</th>
-                  <th className="px-6 py-6 font-label-md text-label-md text-on-surface-variant uppercase tracking-widest">Date &amp; Time</th>
-                  <th className="px-6 py-6 font-label-md text-label-md text-on-surface-variant uppercase tracking-widest">Stylist</th>
-                  <th className="px-6 py-6 font-label-md text-label-md text-on-surface-variant uppercase tracking-widest text-center">Status</th>
-                  <th className="px-6 py-6 font-label-md text-label-md text-on-surface-variant uppercase tracking-widest text-right">Actions</th>
+                  <th className="px-6 py-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-widest">Customer</th>
+                  <th className="px-6 py-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-widest">Service</th>
+                  <th className="px-6 py-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-widest">Date &amp; Time</th>
+                  <th className="px-6 py-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-widest">Stylist</th>
+                  <th className="px-6 py-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-widest">Status</th>
+                  <th className="px-6 py-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-widest text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-outline-variant">
-                {/* Pending Appointment Row */}
-                <tr className="hover:bg-surface-bright transition-colors group" onMouseEnter={handleRowMouseEnter} onMouseLeave={handleRowMouseLeave}>
-                  <td className="px-6 py-8">
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-bold text-sm">EB</div>
-                      <div>
-                        <div className="font-body-md text-body-md font-bold text-primary">Eleanor Bennett</div>
-                        <div className="font-label-sm text-label-sm text-on-surface-variant">VVIP Member</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-8">
-                    <div className="font-body-md text-body-md">Signature Balayage &amp; Blowout</div>
-                    <div className="font-label-sm text-label-sm text-secondary-fixed-dim">180 mins</div>
-                  </td>
-                  <td className="px-6 py-8 text-on-surface-variant">
-                    <div className="font-body-md text-body-md">Oct 28, 2023</div>
-                    <div className="font-label-sm text-label-sm">11:30 AM</div>
-                  </td>
-                  <td className="px-6 py-8 text-on-surface-variant">
-                    <div className="font-body-md text-body-md">Julian Rossi</div>
-                    <div className="font-label-sm text-label-sm">Master Stylist</div>
-                  </td>
-                  <td className="px-6 py-8 text-center">
-                    <span className="px-3 py-1 bg-secondary-container/20 text-secondary border border-secondary/30 rounded-full font-label-sm text-label-sm uppercase tracking-wider">Pending</span>
-                  </td>
-                  <td className="px-6 py-8 text-right">
-                    <div className="flex justify-end gap-2">
-                      <button className="bg-secondary-fixed-dim text-on-secondary-fixed font-label-sm text-label-sm uppercase px-4 py-2 border border-secondary-fixed-dim hover:bg-secondary hover:text-white transition-all">Approve</button>
-                      <button className="bg-transparent border border-outline-variant text-on-surface-variant font-label-sm text-label-sm uppercase px-4 py-2 hover:bg-error hover:text-white hover:border-error transition-all">Cancel</button>
-                    </div>
-                  </td>
-                </tr>
-                {/* Confirmed Appointment Row */}
-                <tr className="hover:bg-surface-bright transition-colors group" onMouseEnter={handleRowMouseEnter} onMouseLeave={handleRowMouseLeave}>
-                  <td className="px-6 py-8">
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center overflow-hidden">
-                        <img className="w-full h-full object-cover" alt="A portrait of a sophisticated woman with styled auburn hair" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrF14xwJERAMOc3Xnsmeic_S_ToK-fsr2haDjPa5rfZn4w35LjTyjOwP3OZzfGmHDqBPR1bXNuEt0oF4T69iLs702rmtb1Yp67jOJAEIawxDk-8IGA3kxdOueg2vPmPx72rQ5o_-2YrHNCek5DunAq3VyY7G05CtcawCPeX6cYNqj09PaQwEojDq5-9E17vGByu6QqsFv1NPhYwZGRiHLlRUj8hfdan7i764h7zyRLZGQXRfUYyU1bqM_APQJzqX0TQEfvma-8-Ug1" />
-                      </div>
-                      <div>
-                        <div className="font-body-md text-body-md font-bold text-primary">Sienna Moretti</div>
-                        <div className="font-label-sm text-label-sm text-on-surface-variant">New Client</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-8">
-                    <div className="font-body-md text-body-md">Velvet Pedicure &amp; Paraffin Wax</div>
-                    <div className="font-label-sm text-label-sm text-secondary-fixed-dim">60 mins</div>
-                  </td>
-                  <td className="px-6 py-8 text-on-surface-variant">
-                    <div className="font-body-md text-body-md">Oct 28, 2023</div>
-                    <div className="font-label-sm text-label-sm">02:15 PM</div>
-                  </td>
-                  <td className="px-6 py-8 text-on-surface-variant">
-                    <div className="font-body-md text-body-md">Clara Bloom</div>
-                    <div className="font-label-sm text-label-sm">Senior Technician</div>
-                  </td>
-                  <td className="px-6 py-8 text-center">
-                    <span className="px-3 py-1 bg-primary text-on-primary border border-primary rounded-full font-label-sm text-label-sm uppercase tracking-wider">Confirmed</span>
-                  </td>
-                  <td className="px-6 py-8 text-right">
-                    <button className="text-on-surface-variant hover:text-primary p-2">
-                      <span className="material-symbols-outlined">more_vert</span>
-                    </button>
-                  </td>
-                </tr>
-                {/* Pending Appointment Row 2 */}
-                <tr className="hover:bg-surface-bright transition-colors group" onMouseEnter={handleRowMouseEnter} onMouseLeave={handleRowMouseLeave}>
-                  <td className="px-6 py-8">
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-bold text-sm">MC</div>
-                      <div>
-                        <div className="font-body-md text-body-md font-bold text-primary">Marcus Sterling</div>
-                        <div className="font-label-sm text-label-sm text-on-surface-variant">Regular</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-8">
-                    <div className="font-body-md text-body-md">Executive Men's Cut &amp; Grooming</div>
-                    <div className="font-label-sm text-label-sm text-secondary-fixed-dim">45 mins</div>
-                  </td>
-                  <td className="px-6 py-8 text-on-surface-variant">
-                    <div className="font-body-md text-body-md">Oct 29, 2023</div>
-                    <div className="font-label-sm text-label-sm">09:00 AM</div>
-                  </td>
-                  <td className="px-6 py-8 text-on-surface-variant">
-                    <div className="font-body-md text-body-md">Sebastian Hart</div>
-                    <div className="font-label-sm text-label-sm">Barber Director</div>
-                  </td>
-                  <td className="px-6 py-8 text-center">
-                    <span className="px-3 py-1 bg-secondary-container/20 text-secondary border border-secondary/30 rounded-full font-label-sm text-label-sm uppercase tracking-wider">Pending</span>
-                  </td>
-                  <td className="px-6 py-8 text-right">
-                    <div className="flex justify-end gap-2">
-                      <button className="bg-secondary-fixed-dim text-on-secondary-fixed font-label-sm text-label-sm uppercase px-4 py-2 border border-secondary-fixed-dim hover:bg-secondary hover:text-white transition-all">Approve</button>
-                      <button className="bg-transparent border border-outline-variant text-on-surface-variant font-label-sm text-label-sm uppercase px-4 py-2 hover:bg-error hover:text-white hover:border-error transition-all">Cancel</button>
-                    </div>
-                  </td>
-                </tr>
-                {/* Completed Appointment Row */}
-                <tr className="hover:bg-surface-bright transition-colors group" onMouseEnter={handleRowMouseEnter} onMouseLeave={handleRowMouseLeave}>
-                  <td className="px-6 py-8 opacity-60">
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center overflow-hidden">
-                        <img className="w-full h-full object-cover" alt="A portrait of a sophisticated man with silver-flecked dark hair" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBOY8F7vW5gISAZGe3ZFRlY4FERVquMQhUHSbfQIG7zg2Pcnjts9l1hl-OYHsENbsPrhiub9VAAJjMjxE6uVIPqAGtop2_0_TYipm8g59edTYs9VeBn2Nw4LselG8tOosCISn1ldWzZ1SDoC8S9LDvyze0wlQvWtrPoJj3t0vDc6BHZYpu0AcGxd5z1_FgLbro2t3Lb9Ll3zFgZwpG-IViNidIjximPv9RA6PZRJj0Y1tKNdWiF8iKTVuJ7ZxJzzP5pFsR-mLneunnh" />
-                      </div>
-                      <div>
-                        <div className="font-body-md text-body-md font-bold text-primary">Julianna Vane</div>
-                        <div className="font-label-sm text-label-sm text-on-surface-variant">VVIP Member</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-8 opacity-60">
-                    <div className="font-body-md text-body-md">Full Body Himalayan Salt Scrub</div>
-                    <div className="font-label-sm text-label-sm text-secondary-fixed-dim">90 mins</div>
-                  </td>
-                  <td className="px-6 py-8 text-on-surface-variant opacity-60">
-                    <div className="font-body-md text-body-md">Oct 26, 2023</div>
-                    <div className="font-label-sm text-label-sm">04:00 PM</div>
-                  </td>
-                  <td className="px-6 py-8 text-on-surface-variant opacity-60">
-                    <div className="font-body-md text-body-md">Elena Sokolova</div>
-                    <div className="font-label-sm text-label-sm">Spa Director</div>
-                  </td>
-                  <td className="px-6 py-8 text-center">
-                    <span className="px-3 py-1 bg-surface-container-highest text-on-surface-variant border border-outline-variant rounded-full font-label-sm text-label-sm uppercase tracking-wider">Completed</span>
-                  </td>
-                  <td className="px-6 py-8 text-right opacity-60">
-                    <button className="text-on-surface-variant hover:text-primary p-2">
-                      <span className="material-symbols-outlined">receipt</span>
-                    </button>
-                  </td>
-                </tr>
+                {filteredAppointments.map((a) => {
+                  const dt = a.appointment_date ? new Date(a.appointment_date) : null;
+                  const dateStr = dt ? dt.toLocaleDateString() : '';
+                  const timeStr = dt ? dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+                  return (
+                    <tr key={a.id} className="service-row group" onMouseEnter={handleRowMouseEnter} onMouseLeave={handleRowMouseLeave}>
+                      <td className="px-6 py-6">
+                        <div className="flex items-center gap-4">
+                          <div className="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-bold text-sm">{(a.customer_name || 'C').slice(0,2).toUpperCase()}</div>
+                          <div>
+                            <div className="font-body-md text-body-md font-bold text-primary">{a.customer_name}</div>
+                            <div className="font-label-sm text-label-sm text-on-surface-variant">{a.email}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-6">
+                        <div className="font-body-md text-body-md">{a.service_name}</div>
+                        <div className="font-label-sm text-label-sm text-secondary-fixed-dim">{a.service_duration ? `${a.service_duration} mins` : ''}</div>
+                      </td>
+                      <td className="px-6 py-6 text-on-surface-variant">
+                        <div className="font-body-md text-body-md">{dateStr}</div>
+                        <div className="font-label-sm text-label-sm">{timeStr}</div>
+                      </td>
+                      <td className="px-6 py-6 text-on-surface-variant">
+                        <div className="font-body-md text-body-md">{a.stylist || '-'}</div>
+                        <div className="font-label-sm text-label-sm">{a.staff_role || ''}</div>
+                      </td>
+                      <td className="px-6 py-6">
+                        <span className={`badge ${a.status === 'approved' ? 'bg-green-100 text-green-800' : a.status === 'pending' ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800'}`}>{(a.status||'pending')}</span>
+                      </td>
+                      <td className="px-6 py-6 text-right">
+                        <div className="flex justify-end gap-2">
+                          <button onClick={() => updateAppointmentStatus(a.id, 'approved')} className="btn btn-primary">Approve</button>
+                          <button onClick={() => updateAppointmentStatus(a.id, 'cancelled')} className="btn">Cancel</button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
             {/* Pagination */}
@@ -260,54 +229,7 @@ const AdminAppointmentManagement = () => {
             </div>
           </section>
 
-          {/* Quick Stats Section */}
-          <section className="mt-section-gap-desktop grid grid-cols-12 gap-gutter mb-20">
-            <div className="col-span-12 lg:col-span-4 bg-primary text-on-primary p-8 border border-primary flex flex-col justify-between">
-              <div>
-                <span className="material-symbols-outlined text-4xl mb-6 text-secondary-fixed-dim">auto_awesome</span>
-                <h3 className="font-headline-md text-headline-md">Client Experience</h3>
-              </div>
-              <div className="mt-12">
-                <p className="font-body-md text-body-md opacity-80 mb-4">Total luxury sessions managed this month across all atelier departments.</p>
-                <div className="text-4xl font-bold font-headline-lg">1,284</div>
-              </div>
-            </div>
-            <div className="col-span-12 lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-gutter">
-              <div className="bg-surface border border-outline-variant p-8 hover:border-secondary transition-all">
-                <div className="flex justify-between items-start mb-8">
-                  <div className="h-12 w-12 bg-surface-container flex items-center justify-center">
-                    <span className="material-symbols-outlined text-secondary">pending_actions</span>
-                  </div>
-                  <span className="font-label-sm text-label-sm text-secondary font-bold">+12% vs LW</span>
-                </div>
-                <h4 className="font-label-md text-label-md uppercase tracking-widest text-on-surface-variant mb-2">Awaiting Approval</h4>
-                <div className="text-3xl font-bold font-headline-md">18</div>
-              </div>
-              <div className="bg-surface border border-outline-variant p-8 hover:border-secondary transition-all">
-                <div className="flex justify-between items-start mb-8">
-                  <div className="h-12 w-12 bg-surface-container flex items-center justify-center">
-                    <span className="material-symbols-outlined text-secondary">check_circle</span>
-                  </div>
-                  <span className="font-label-sm text-label-sm text-secondary font-bold">+5% vs LW</span>
-                </div>
-                <h4 className="font-label-md text-label-md uppercase tracking-widest text-on-surface-variant mb-2">Confirmed Today</h4>
-                <div className="text-3xl font-bold font-headline-md">42</div>
-              </div>
-              <div className="col-span-1 md:col-span-2 bg-surface border border-outline-variant p-8 flex items-center justify-between">
-                <div>
-                  <h4 className="font-label-md text-label-md uppercase tracking-widest text-on-surface-variant mb-2">Daily Revenue Pace</h4>
-                  <div className="text-3xl font-bold font-headline-md text-secondary">$12,450.00</div>
-                </div>
-                <div className="w-1/2 h-12 bg-surface-container-low flex items-end gap-1 px-4">
-                  <div className="flex-1 bg-outline-variant h-1/4"></div>
-                  <div className="flex-1 bg-outline-variant h-2/4"></div>
-                  <div className="flex-1 bg-outline-variant h-1/4"></div>
-                  <div className="flex-1 bg-outline-variant h-3/4"></div>
-                  <div className="flex-1 bg-secondary-fixed-dim h-full"></div>
-                </div>
-              </div>
-            </div>
-          </section>
+          
 
           <footer className="mt-20 py-8 border-t border-outline-variant flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">

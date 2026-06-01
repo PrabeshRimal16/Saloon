@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import CustomerNavbar from '../../components/CustomerNavbar';
+import { useAuth } from '../../context/AuthContext';
 
 // Helper function to get status badge styling
 const getStatusConfig = (status) => {
@@ -17,54 +18,42 @@ const getStatusConfig = (status) => {
 
 const AppointmentsPage = () => {
   // State for appointments
-  const [appointments, setAppointments] = useState([
-    {
-      id: 1,
-      serviceName: "Signature Haircut & Style",
-      serviceIcon: "content_cut",
-      duration: "60 min",
-      date: "Oct 24, 2024",
-      time: "10:30 AM",
-      specialistName: "Elena Vance",
-      specialistAvatar: "https://lh3.googleusercontent.com/aida-public/AB6AXuBCqcFtti0IIdzfEookIIBNdiuAkD4S9iONlcTT-ZUfIKVltVJv_qC0MfJXhzxErP087v-AChH_9LXeDHXyuydLE3AfbH8nTGDPT7ZhSwAbIntvjwZpw72SbYq9NhHaelnOYMy9dtp11XGmOmq17i5SG5ilPb7UtYTRGnwvZnapVwRNt8wEa_rt3xi9EkExFmRzsvN2zNHcvsPm1y5UJTQZmvbBV3FXu8n5sK0ixpUeEYOSCEZZ1_U1HxYnEMZdVTq5Oo2fSdaR8B5V",
-      status: "approved",
-    },
-    {
-      id: 2,
-      serviceName: "Luxe Gel Manicure",
-      serviceIcon: "brush",
-      duration: "45 min",
-      date: "Oct 28, 2024",
-      time: "02:00 PM",
-      specialistName: "Marcus Thorne",
-      specialistAvatar: "https://lh3.googleusercontent.com/aida-public/AB6AXuB1og-vB-sh6k3Rrd_xtkGi9lXstKlcBZTzl7_ppivykjXse9OOWtM0AzY83c-nyPp2IFi_1mlKxT1m1vLCIIXOMBpHcW7S3nd8hWIa-NiwXEjjjCsDKIbqR2PNt-dMHbo2Q5JDwF3TbmJPy44Kr1ks2gQC0B-4cGajKxU1XoG9WNkTALfgnCw2hNd5AhJOucMLlYE2hcBqXZP7He4pwQJ6qNleeENcjQhuIRbPvzREuS2lKYY3I1SKKVmKPH_6mDGLf2JHxjuYyAQY",
-      status: "pending",
-    },
-    {
-      id: 3,
-      serviceName: "Radiance Facial Therapy",
-      serviceIcon: "face_retouching_natural",
-      duration: "90 min",
-      date: "Oct 15, 2024",
-      time: "09:00 AM",
-      specialistName: "Sophia Chen",
-      specialistAvatar: "https://lh3.googleusercontent.com/aida-public/AB6AXuAaFh-VhbwJ0TmGFH6mM_-ocJu-knfPScUhzt_1_-y-Gzk8lExbzYKKtdigtphClAtDoDP9KBLLm08BQmtRXdenrINPUb_0tKewcsye3m70LtrWV-xDHri2xr6-Jh2NfFBxsrL2fvQ-t9P1ISTvNaZJ0JQqTXyHBybLxiBCno1DlkZLknAZEvsH83URhM7av-9cq-c48I8e8iR5T4vVHrkdp9Zny8yQ0qeT3yxf2KUQAL-EcE2IpINwnzslUgeS99g1wmUCjcdMc6ba",
-      status: "cancelled",
-    },
-  ]);
+  const { user } = useAuth();
+  const [appointments, setAppointments] = useState([]);
 
   // State for row visibility animation
   const [rowVisibility, setRowVisibility] = useState([]);
   
+  // Fetch user's appointments when user becomes available
+  useEffect(() => {
+    if (!user || !user.id) return;
+    const API_BASE = process.env.REACT_APP_API_URL || '';
+    fetch(`${API_BASE}/api/appointments/my/${user.id}`)
+      .then(r => r.json())
+      .then(data => {
+        const mapped = data.map(a => {
+          const dt = a.appointment_date ? new Date(a.appointment_date) : null;
+          return {
+            id: a.id,
+            serviceName: a.service_name || 'Service',
+            serviceIcon: 'content_cut',
+            duration: a.service_duration ? `${a.service_duration} min` : (a.duration || ''),
+            date: dt ? dt.toLocaleDateString() : '',
+            time: dt ? dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '',
+            specialistName: a.stylist || '',
+            specialistAvatar: '',
+            status: a.status || 'pending'
+          };
+        });
+        setAppointments(mapped);
+      })
+      .catch(err => console.error('Failed to load appointments', err));
+  }, [user]);
+
   // Effect to handle staggered row animation when appointments change
   useEffect(() => {
-    // Clear any existing timeouts
     let timeouts = [];
-    
-    // Reset visibility to all false
     setRowVisibility(new Array(appointments.length).fill(false));
-    
-    // Set staggered timeouts to make rows visible
     appointments.forEach((_, index) => {
       const timeout = setTimeout(() => {
         setRowVisibility(prev => {
@@ -75,17 +64,25 @@ const AppointmentsPage = () => {
       }, 100 * (index + 1));
       timeouts.push(timeout);
     });
-    
-    // Cleanup timeouts on unmount or appointments change
-    return () => {
-      timeouts.forEach(timeout => clearTimeout(timeout));
-    };
+    return () => timeouts.forEach(t => clearTimeout(t));
   }, [appointments]);
 
   // Action Handlers
-  const handleCancelAppointment = (id) => {
-    if (window.confirm('Are you sure you want to cancel this appointment?')) {
-      setAppointments(prev => prev.filter(apt => apt.id !== id));
+  const handleCancelAppointment = async (id) => {
+    if (!window.confirm('Are you sure you want to cancel this appointment?')) return;
+    try {
+      const API_BASE = process.env.REACT_APP_API_URL || '';
+      const res = await fetch(`${API_BASE}/api/appointments/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'cancelled' })
+      });
+      if (!res.ok) throw new Error('Failed to cancel');
+      const updated = await res.json();
+      setAppointments(prev => prev.map(a => a.id === id ? { ...a, status: updated.status } : a));
+    } catch (err) {
+      console.error('Cancel error', err);
+      alert('Failed to cancel appointment');
     }
   };
 
@@ -135,7 +132,7 @@ const AppointmentsPage = () => {
           </div>
           <button 
             onClick={handleBookNewService}
-            className="hidden md:flex items-center gap-2 bg-primary text-on-primary px-8 py-4 border border-primary hover:bg-white hover:text-primary transition-all duration-300"
+            className="hidden md:flex items-center gap-2 btn btn-primary"
           >
             <span className="material-symbols-outlined">add</span>
             <span className="font-label-md text-label-md uppercase">Book New Service</span>
@@ -215,38 +212,15 @@ const AppointmentsPage = () => {
                         {!isCancelled ? (
                           <div className="flex justify-end gap-4">
                             {appointment.status === 'approved' && (
-                              <button 
-                                onClick={() => handleReschedule(appointment.id)}
-                                className="text-outline hover:text-primary transition-colors" 
-                                title="Reschedule"
-                              >
-                                <span className="material-symbols-outlined">event_repeat</span>
-                              </button>
+                              <button onClick={() => handleReschedule(appointment.id)} className="btn" title="Reschedule"><span className="material-symbols-outlined">event_repeat</span></button>
                             )}
                             {appointment.status === 'pending' && (
-                              <button 
-                                onClick={() => handleMessageSpecialist(appointment.id)}
-                                className="text-outline hover:text-primary transition-colors" 
-                                title="Message"
-                              >
-                                <span className="material-symbols-outlined">chat_bubble_outline</span>
-                              </button>
+                              <button onClick={() => handleMessageSpecialist(appointment.id)} className="btn" title="Message"><span className="material-symbols-outlined">chat_bubble_outline</span></button>
                             )}
-                            <button 
-                              onClick={() => handleCancelAppointment(appointment.id)}
-                              className="text-outline hover:text-error transition-colors" 
-                              title="Cancel"
-                            >
-                              <span className="material-symbols-outlined">close</span>
-                            </button>
+                            <button onClick={() => handleCancelAppointment(appointment.id)} className="btn" title="Cancel"><span className="material-symbols-outlined">close</span></button>
                           </div>
                         ) : (
-                          <button 
-                            onClick={() => handleBookAgain(appointment.id)}
-                            className="px-4 py-2 border border-outline hover:bg-primary hover:text-white transition-all text-xs font-label-md uppercase"
-                          >
-                            Book Again
-                          </button>
+                          <button onClick={() => handleBookAgain(appointment.id)} className="btn btn-primary">Book Again</button>
                         )}
                       </td>
                     </tr>
