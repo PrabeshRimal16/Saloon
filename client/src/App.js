@@ -4,6 +4,7 @@ import Login from "./pages/Login";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import CustomerDashboard from "./pages/customer/CustomerDashboard";
 import Register from "./pages/Register";
+import CompleteProfile from "./pages/CompleteProfile";
 
 const AppRoutes = () => {
   const { user, loading } = useAuth();
@@ -44,6 +45,7 @@ const AppRoutes = () => {
       path="/register" 
       element={<Register />} 
       />
+      <Route path="/complete-profile" element={<CompleteProfile />} />
     </Routes>
   );
 };

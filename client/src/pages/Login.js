@@ -4,6 +4,10 @@ import { useNavigate } from "react-router-dom";
 const Login = () => {
 const navigate = useNavigate();
   const { loginWithGoogle } = useAuth();
+  const handleGoogleLogin = () => {
+    // Open the server Google auth endpoint (use _self to allow server callback redirects)
+    window.open("http://localhost:5000/auth/google", "_self");
+  };
 
 
   return (
@@ -34,7 +38,7 @@ const navigate = useNavigate();
             </tr>
             <tr>
               <td colSpan={2}>
-                <button style={styles.googleButton} onClick={loginWithGoogle}>
+                <button style={styles.googleButton} onClick={handleGoogleLogin}>
                   Login with Google
                 </button>
               </td>
