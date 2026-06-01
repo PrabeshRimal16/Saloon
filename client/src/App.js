@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import Login from "./pages/Login";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import CustomerDashboard from "./pages/customer/CustomerDashboard";
+import CustomerServices from "./pages/customer/CustomerServices";
 import Register from "./pages/Register";
 import CompleteProfile from "./pages/CompleteProfile";
 
@@ -31,6 +32,18 @@ const AppRoutes = () => {
       />
       <Route
         path="/customer"
+        element={
+          isLoggedIn && !isAdmin
+            ? <CustomerDashboard />
+            : <Navigate to={isLoggedIn ? "/admin" : "/login"} />
+        }
+      />
+      <Route
+        path="/services"
+        element={<CustomerServices />}
+      />
+      <Route
+        path="/"
         element={
           isLoggedIn && !isAdmin
             ? <CustomerDashboard />
