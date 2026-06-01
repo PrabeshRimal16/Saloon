@@ -19,28 +19,66 @@ export default function RegisterPage() {
 
   return (
     <div
-      className="relative min-h-screen flex items-center justify-center overflow-x-hidden"
-      style={{ background: "#f9f9f9", color: "#1a1c1c", fontFamily: "Montserrat, sans-serif" }}
+      style={{
+        background: "#f9f9f9",
+        color: "#1a1c1c",
+        fontFamily: "Montserrat, sans-serif",
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        overflowX: "hidden",
+        position: "relative",
+        padding: "40px 20px",
+      }}
     >
       {/* Background decoration */}
-      <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-[10%] -left-[5%] w-[40%] h-[60%] opacity-10 rotate-12">
+      <div style={{ position: "fixed", inset: 0, zIndex: 0, overflow: "hidden", pointerEvents: "none" }}>
+        <div
+          style={{
+            position: "absolute",
+            top: "-10%",
+            left: "-5%",
+            width: "40%",
+            height: "60%",
+            opacity: 0.1,
+            transform: "rotate(12deg)",
+          }}
+        >
           <img
-            alt=""
-            className="w-full h-full object-cover"
+            alt="decor"
+            style={{ width: "100%", height: "100%", objectFit: "cover" }}
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuBFsMxJFfGtelEGYij_FpR0KXk5LbHfp-aYk9wE-ruBDk0unXfm4lwoCKKQhryZVsbJnL5f-NIEneTF3QkmHbeac1dsPA2fKCGBhav-TFaiCL578DmSBoHItDYJaqOPgRXaFbXNiSjq1gZj4FEFB4qmp_keHwNgMihYlB_aTKgxZlWFfaLTffyqCytaFMil7reVjfPrrM3WveXpdL_PtFNicp_k-BKCoo7KtHkzkMgMEcehvxW-uxGxyDhlknaURwPBuG4YiVJkVp_A"
           />
         </div>
         <div
-          className="absolute bottom-0 right-0 w-[500px] h-[500px] rounded-full blur-[120px]"
           style={{
+            position: "absolute",
+            bottom: 0,
+            right: 0,
+            width: 500,
+            height: 500,
+            borderRadius: "50%",
+            filter: "blur(120px)",
             backgroundColor: "rgba(254, 214, 91, 0.1)",
             transform: `translate(${offset.x}px, ${offset.y}px)`,
           }}
         />
       </div>
 
-      <main className="relative z-10 w-full max-w-[1280px] px-6 py-16 flex flex-col items-center">
+      <main
+        style={{
+          position: "relative",
+          zIndex: 10,
+          width: "100%",
+          maxWidth: 980,
+          padding: "24px",
+          boxSizing: "border-box",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
         {/* Brand header */}
         <header className="mb-12 text-center">
           <h1
@@ -56,8 +94,15 @@ export default function RegisterPage() {
 
         {/* Card */}
         <div
-          className="w-full max-w-[480px] p-8 md:p-12 transition-all duration-500"
-          style={{ background: "#fff", border: "1px solid rgba(207,196,197,0.3)" }}
+          style={{
+            width: "100%",
+            maxWidth: 480,
+            padding: 24,
+            transition: "all 0.25s ease",
+            background: "#fff",
+            border: "1px solid rgba(207,196,197,0.3)",
+            boxSizing: "border-box",
+          }}
         >
           <div className="mb-10">
             <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 32, fontWeight: 500, lineHeight: 1.3 }}>
@@ -110,12 +155,12 @@ export default function RegisterPage() {
             </button>
           </form>
 
-          <div className="flex items-center my-8">
-            <div className="flex-grow border-t" style={{ borderColor: "rgba(207,196,197,0.3)" }} />
-            <span className="px-4 text-[12px] font-medium tracking-wider uppercase" style={{ color: "#7e7576" }}>
+          <div style={{ display: "flex", alignItems: "center", margin: "24px 0" }}>
+            <div style={{ flex: 1, height: 1, backgroundColor: "rgba(207,196,197,0.3)" }} />
+            <span style={{ padding: "0 12px", fontSize: 12, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", color: "#7e7576" }}>
               OR
             </span>
-            <div className="flex-grow border-t" style={{ borderColor: "rgba(207,196,197,0.3)" }} />
+            <div style={{ flex: 1, height: 1, backgroundColor: "rgba(207,196,197,0.3)" }} />
           </div>
 
           <button
@@ -137,11 +182,11 @@ export default function RegisterPage() {
           </footer>
         </div>
 
-        <div className="mt-12 flex flex-wrap justify-center gap-6">
-          <a href="#" className="text-[12px] font-medium tracking-widest uppercase hover:text-black" style={{ color: "#7e7576" }}>
+        <div style={{ marginTop: 24, display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 12 }}>
+          <a href="#" style={{ fontSize: 12, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", color: "#7e7576", textDecoration: "none" }}>
             Privacy Policy
           </a>
-          <a href="#" className="text-[12px] font-medium tracking-widest uppercase hover:text-black" style={{ color: "#7e7576" }}>
+          <a href="#" style={{ fontSize: 12, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", color: "#7e7576", textDecoration: "none" }}>
             Terms of Service
           </a>
         </div>
@@ -164,6 +209,12 @@ export default function RegisterPage() {
           border-bottom: 1px solid #735c00;
         }
         .form-input-atelier::placeholder { color: #7e7576; }
+
+        /* Small responsive tweaks */
+        @media (max-width: 640px) {
+          h1, h2 { font-size: 22px !important; }
+          .form-input-atelier { font-size: 15px; }
+        }
       `}</style>
     </div>
   );
