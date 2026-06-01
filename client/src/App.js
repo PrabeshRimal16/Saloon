@@ -12,7 +12,7 @@ const AppRoutes = () => {
   const defaultAuthedPath = isAdmin ? "/admin" : "/customer";
 
   if (loading) {
-    return null;
+    return <div>Loading...</div>;
   }
 
   return (
