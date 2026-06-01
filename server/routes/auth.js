@@ -12,6 +12,19 @@ router.get(
   "/google/callback",
   passport.authenticate("google", { failureRedirect: `${CLIENT_URL}/login` }),
   (req, res) => {
+    // If user was returned as a transient Google profile (isNewUser), redirect to complete-profile
+    if (req.user && req.user.isNewUser) {
+      const { google_id, email, avatar_url, name } = req.user;
+      const params = new URLSearchParams({
+        google_id: google_id || "",
+        email: email || "",
+        avatar_url: avatar_url || "",
+        name: name || "",
+      }).toString();
+
+      return res.redirect(`${CLIENT_URL}/complete-profile?${params}`);
+    }
+
     const redirectPath = req.user?.role === "admin" ? "/admin" : "/customer";
     res.redirect(`${CLIENT_URL}${redirectPath}`);
   }

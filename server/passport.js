@@ -21,18 +21,14 @@ passport.use(
           return done(null, existing.rows[0]);
         }
 
-        // Create new user
-        const newUser = await pool.query(
-          "INSERT INTO users (google_id, name, email, avatar_url) VALUES ($1, $2, $3, $4) RETURNING *",
-          [
-            profile.id,
-            profile.displayName,
-            profile.emails[0].value,
-            profile.photos[0].value,
-          ]
-        );
-
-        done(null, newUser.rows[0]);
+        // New user - do not auto-save. Return profile info and mark as new.
+        return done(null, {
+          google_id: profile.id,
+          email: profile.emails?.[0]?.value,
+          avatar_url: profile.photos?.[0]?.value,
+          name: profile.displayName,
+          isNewUser: true,
+        });
       } catch (err) {
         done(err, null);
       }
@@ -41,12 +37,19 @@ passport.use(
 );
 
 passport.serializeUser((user, done) => {
-  done(null, user.id);
+  // Store the full user object in session (handles both DB users and transient google profiles)
+  done(null, user);
 });
 
-passport.deserializeUser(async (id, done) => {
+passport.deserializeUser(async (userOrId, done) => {
   try {
-    const result = await pool.query("SELECT * FROM users WHERE id = $1", [id]);
+    // If session already contains the full user object, return it directly
+    if (userOrId && typeof userOrId === "object") {
+      return done(null, userOrId);
+    }
+
+    // Otherwise treat as DB id and fetch
+    const result = await pool.query("SELECT * FROM users WHERE id = $1", [userOrId]);
     done(null, result.rows[0]);
   } catch (err) {
     done(err, null);
