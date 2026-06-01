@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const session = require("express-session");
+const passport = require("./passport");
 
 dotenv.config();
 
@@ -20,7 +21,12 @@ app.use(session({
   saveUninitialized: false
 }));
 
+// Passport
+app.use(passport.initialize());
+app.use(passport.session());
+
 // Routes
+app.use("/auth", require("./routes/auth"));
 app.use("/api/services", require("./routes/services"));
 app.use("/api/appointments", require("./routes/appointments"));
 app.use("/api/offers", require("./routes/offers"));
