@@ -5,7 +5,7 @@ import axios from "axios";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { loginWithGoogle } = useAuth();
+  const { loginWithGoogle, refreshUser } = useAuth();
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
 
@@ -22,6 +22,10 @@ const Login = () => {
       );
 
       const user = res.data;
+      // Refresh client auth state (reads /auth/me) so other components update
+      try {
+        await refreshUser();
+      } catch {}
       const dest = user?.role === "admin" ? "/admin" : "/customer";
       navigate(dest);
     } catch (err) {

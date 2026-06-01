@@ -73,8 +73,13 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ error: "Invalid password" });
     }
 
-    req.session.user = user;
-    res.json(user);
+    // Establish passport session for the logged-in user
+    req.login(user, (err) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+      res.json(user);
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
