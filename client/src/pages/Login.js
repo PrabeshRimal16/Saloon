@@ -1,36 +1,60 @@
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import axios from "axios";
 
 const Login = () => {
-const navigate = useNavigate();
+  const navigate = useNavigate();
   const { loginWithGoogle } = useAuth();
-  const handleGoogleLogin = () => {
-    // Open the server Google auth endpoint (use _self to allow server callback redirects)
-    window.open("http://localhost:5000/auth/google", "_self");
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [error, setError] = useState("");
+
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+
+  const handleLogin = async (e) => {
+    e?.preventDefault?.();
+    setError("");
+    try {
+      const res = await axios.post(
+        "http://localhost:5000/api/users/login",
+        { email: form.email, password: form.password },
+        { withCredentials: true }
+      );
+
+      const user = res.data;
+      const dest = user?.role === "admin" ? "/admin" : "/customer";
+      navigate(dest);
+    } catch (err) {
+      setError(err.response?.data?.error || "Login failed");
+    }
   };
 
+  const handleGoogleLogin = () => {
+    window.open("http://localhost:5000/auth/google", "_self");
+  };
 
   return (
     <div style={styles.container}>
       <div style={styles.card}>
         <h2 style={styles.title}>Saloon Login</h2>
+        {error && <p style={styles.error}>{error}</p>}
         <table style={styles.table}>
           <tbody>
             <tr>
               <td style={styles.label}>Email</td>
               <td>
-                <input style={styles.input} type="email" placeholder="Enter email" />
+                <input style={styles.input} name="email" value={form.email} onChange={handleChange} type="email" placeholder="Enter email" />
               </td>
             </tr>
             <tr>
               <td style={styles.label}>Password</td>
               <td>
-                <input style={styles.input} type="password" placeholder="Enter password" />
+                <input style={styles.input} name="password" value={form.password} onChange={handleChange} type="password" placeholder="Enter password" />
               </td>
             </tr>
             <tr>
               <td colSpan={2}>
-                <button style={styles.button}>Login</button>
+                <button style={styles.button} onClick={handleLogin}>Login</button>
               </td>
             </tr>
             <tr>
@@ -42,11 +66,11 @@ const navigate = useNavigate();
                   Login with Google
                 </button>
               </td>
-              <tr>
-                <td colSpan={2} style={{ textAlign: "center", paddingTop: "10px", color: "#555" }}>
-                  Don't have an account? <span style={{ color: "#4285F4", cursor: "pointer" }} onClick={() => navigate("/register")}>Register</span>
-                 </td>
             </tr>
+            <tr>
+              <td colSpan={2} style={{ textAlign: "center", paddingTop: "10px", color: "#555" }}>
+                Don't have an account? <span style={{ color: "#4285F4", cursor: "pointer" }} onClick={() => navigate("/register")}>Register</span>
+               </td>
             </tr>
           </tbody>
         </table>
