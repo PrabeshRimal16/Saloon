@@ -1,5 +1,4 @@
 import { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const Register = () => {
@@ -11,51 +10,24 @@ const Register = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleRegister = async () => {
-    try {
-      // Step 1: Open Google popup
-      const googleUser = await getGoogleUser();
-      if (!googleUser) return;
+  const [loading, setLoading] = useState(false);
 
-      // Step 2: Register with Google info + form data
-      await axios.post("http://localhost:5000/api/users/register", {
-        name: form.name,
-        email: googleUser.email,
-        google_id: googleUser.id,
-        avatar_url: googleUser.picture,
-        password: form.password,
-        phone: form.phone,
-      });
-
-      navigate("/login");
-    } catch (err) {
-      setError(err.response?.data?.error || "Registration failed");
+  const handleRegister = () => {
+    if (!form.name || !form.password || !form.phone) {
+      setError("All fields are required");
+      return;
     }
-  };
 
-  const getGoogleUser = () => {
-    return new Promise((resolve) => {
-      const popup = window.open(
-        "http://localhost:5000/auth/google",
-        "googleLogin",
-        "width=500,height=600"
-      );
+    setLoading(true);
+    setError("");
 
-      const timer = setInterval(async () => {
-        try {
-          const res = await axios.get("http://localhost:5000/auth/me", {
-            withCredentials: true,
-          });
-          if (res.data) {
-            clearInterval(timer);
-            popup.close();
-            resolve(res.data);
-          }
-        } catch {
-          // keep waiting
-        }
-      }, 1000);
-    });
+    const url = `http://localhost:5000/auth/google?action=register&name=${encodeURIComponent(
+      form.name
+    )}&password=${encodeURIComponent(form.password)}&phone=${encodeURIComponent(
+      form.phone
+    )}`;
+
+    window.location.href = url;
   };
 
   return (
