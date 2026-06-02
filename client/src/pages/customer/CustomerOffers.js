@@ -5,6 +5,27 @@ import CustomerNavbar from '../../components/CustomerNavbar';
    Offers & Rituals Page Component
    ────────────────────────────────────────────── */
 const OffersAndRitualsPage = () => {
+  const [offers, setOffers] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  /* ── Fetch offers from API ──────────── */
+  useEffect(() => {
+    fetchOffers();
+  }, []);
+
+  const fetchOffers = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch("http://localhost:5000/api/offers");
+      const data = await response.json();
+      setOffers(data);
+    } catch (error) {
+      console.error("Error fetching offers:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   /* ── Reveal on scroll ─────────────── */
   useEffect(() => {
     const observerOptions = {
@@ -73,54 +94,13 @@ const OffersAndRitualsPage = () => {
     e.target.reset();
   }, []);
 
-  /* ── Offer data ───────────────────── */
-  const offers = [
-    {
-      id: "summer-glow",
-      title: "Summer Glow Ritual",
-      description:
-        "A restorative 90-minute treatment including a signature gold-leaf facial, silk protein hair mask, and a refreshing chilled prosecco reception. Perfect for rehydrating after sun exposure.",
-      badge: "20% OFF",
-      badgeClass: "bg-secondary-fixed text-on-secondary-fixed",
-      validUntil: "AUG 31, 2024",
-      promoCode: "GLOW20",
-      imageSrc:
-        "https://lh3.googleusercontent.com/aida-public/AB6AXuCnTudoU8gg9okU4SQSHG1-eNziJzyrD_0c08-24AgB9Fk56eu61-OyYckI-Yo_LsDAFK17D6MbDPLbxSSKFiJELxNP7uXD2zsVX7_JYNQ-KQfiB7ipEB5uThbjsMxENL1mlKxAlL7cVVUfBOjcHCj4Wy5UGiM798-1KoyORteJ9LGSAIpg9Kkcw3Cgdm-SYJMtMDPOojNUGFVjVO7etasDp3wC-k4yq-e61cO_m8k1AtcVwyBajy3woorg8GSvCBEcY4PEMUS8y4L6",
-      imageAlt: "A close-up photograph of a luxury 24-karat gold leaf facial treatment being applied...",
-      actionLabel: "Book with Code",
-      onAction: () => handleBookWithCode("GLOW20"),
-    },
-    {
-      id: "welcome-ritual",
-      title: "The Welcome Ritual",
-      description:
-        "An exclusive introduction to L'Atelier excellence. First-time guests receive a complimentary stylistic consultation and a $50 credit toward any master-level color or styling service.",
-      badge: "$50 CREDIT",
-      badgeClass: "bg-primary text-on-primary",
-      validUntil: "DEC 31, 2024",
-      promoCode: "WELCOME50",
-      imageSrc:
-        "https://lh3.googleusercontent.com/aida-public/AB6AXuCVyZNUnyAS7tworS13M1P9pYAYYHFGkYmDxq4U0ginA_inM0Eq_99cgR4U96YylPDmfb9jl7jYZUQoPQhURfrSa8sshBNR2lprpio9LXAkJyNIlt9CxS7D4b4FQ8TmNXQ3MfgMYOoS3DxRq1h6emUYICMb5AAkRGYFXozfL6GHxnhWz4dJOFqiTe6T78bnYWwz7RwBzkCPcLAU0vlUIzArOPpps_3Yypl8COFH_oJ7vQ2Ek4QlQI9iR2esNrnoj294EkDS7NNBTc5Z",
-      imageAlt: "A high-fashion portrait of a woman with perfectly styled, voluminous hair...",
-      actionLabel: "Claim Offer",
-      onAction: () => handleClaimOffer("WELCOME50"),
-    },
-    {
-      id: "weekend-solstice",
-      title: "Weekend Solstice",
-      description:
-        "Transform your Friday or Saturday appointment. Book any full-service color and receive a complimentary upgrade to our Oribe Gold Lust restorative treatment and a hand-massage ritual.",
-      badge: "FREE UPGRADE",
-      badgeClass: "bg-secondary-fixed text-on-secondary-fixed",
-      validUntil: "ONGOING",
-      promoCode: "WEEKEND",
-      imageSrc:
-        "https://lh3.googleusercontent.com/aida-public/AB6AXuDwBLZDaHM5Xku16LwmhG_bD0r2PNPJDHKpAkxWn-FZmn5UpHyKTBEpE0R-9Y3fwOjg-2cTUwnuwTaDAmuTeFwssIG0ncea81qk6FRPyOSf6JLf7XRceF9w0RW9GdO2ohc9yKqpzwCgfTe_EUW0nnnxaNDvz4D5VHSJyo0oLz6LrdIWzjNrHDP5JvYhiuNb31VdISK5az7YkYbH0890TLEEcQGm9lqHQVmN4jHxpp20OmbRI7D361csuyY86WpqzuZ57PwTyyfjg__M",
-      imageAlt: "Two elegant crystal champagne flutes filled with bubbling champagne...",
-      actionLabel: "Book with Code",
-      onAction: () => handleBookWithCode("WEEKEND"),
-    },
-  ];
+  /* ── Generate promo code from offer title ───---- */
+  const generatePromoCode = (title) => {
+    return title
+      .substring(0, 3)
+      .toUpperCase()
+      .replace(/\s+/g, "") + Math.floor(Math.random() * 100);
+  };
 
   /* ── Main render ──────────────────── */
   return (
@@ -153,46 +133,93 @@ const OffersAndRitualsPage = () => {
         {/* Offers Grid */}
         <section className="max-w-container-max-width mx-auto px-gutter py-section-gap-desktop">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-            {offers.map((offer, index) => (
-              <div
-                key={offer.id}
-                className="group reveal-up active flex flex-col h-full"
-                style={{ transitionDelay: `${index * 100}ms` }}
-              >
-                <div className="relative overflow-hidden card-img-zoom mb-6 shrink-0">
-                  <img
-                    alt={offer.imageAlt}
-                    className="w-full aspect-[3/4] object-cover transition-transform duration-700"
-                    src={offer.imageSrc}
-                  />
-                  <div className={`absolute top-4 right-4 px-4 py-1 font-label-md text-label-md uppercase tracking-wider shadow-sm ${offer.badgeClass}`}>
-                    {offer.badge}
-                  </div>
-                </div>
-                <div className="flex flex-col flex-grow space-y-4">
-                  <h3 className="font-headline-md text-headline-md">{offer.title}</h3>
-                  <p className="font-body-md text-on-surface-variant flex-grow line-clamp-3">{offer.description}</p>
-                  <div className="pt-4 flex flex-col gap-2 border-t border-outline-variant/50 shrink-0">
-                    <div className="flex justify-between items-center font-label-sm text-label-sm">
-                      <span className="uppercase tracking-widest text-outline">Valid Until</span>
-                      <span className="text-primary font-semibold">{offer.validUntil}</span>
-                    </div>
-                    <div className="flex justify-between items-center font-label-sm text-label-sm">
-                      <span className="uppercase tracking-widest text-outline">Promo Code</span>
-                      <span className="text-secondary font-bold select-all cursor-pointer hover:underline">
-                        {offer.promoCode}
-                      </span>
-                    </div>
-                  </div>
-                  <button
-                    className="w-full py-4 mt-2 border border-primary font-label-md text-label-md uppercase tracking-widest hover:bg-primary hover:text-on-primary transition-all duration-300 shrink-0"
-                    onClick={offer.onAction}
-                  >
-                    {offer.actionLabel}
-                  </button>
-                </div>
+            {loading ? (
+              <div className="col-span-full text-center py-12">
+                <p className="text-on-surface-variant">Loading offers...</p>
               </div>
-            ))}
+            ) : offers.length === 0 ? (
+              <div className="col-span-full text-center py-12">
+                <p className="text-on-surface-variant">No offers available at this time.</p>
+              </div>
+            ) : (
+              offers.map((offer, index) => {
+                const discountPercent = offer.discount_percent || 0;
+                const promoCode = generatePromoCode(offer.title);
+                const isExpired =
+                  offer.valid_until &&
+                  new Date(offer.valid_until) < new Date();
+
+                return (
+                  <div
+                    key={offer.id}
+                    className="group reveal-up active flex flex-col h-full"
+                    style={{ transitionDelay: `${index * 100}ms` }}
+                  >
+                    <div className="relative overflow-hidden card-img-zoom mb-6 shrink-0 bg-gradient-to-br from-indigo-100 to-purple-100 aspect-[3/4] flex items-center justify-center">
+                      {/* Placeholder Icon */}
+                      <span className="material-symbols-outlined text-6xl text-indigo-300">
+                        local_offer
+                      </span>
+                      {isExpired && (
+                        <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                          <span className="text-white font-bold text-lg">EXPIRED</span>
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex flex-col flex-grow space-y-4">
+                      <div className="flex justify-between items-start">
+                        <h3 className="font-headline-md text-headline-md flex-1">
+                          {offer.title}
+                        </h3>
+                        {discountPercent > 0 && (
+                          <span className="bg-secondary-fixed text-on-secondary-fixed px-3 py-1 font-label-sm text-label-sm uppercase tracking-wider">
+                            {discountPercent}% OFF
+                          </span>
+                        )}
+                      </div>
+                      <p className="font-body-md text-on-surface-variant flex-grow line-clamp-3">
+                        {offer.description}
+                      </p>
+                      <div className="pt-4 flex flex-col gap-2 border-t border-outline-variant/50 shrink-0">
+                        <div className="flex justify-between items-center font-label-sm text-label-sm">
+                          <span className="uppercase tracking-widest text-outline">
+                            Valid Until
+                          </span>
+                          <span className="text-primary font-semibold">
+                            {offer.valid_until
+                              ? new Date(
+                                  offer.valid_until
+                                ).toLocaleDateString("en-US", {
+                                  year: "numeric",
+                                  month: "short",
+                                  day: "2-digit",
+                                })
+                              : "ONGOING"}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center font-label-sm text-label-sm">
+                          <span className="uppercase tracking-widest text-outline">
+                            Promo Code
+                          </span>
+                          <span className="text-secondary font-bold select-all cursor-pointer hover:underline">
+                            {promoCode}
+                          </span>
+                        </div>
+                      </div>
+                      <button
+                        className="w-full py-4 mt-2 border border-primary font-label-md text-label-md uppercase tracking-widest hover:bg-primary hover:text-on-primary transition-all duration-300 shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
+                        onClick={() =>
+                          handleBookWithCode(promoCode)
+                        }
+                        disabled={isExpired}
+                      >
+                        {isExpired ? "Offer Expired" : "Book with Code"}
+                      </button>
+                    </div>
+                  </div>
+                );
+              })
+            )}
           </div>
         </section>
 

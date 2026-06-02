@@ -1,11 +1,141 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import AdminSidebar from "../../components/AdminSidebar";
 import AdminHeader from "../../components/AdminHeader";
 
 const AdminOfferManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [activePage, setActivePage] = useState(1);
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [offers, setOffers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    discount_percent: "",
+    valid_until: "",
+  });
   const editIconRefs = useRef([]);
+
+  // ── Fetch offers from API ──
+  useEffect(() => {
+    fetchOffers();
+  }, []);
+
+  const fetchOffers = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch("http://localhost:5000/api/offers");
+      const data = await response.json();
+      setOffers(data);
+    } catch (error) {
+      console.error("Error fetching offers:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ── Calculate Stats ──
+  const calculateStats = () => {
+    const now = new Date();
+    const activeOffers = offers.filter(
+      (offer) => !offer.valid_until || new Date(offer.valid_until) > now
+    );
+    const expiredOffers = offers.filter(
+      (offer) => offer.valid_until && new Date(offer.valid_until) <= now
+    );
+    const totalRevenue = offers.reduce(
+      (sum, offer) => sum + (offer.discount_percent || 0),
+      0
+    );
+    const avgDiscountRate =
+      offers.length > 0
+        ? (totalRevenue / offers.length).toFixed(1)
+        : 0;
+
+    return {
+      totalOffers: offers.length,
+      activeOffers: activeOffers.length,
+      expiredOffers: expiredOffers.length,
+      avgDiscount: avgDiscountRate,
+      totalRevenue: (activeOffers.length * 500).toLocaleString(),
+    };
+  };
+
+  const stats = calculateStats();
+
+  // ── Create or Update Offer ──
+  const handleSaveOffer = async (e) => {
+    e.preventDefault();
+    try {
+      const method = editingId ? "PUT" : "POST";
+      const url = editingId
+        ? `http://localhost:5000/api/offers/${editingId}`
+        : "http://localhost:5000/api/offers";
+
+      const response = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        fetchOffers();
+        setShowModal(false);
+        setEditingId(null);
+        setFormData({
+          title: "",
+          description: "",
+          discount_percent: "",
+          valid_until: "",
+        });
+      }
+    } catch (error) {
+      console.error("Error saving offer:", error);
+    }
+  };
+
+  // ── Delete Offer ──
+  const handleDeleteOffer = async (id) => {
+    if (window.confirm("Are you sure you want to delete this offer?")) {
+      try {
+        const response = await fetch(`http://localhost:5000/api/offers/${id}`, {
+          method: "DELETE",
+        });
+
+        if (response.ok) {
+          fetchOffers();
+        }
+      } catch (error) {
+        console.error("Error deleting offer:", error);
+      }
+    }
+  };
+
+  // ── Edit Offer ──
+  const handleEditOffer = (offer) => {
+    setEditingId(offer.id);
+    setFormData({
+      title: offer.title,
+      description: offer.description,
+      discount_percent: offer.discount_percent || "",
+      valid_until: offer.valid_until || "",
+    });
+    setShowModal(true);
+  };
+
+  // ── Close Modal ──
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setEditingId(null);
+    setFormData({
+      title: "",
+      description: "",
+      discount_percent: "",
+      valid_until: "",
+    });
+  };
 
   // ── Card hover effect for edit icon scale ──
   const handleCardMouseEnter = (index) => {
@@ -19,8 +149,8 @@ const AdminOfferManagement = () => {
     }
   };
 
-  // ── Offer Data ──
-  const offers = [
+  // ── Static offers data (kept for backup/reference) ──
+  const staticOffers = [
     {
       id: 1,
       title: "Summer Glow Package",
@@ -83,30 +213,6 @@ const AdminOfferManagement = () => {
         .material-symbols-outlined {
           font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
         }
-        .glass-nav {
-          background: rgba(249, 249, 249, 0.9);
-          backdrop-filter: blur(30px);
-        }
-        .luxury-card {
-          transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s ease;
-        }
-        .luxury-card:hover {
-          transform: translateY(-4px);
-          border-color: #735c00;
-        }
-        .offer-image-container {
-          overflow: hidden;
-        }
-        .offer-image-container img {
-          transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .offer-image-container:hover img {
-          transform: scale(1.05);
-        }
-        .scale-110 {
-          transform: scale(1.1);
-          transition: transform 0.2s ease;
-        }
       `}</style>
 
       <AdminSidebar />
@@ -114,168 +220,211 @@ const AdminOfferManagement = () => {
       <AdminHeader title="Offers & Promotions Management" />
 
       {/* ── Main Content ── */}
-      <main className="ml-64 pt-20 px-8 pb-8 max-w-container-max-width mx-auto">
-        {/* Action Bar */}
-        <div className="mb-8 flex justify-end">
-          <button className="px-8 py-4 bg-tertiary text-on-primary font-label-md text-label-md flex items-center gap-3 hover:bg-secondary transition-colors duration-300">
-            <span className="material-symbols-outlined">add</span>
-            CREATE NEW OFFER
+      <main className="ml-64 pt-20 px-8 pb-12 max-w-6xl mx-auto">
+        {/* Sticky Action Bar */}
+        <div className="sticky top-20 bg-background z-40 mb-8 -mx-8 px-8 py-4 flex justify-between items-center border-b border-gray-200">
+          <h2 className="text-2xl font-bold text-gray-900">Offers</h2>
+          <button
+            onClick={() => setShowModal(true)}
+            className="px-6 py-2 bg-indigo-600 text-white font-semibold flex items-center gap-2 rounded-lg hover:bg-indigo-700 transition-colors duration-300 shadow-md hover:shadow-lg"
+          >
+            <span className="material-symbols-outlined text-xl">add</span>
+            Create New Offer
           </button>
         </div>
 
         {/* Summary Statistics */}
-        <section className="grid grid-cols-1 md:grid-cols-4 gap-gutter mb-16">
+        <section className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
           {[
             {
-              label: "Total Active Offers",
-              value: "12",
-              suffix: "+2 this month",
-              suffixClass: "text-secondary font-label-sm",
+              label: "Total active offers",
+              value: stats.activeOffers.toString(),
+              suffix: `+${Math.max(0, stats.activeOffers - Math.floor(stats.activeOffers * 0.83))} active`,
+              borderColor: "border-l-4 border-l-indigo-600",
             },
             {
-              label: "Redemption Rate",
-              value: "24.8%",
-              suffix: "trending_up",
-              suffixClass: "material-symbols-outlined text-secondary",
-              isIcon: true,
+              label: "Average discount",
+              value: `${stats.avgDiscount}%`,
+              suffix: `${stats.totalOffers} total offers`,
+              borderColor: "border-l-4 border-l-amber-500",
             },
             {
-              label: "Total Revenue Impact",
-              value: "$18.4k",
-              suffix: "May 2024",
-              suffixClass: "text-on-surface-variant font-label-sm",
+              label: "Revenue potential",
+              value: `$${stats.totalRevenue}`,
+              suffix: `${stats.activeOffers} active × $500 avg`,
+              borderColor: "border-l-4 border-l-green-500",
             },
             {
-              label: "Client Retention",
-              value: "68%",
-              suffix: "analytics",
-              suffixClass: "material-symbols-outlined text-outline",
-              isIcon: true,
+              label: "Expired offers",
+              value: stats.expiredOffers.toString(),
+              suffix: "ready to renew",
+              borderColor: "border-l-4 border-l-blue-500",
             },
           ].map((stat, i) => (
             <div
               key={i}
-              className="bg-surface-container-lowest border border-outline-variant/30 p-8 flex flex-col gap-2"
+              className={`bg-white rounded-xl p-6 shadow-sm border border-gray-100 ${stat.borderColor}`}
             >
-              <span className="font-label-sm text-label-sm text-on-surface-variant uppercase">
-                {stat.label}
-              </span>
-              <div className="flex items-end justify-between">
-                <span className="font-headline-md text-headline-md text-primary">
-                  {stat.value}
-                </span>
-                {stat.isIcon ? (
-                  <span className={stat.suffixClass}>{stat.suffix}</span>
-                ) : (
-                  <span className={stat.suffixClass}>{stat.suffix}</span>
-                )}
-              </div>
+              <p className="text-sm font-medium text-gray-600 mb-3">{stat.label}</p>
+              <p className="text-3xl font-bold text-gray-900 mb-2">{stat.value}</p>
+              <p className="text-xs text-gray-500">{stat.suffix}</p>
             </div>
           ))}
         </section>
 
+        {/* Filter & Search Toolbar */}
+        <div className="mb-8 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between bg-white p-5 rounded-xl border border-gray-100 shadow-sm">
+          <input
+            type="text"
+            placeholder="Search offers by name..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
+          <div className="flex gap-2 flex-wrap">
+            {["all", "active", "scheduled", "expired"].map((status) => (
+              <button
+                key={status}
+                onClick={() => setStatusFilter(status)}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  statusFilter === status
+                    ? "bg-indigo-600 text-white shadow-md"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                }`}
+              >
+                {status === "all" ? "All status" : status.charAt(0).toUpperCase() + status.slice(1)}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* Offers Grid */}
-        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
-          {offers.map((offer, index) => (
-            <article
-              key={offer.id}
-              className={`luxury-card bg-surface-container-lowest border border-outline-variant/30 flex flex-col h-full ${offer.opacity} ${offer.grayscale}`}
-              onMouseEnter={() => handleCardMouseEnter(index)}
-              onMouseLeave={() => handleCardMouseLeave(index)}
-            >
-              <div className="offer-image-container h-56 w-full bg-surface-container relative">
-                <img
-                  alt={offer.imageAlt}
-                  className="w-full h-full object-cover"
-                  src={offer.imageSrc}
-                />
-                <div
-                  className={`absolute top-4 right-4 px-3 py-1 font-label-sm text-label-sm ${offer.statusClass}`}
+        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {loading ? (
+            <div className="col-span-full text-center py-12">
+              <p className="text-gray-600">Loading offers...</p>
+            </div>
+          ) : offers.length === 0 ? (
+            <div className="col-span-full text-center py-12">
+              <p className="text-gray-600 mb-4">No offers found</p>
+              <button
+                onClick={() => setShowModal(true)}
+                className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+              >
+                Create your first offer
+              </button>
+            </div>
+          ) : (
+            offers.map((offer, index) => {
+              const discountPercent = offer.discount_percent || 0;
+              const isExpired =
+                offer.valid_until &&
+                new Date(offer.valid_until) < new Date();
+              const statusText = isExpired ? "EXPIRED" : "ACTIVE";
+              const statusStyles = isExpired
+                ? "bg-gray-400 text-white"
+                : "bg-green-500 text-white";
+
+              return (
+                <article
+                  key={offer.id}
+                  className={`bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 flex flex-col h-full ${
+                    isExpired ? "opacity-60 grayscale" : ""
+                  }`}
+                  onMouseEnter={() => handleCardMouseEnter(index)}
+                  onMouseLeave={() => handleCardMouseLeave(index)}
                 >
-                  {offer.status}
-                </div>
-              </div>
-              <div className="p-8 flex flex-col flex-1">
-                <div className="flex justify-between items-start mb-4">
-                  <h3 className="font-headline-md text-headline-md text-primary">
-                    {offer.title}
-                  </h3>
-                  <span className="font-headline-md text-secondary">
-                    {offer.discount}
-                  </span>
-                </div>
-                <p className="text-on-surface-variant font-body-md mb-8 flex-1">
-                  {offer.description}
-                </p>
-                <div className="space-y-4 mb-8">
-                  <div className="flex items-center gap-3 text-on-surface-variant">
-                    <span className="material-symbols-outlined text-sm">event</span>
-                    <span className="font-label-sm text-label-sm">{offer.dateLabel}</span>
-                  </div>
-                  {offer.codeLabel && (
-                    <div className="flex items-center gap-3 text-on-surface-variant">
-                      <span className="material-symbols-outlined text-sm">
-                        {offer.icon || "confirmation_number"}
-                      </span>
-                      <span className="font-label-sm text-label-sm">{offer.codeLabel}</span>
+                  {/* Image Container - Placeholder */}
+                  <div className="relative h-48 overflow-hidden bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center">
+                    <span className="material-symbols-outlined text-6xl text-indigo-300">
+                      local_offer
+                    </span>
+                    {/* Status Badge - Pill Overlay */}
+                    <div
+                      className={`absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-semibold ${statusStyles}`}
+                    >
+                      {statusText}
                     </div>
-                  )}
-                </div>
-                <div className="flex items-center justify-between pt-6 border-t border-outline-variant/30">
-                  <div className="flex gap-4">
-                    <button
-                      className="text-primary hover:text-secondary transition-colors"
-                      title="Edit"
-                    >
-                      <span
-                        className="material-symbols-outlined"
-                        ref={(el) => (editIconRefs.current[index] = el)}
-                      >
-                        edit
-                      </span>
-                    </button>
-                    <button
-                      className={`text-on-surface-variant hover:text-error transition-colors ${
-                        offer.deactivateDisabled ? "opacity-50 cursor-not-allowed" : ""
-                      }`}
-                      title="Deactivate"
-                      disabled={offer.deactivateDisabled}
-                    >
-                      <span className="material-symbols-outlined">block</span>
-                    </button>
                   </div>
-                  <button
-                    className="text-on-surface-variant hover:text-error transition-colors"
-                    title="Remove"
-                  >
-                    <span className="material-symbols-outlined">delete</span>
-                  </button>
-                </div>
-              </div>
-            </article>
-          ))}
+
+                  {/* Card Body */}
+                  <div className="p-5 flex flex-col flex-1">
+                    {/* Title & Discount Badge */}
+                    <div className="flex items-start justify-between gap-3 mb-3">
+                      <h3 className="text-lg font-semibold text-gray-800 flex-1">
+                        {offer.title}
+                      </h3>
+                      {discountPercent > 0 && (
+                        <span className="px-3 py-1 rounded-md text-xs font-semibold bg-purple-100 text-purple-700 whitespace-nowrap">
+                          {discountPercent}% OFF
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Description */}
+                    <p className="text-sm text-gray-500 mt-1 line-clamp-2 mb-3">
+                      {offer.description}
+                    </p>
+
+                    {/* Valid Until Date */}
+                    <p className="text-xs text-gray-400 mb-4">
+                      {offer.valid_until
+                        ? `Valid until: ${new Date(
+                            offer.valid_until
+                          ).toLocaleDateString()}`
+                        : "No expiry set"}
+                    </p>
+
+                    {/* Action Buttons */}
+                    <div className="flex gap-3 pt-4 border-t border-gray-100 mt-auto">
+                      <button
+                        onClick={() => handleEditOffer(offer)}
+                        className="flex-1 px-4 py-2 bg-indigo-50 text-indigo-600 font-medium text-sm rounded-lg hover:bg-indigo-100 transition-colors flex items-center justify-center gap-2"
+                        title="Edit"
+                      >
+                        <span className="material-symbols-outlined text-base">
+                          edit
+                        </span>
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeleteOffer(offer.id)}
+                        className="flex-1 px-4 py-2 bg-red-50 text-red-600 font-medium text-sm rounded-lg hover:bg-red-100 transition-colors flex items-center justify-center gap-2"
+                        title="Delete"
+                      >
+                        <span className="material-symbols-outlined text-base">
+                          delete
+                        </span>
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                </article>
+              );
+            })
+          )}
         </section>
 
         {/* Pagination Footer */}
-        <footer className="mt-16 flex items-center justify-between py-8 border-t border-outline-variant/30">
-          <span className="font-label-sm text-label-sm text-on-surface-variant">
+        <footer className="mt-12 flex items-center justify-between py-6 border-t border-gray-200">
+          <span className="text-sm text-gray-600">
             Showing 3 of 12 Promotions
           </span>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
             <button
-              className="w-10 h-10 flex items-center justify-center border border-outline-variant/30 hover:border-primary transition-colors"
+              className="w-9 h-9 flex items-center justify-center border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors disabled:opacity-50"
               disabled={activePage === 1}
               onClick={() => setActivePage((p) => Math.max(1, p - 1))}
             >
-              <span className="material-symbols-outlined">chevron_left</span>
+              <span className="material-symbols-outlined text-sm">chevron_left</span>
             </button>
             {[1, 2, 3].map((page) => (
               <button
                 key={page}
-                className={`px-4 py-2 font-label-sm text-label-sm ${
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                   activePage === page
-                    ? "bg-primary text-on-primary"
-                    : "border border-outline-variant/30 hover:border-primary"
+                    ? "bg-indigo-600 text-white"
+                    : "border border-gray-300 text-gray-700 hover:border-indigo-600"
                 }`}
                 onClick={() => setActivePage(page)}
               >
@@ -283,15 +432,122 @@ const AdminOfferManagement = () => {
               </button>
             ))}
             <button
-              className="w-10 h-10 flex items-center justify-center border border-outline-variant/30 hover:border-primary transition-colors"
+              className="w-9 h-9 flex items-center justify-center border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors disabled:opacity-50"
               disabled={activePage === 3}
               onClick={() => setActivePage((p) => Math.min(3, p + 1))}
             >
-              <span className="material-symbols-outlined">chevron_right</span>
+              <span className="material-symbols-outlined text-sm">chevron_right</span>
             </button>
           </div>
         </footer>
       </main>
+
+      {/* ── Modal for Create/Edit Offer ── */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-xl max-w-md w-full">
+            <div className="p-6 border-b border-gray-200 flex justify-between items-center">
+              <h2 className="text-xl font-bold text-gray-900">
+                {editingId ? "Edit Offer" : "Create New Offer"}
+              </h2>
+              <button
+                onClick={handleCloseModal}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveOffer} className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Title *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={formData.title}
+                  onChange={(e) =>
+                    setFormData({ ...formData, title: e.target.value })
+                  }
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="e.g., Summer Glow Package"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Description *
+                </label>
+                <textarea
+                  required
+                  value={formData.description}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 h-24 resize-none"
+                  placeholder="Describe your offer..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Discount Percentage *
+                </label>
+                <input
+                  type="number"
+                  required
+                  min="0"
+                  max="100"
+                  value={formData.discount_percent}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      discount_percent: e.target.value,
+                    })
+                  }
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="e.g., 20"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Valid Until *
+                </label>
+                <input
+                  type="date"
+                  required
+                  value={formData.valid_until}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      valid_until: e.target.value,
+                    })
+                  }
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+
+              <div className="flex gap-3 pt-4 border-t border-gray-200">
+                <button
+                  type="button"
+                  onClick={handleCloseModal}
+                  className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 px-4 py-2 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors"
+                >
+                  {editingId ? "Update" : "Create"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* ── Mobile Bottom Nav ── */}
       <nav className="md:hidden fixed bottom-0 left-0 w-full h-16 bg-surface border-t border-outline-variant/30 flex items-center justify-around z-50">
