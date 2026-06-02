@@ -301,97 +301,98 @@ const AdminUserManagement = () => {
       <div className="main ml-64 pt-20 px-8 pb-8">
         <div className="content">
           {/* Page Header & Metrics */}
-          <div className="mb-12">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-gutter">
-              <div className="bg-surface p-8 border border-outline-variant flex flex-col justify-between h-40 group hover:border-secondary transition-colors duration-500">
-                <span className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Total Users</span>
-                <div className="flex items-end justify-between">
-                  <span className="font-headline-xl text-headline-xl text-primary leading-none">{totalUsers}</span>
-                  <span className="material-symbols-outlined text-secondary text-4xl opacity-20 group-hover:opacity-100 transition-opacity">
-                    group
-                  </span>
+          <div className="mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="stats-card">
+                <div>
+                  <span className="stats-label">Total Users</span>
+                  <div className="mt-3 text-[2.25rem] font-bold text-primary leading-none">{totalUsers}</div>
                 </div>
+                <span className="material-symbols-outlined stats-icon">group</span>
               </div>
-              <div className="bg-surface p-8 border border-outline-variant flex flex-col justify-between h-40 group hover:border-secondary transition-colors duration-500">
-                <span className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Active Members</span>
-                <div className="flex items-end justify-between">
-                  <span className="font-headline-xl text-headline-xl text-primary leading-none">{activeUsers}</span>
-                  <div className="flex items-center text-secondary font-bold">
-                    <span className="material-symbols-outlined">trending_up</span>
-                    <span className="ml-1">4.2%</span>
-                  </div>
+              <div className="stats-card">
+                <div>
+                  <span className="stats-label">Active Members</span>
+                  <div className="mt-3 text-[2.25rem] font-bold text-primary leading-none">{activeUsers}</div>
                 </div>
+                <span className="material-symbols-outlined stats-icon">trending_up</span>
               </div>
-              <div className="bg-surface p-8 border border-outline-variant flex flex-col justify-between h-40 group hover:border-error transition-colors duration-500">
-                <span className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Restricted</span>
-                <div className="flex items-end justify-between">
-                  <span className="font-headline-xl text-headline-xl text-primary leading-none">{restrictedUsers}</span>
-                  <span className="material-symbols-outlined text-error text-4xl opacity-20 group-hover:opacity-100 transition-opacity">
-                    block
-                  </span>
+              <div className="stats-card">
+                <div>
+                  <span className="stats-label">Restricted</span>
+                  <div className="mt-3 text-[2.25rem] font-bold text-primary leading-none">{restrictedUsers}</div>
                 </div>
+                <span className="material-symbols-outlined stats-icon">block</span>
               </div>
             </div>
           </div>
 
-          {/* Table Controls */}
-          <div className="flex flex-col gap-5 mb-8 border-b border-outline-variant pb-6">
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <div className="flex gap-6 flex-wrap">
+          <div className="users-table-card">
+            <div className="flex flex-col gap-4 mb-6">
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div className="relative min-w-[300px] max-w-[420px] w-full md:w-auto">
+                  <span className="material-symbols-outlined search-input-icon">search</span>
+                  <input
+                    value={searchTerm}
+                    onChange={handleSearchChange}
+                    placeholder="Search by name or email..."
+                    className="search-input"
+                  />
+                </div>
+                <div className="flex flex-wrap items-center gap-3 ml-auto">
+                  <select
+                    value={sortOption}
+                    onChange={handleSortChange}
+                    className="gold-select"
+                  >
+                    <option value="newest">Newest Joined</option>
+                    <option value="oldest">Oldest Joined</option>
+                    <option value="name">Name A‑Z</option>
+                  </select>
+                  <button
+                    onClick={exportUsersCsv}
+                    className="btn-gold"
+                  >
+                    <span className="material-symbols-outlined text-sm">download</span>
+                    Export
+                  </button>
+                  <button
+                    onClick={fetchUsers}
+                    disabled={loadingUsers}
+                    className="btn-gold-outline"
+                  >
+                    <span className="material-symbols-outlined text-sm">refresh</span>
+                    {loadingUsers ? 'Refreshing...' : 'Refresh'}
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex gap-3 flex-wrap">
                 {['All Users', 'Active', 'Restricted'].map((tab) => (
                   <button
                     key={tab}
                     onClick={() => handleFilterChange(tab)}
-                    className={`px-4 py-2 rounded-full font-label-sm uppercase tracking-widest transition-all ${
-                      activeTab === tab
-                        ? 'gold-tab-active'
-                        : 'gold-tab'
-                    }`}
+                    className={`tab-pill ${activeTab === tab ? 'tab-pill-active' : 'tab-pill-inactive'}`}
                   >
                     {tab}
                   </button>
                 ))}
               </div>
-              <div className="flex flex-wrap items-center gap-3">
-                <div className="relative w-full max-w-xs">
-                  <span className="material-symbols-outlined table-search-icon">search</span>
-                  <input
-                    value={searchTerm}
-                    onChange={handleSearchChange}
-                    placeholder="Search members, email, phone or role"
-                    className="search-input"
-                  />
-                </div>
-                <select
-                  value={sortOption}
-                  onChange={handleSortChange}
-                  className="px-4 py-3 rounded-full border border-outline-variant bg-surface text-on-surface font-label-sm tracking-widest"
-                >
-                  <option value="newest">Newest Joined</option>
-                  <option value="oldest">Oldest Joined</option>
-                  <option value="name">Name A‑Z</option>
-                </select>
-                <button
-                  onClick={exportUsersCsv}
-                  className="btn-gold"
-                >
-                  <span className="material-symbols-outlined text-sm">download</span>
-                  Export
-                </button>
-                <button
-                  onClick={fetchUsers}
-                  disabled={loadingUsers}
-                  className="btn-black"
-                >
-                  <span className="material-symbols-outlined text-sm">refresh</span>
-                  {loadingUsers ? 'Refreshing...' : 'Refresh'}
-                </button>
-              </div>
             </div>
-          </div>
 
-          {/* Client Table */}
-          <div className="overflow-x-auto">
+            {/* Client Table */}
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-separate border-spacing-y-4">
+                <thead>
+                  <tr>
+                    <th className="table-header-cell min-w-[300px]">Name & Identity</th>
+                    <th className="table-header-cell min-w-[150px]">Joined</th>
+                    <th className="table-header-cell min-w-[150px]">Phone</th>
+                    <th className="table-header-cell min-w-[120px]">Role</th>
+                    <th className="table-header-cell min-w-[120px]">Status</th>
+                    <th className="table-header-cell min-w-[200px] text-right">Actions</th>
+                  </tr>
+                </thead>
             <table className="w-full text-left border-separate border-spacing-y-4">
               <thead>
                 <tr>
