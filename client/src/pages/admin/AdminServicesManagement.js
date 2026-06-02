@@ -7,12 +7,14 @@ const AdminServicesManagement = () => {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingService, setEditingService] = useState(null);
-  const [formData, setFormData] = useState({ name: '', description: '', category: '', duration: '', price: '', image: null });
+  const [formData, setFormData] = useState({ name: '', description: '', category: '', duration: '', price: '', image: null, active: true });
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [sortOption, setSortOption] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  
-  const itemsPerPage = 3;
+  const [selectedServiceId, setSelectedServiceId] = useState(null);
+
+  const itemsPerPage = 5;
 
   const getBadgeColor = (category) => {
     if (!category) return 'bg-surface-container';
@@ -34,17 +36,106 @@ const AdminServicesManagement = () => {
       const API_BASE = process.env.REACT_APP_API_URL || '';
       const res = await fetch(`${API_BASE}/api/services`);
       const data = await res.json();
-      // map backend image_url to imageUrl for existing UI
+      // map backend image_url to imageUrl and set defaults
       const mapped = data.map(s => ({
         ...s,
-        imageUrl: s.image_url || s.imageUrl || '/uploads/placeholder.png',
-        price: s.price == null ? 0 : Number(s.price)
+        imageUrl: s.image_url || s.imageUrl || '',
+        price: s.price == null ? 0 : Number(s.price),
+        duration: s.duration || '',
+        category: s.category || '',
+        active: typeof s.active === 'boolean' ? s.active : true,
       }));
       setServices(mapped);
     } catch (err) {
       console.error('Failed to fetch services', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const formatPrice = (value) => {
+    return new Intl.NumberFormat('ne-NP', {
+      style: 'currency',
+      currency: 'NPR',
+      maximumFractionDigits: 2,
+    }).format(Number(value) || 0);
+  };
+
+  const handleSortChange = (option) => {
+    setSortOption(option);
+    setCurrentPage(1);
+  };
+
+  const handleResetFilters = () => {
+    setSearchTerm('');
+    setSelectedCategory('All');
+    setSortOption('');
+    setCurrentPage(1);
+  };
+
+  const sortServices = (list) => {
+    const sorted = [...list];
+    if (sortOption === 'price_asc') {
+      sorted.sort((a, b) => (Number(a.price) || 0) - (Number(b.price) || 0));
+    } else if (sortOption === 'price_desc') {
+      sorted.sort((a, b) => (Number(b.price) || 0) - (Number(a.price) || 0));
+    } else if (sortOption === 'newest') {
+      sorted.sort((a, b) => (b.id || 0) - (a.id || 0));
+    } else if (sortOption === 'oldest') {
+      sorted.sort((a, b) => (a.id || 0) - (b.id || 0));
+    }
+    return sorted;
+  };
+
+  const handleRowSelect = (service) => {
+    setSelectedServiceId(service.id === selectedServiceId ? null : service.id);
+  };
+
+  const handleUploadImage = async (service, file) => {
+    if (!file) return;
+    const API_BASE = process.env.REACT_APP_API_URL || '';
+    const fd = new FormData();
+    fd.append('name', service.name || '');
+    fd.append('description', service.description || '');
+    fd.append('category', service.category || '');
+    fd.append('duration', service.duration || '');
+    fd.append('price', service.price || 0);
+    fd.append('active', service.active ? 'true' : 'false');
+    fd.append('image', file);
+    try {
+      const res = await fetch(`${API_BASE}/api/services/${service.id}`, {
+        method: 'PUT',
+        body: fd,
+      });
+      if (!res.ok) throw new Error(`Upload failed: ${res.status}`);
+      const updated = await res.json();
+      setServices((prev) => prev.map((item) => (item.id === service.id ? { ...item, ...updated, imageUrl: updated.image_url || updated.imageUrl || item.imageUrl } : item)));
+    } catch (err) {
+      console.error('Image upload failed', err);
+      alert('Image upload failed. Please try again.');
+    }
+  };
+
+  const handleToggleActive = async (service) => {
+    const API_BASE = process.env.REACT_APP_API_URL || '';
+    const fd = new FormData();
+    fd.append('name', service.name || '');
+    fd.append('description', service.description || '');
+    fd.append('category', service.category || '');
+    fd.append('duration', service.duration || '');
+    fd.append('price', service.price || 0);
+    fd.append('active', (!service.active).toString());
+    try {
+      const res = await fetch(`${API_BASE}/api/services/${service.id}`, {
+        method: 'PUT',
+        body: fd,
+      });
+      if (!res.ok) throw new Error(`Status update failed: ${res.status}`);
+      const updated = await res.json();
+      setServices((prev) => prev.map((item) => (item.id === service.id ? { ...item, ...updated, active: typeof updated.active === 'boolean' ? updated.active : !item.active } : item)));
+    } catch (err) {
+      console.error('Status update failed', err);
+      alert('Status could not be updated.');
     }
   };
 
@@ -73,14 +164,15 @@ const AdminServicesManagement = () => {
       filtered = filtered.filter(
         (service) =>
           service.name.toLowerCase().includes(term) ||
-          service.description.toLowerCase().includes(term)
+          service.description.toLowerCase().includes(term) ||
+          (service.category || '').toLowerCase().includes(term)
       );
     }
     if (selectedCategory !== 'All') {
       filtered = filtered.filter(service => service.category === selectedCategory);
     }
-    return filtered;
-  }, [services, searchTerm, selectedCategory]);
+    return sortServices(filtered);
+  }, [services, searchTerm, selectedCategory, sortOption]);
 
   // Pagination
   const totalPages = Math.ceil(filteredServices.length / itemsPerPage);
