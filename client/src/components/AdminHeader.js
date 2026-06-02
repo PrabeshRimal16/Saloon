@@ -35,8 +35,8 @@ export default function AdminHeader({ title }) {
     <header ref={headerRef} className="app-header w-full fixed top-0 left-0 right-0 z-50 border-b border-transparent">
       <div className="max-w-screen-xl mx-auto flex items-center justify-between px-4 lg:px-10 h-full">
         <div>
-          <h1 className="text-2xl font-serif text-gray-900">{title || 'Admin'}</h1>
-          <p className="text-sm text-gray-500">Manage site settings and content</p>
+          <h1 className="text-2xl font-serif">{title || 'Admin'}</h1>
+          <p className="text-sm" style={{color:'rgba(255,255,255,0.85)'}}>Manage site settings and content</p>
         </div>
 
           <div className="flex items-center gap-4">
@@ -48,7 +48,7 @@ export default function AdminHeader({ title }) {
             />
           </div>
           <div className="flex items-center gap-3">
-            <button className="hidden md:inline-block px-3 py-2 rounded-md bg-white/80 text-sm shadow-sm">Notifications</button>
+            <button className="hidden md:inline-block header-button">Notifications</button>
             {loading ? (
               <div className="w-9 h-9 rounded-full bg-gray-200 animate-pulse" />
             ) : (
@@ -58,7 +58,7 @@ export default function AdminHeader({ title }) {
                 ) : (
                   <div className="w-9 h-9 rounded-full bg-gray-300 flex items-center justify-center text-sm font-semibold">{avatarInitials(displayName, user?.email)}</div>
                 )}
-                <span className="hidden sm:inline-block text-sm font-medium text-gray-700">{displayName}</span>
+                <span className="hidden sm:inline-block user-name">{displayName}</span>
               </Link>
             )}
           </div>

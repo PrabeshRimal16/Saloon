@@ -14,7 +14,7 @@ export default function AdminSidebar() {
 	};
 
 	return (
-		<aside className="hidden md:flex fixed left-0 top-0 h-full w-64 bg-gradient-to-b from-gray-900/95 to-gray-900 text-white flex-col z-40">
+		<aside className="sidebar">
 			<div className="p-6 border-b border-gray-800">
 				<NavLink to="/admin" className="text-2xl font-serif text-white">Admin</NavLink>
 				{/* user preview */}
@@ -46,7 +46,7 @@ export default function AdminSidebar() {
 			</nav>
 			<div className="p-4 border-t border-gray-800">
 				<button onClick={handleLogout} className="w-full text-left px-4 py-2 rounded-md bg-red-600 hover:bg-red-700 text-white">Logout</button>
-				<div className="mt-3 text-sm text-gray-400">v1.0</div>
+				<div className="mt-3 version-text">v1.0</div>
 			</div>
 		</aside>
 	);

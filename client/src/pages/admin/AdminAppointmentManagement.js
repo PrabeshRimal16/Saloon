@@ -67,7 +67,7 @@ const AdminAppointmentManagement = () => {
   };
 
   return (
-    <div className="bg-background text-on-surface font-body-md selection:bg-secondary-container selection:text-on-secondary-container">
+    <div className="app">
       {/* Inject custom styles */}
       <style>{`
         .material-symbols-outlined {
@@ -95,9 +95,9 @@ const AdminAppointmentManagement = () => {
       <AdminSidebar />
 
       {/* Main Content */}
-      <main className="md:ml-64 min-h-screen p-12">
+      <div className="main md:ml-64">
         <AdminHeader title="Appointment Management" />
-        <div className="p-gutter max-w-container-max-width mx-auto">
+        <div className="content">
           {/* Breadcrumb & Title */}
           <section className="mb-12">
             <nav className="flex items-center gap-2 mb-4">
@@ -245,7 +245,7 @@ const AdminAppointmentManagement = () => {
             </div>
           </footer>
         </div>
-      </main>
+      </div>
 
       {/* Contextual FAB */}
       <button className="fixed bottom-10 right-10 h-16 w-16 bg-primary text-on-primary rounded-full luxury-shadow flex items-center justify-center z-50 hover:scale-105 active:scale-95 transition-all group">

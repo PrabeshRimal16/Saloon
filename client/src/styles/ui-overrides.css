@@ -1,13 +1,13 @@
 /* Global UI overrides and helper classes */
 :root{
-  --primary: #1f2937; /* deep slate */
+  --primary: #1a2035; /* unified dark navy */
   --primary-contrast: #ffffff;
   --surface: #ffffff;
   --muted: #6b7280;
   --accent: #c084fc;
   --success: #10b981;
   --danger: #ef4444;
-  --radius: 10px;
+  --radius: 12px;
   --card-shadow: 0 10px 30px rgba(15,23,42,0.06);
 }
 
@@ -64,8 +64,17 @@ h3{font-size:1.125rem;margin:0 0 .5rem}
 .btn-accent:hover{transform:translateY(-2px)}
 
 /* App header styles */
-.app-header{--app-header-height:96px;height:var(--app-header-height);background:linear-gradient(90deg, rgba(124,58,237,0.08), rgba(6,182,212,0.06));backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);box-shadow:0 6px 24px rgba(15,23,42,0.06);}
+.app-header{--app-header-height:96px;height:var(--app-header-height);background:var(--primary);color:var(--primary-contrast);box-shadow:0 6px 24px rgba(15,23,42,0.06);} 
 .app-header .search-input{max-width:420px}
+
+/* Header text contrast */
+.app-header h1, .app-header p, .app-header .user-name, .app-header button {
+  color: var(--primary-contrast);
+}
+
+/* Outlined header button */
+.header-button{padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.18);background:transparent;color:var(--primary-contrast);cursor:pointer}
+.header-button:hover{background:rgba(255,255,255,0.04)}
 
 /* Responsive: ensure main content accounts for fixed header */
 main{padding-top:calc(var(--app-header-height) + 16px)}
@@ -75,8 +84,11 @@ main{padding-top:calc(var(--app-header-height) + 16px)}
 
 /* When sidebar is visible (md+), shift header container to the right of the sidebar instead of spanning underneath it */
 @media (min-width: 768px) {
-  .app-header{left:16rem;right:0;width:calc(100% - 16rem)}
+  .app-header{left:256px;right:0;width:calc(100% - 256px)}
 }
+
+/* Version text in sidebar */
+.sidebar .version-text{font-size:0.75rem;color:rgba(255,255,255,0.6);margin-top:6px}
 
 /* Buttons */
 .btn{display:inline-flex;align-items:center;gap:0.5rem;padding:0.5rem 1rem;border-radius:8px;border:1px solid transparent;cursor:pointer;font-weight:600;transition:all .18s ease}

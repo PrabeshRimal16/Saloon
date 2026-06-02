@@ -21,7 +21,7 @@ body {
 
 /* SIDEBAR */
 .sidebar {
-  width: 280px;
+  width: 256px;
   background: #1e293b;
   color: #e2e8f0;
   display: flex;
@@ -113,6 +113,8 @@ body {
   display: flex;
   flex-direction: column;
   overflow-x: auto;
+  margin-left: 256px;
+  padding-top: var(--app-header-height, 96px);
 }
 
 .top-bar {
@@ -199,15 +201,19 @@ body {
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 24px;
   margin-bottom: 40px;
 }
 
+@media (max-width: 900px) {
+  .stats-grid { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+}
+
 .stat-card {
   background: white;
-  border-radius: 24px;
-  padding: 22px 20px;
+  border-radius: 12px;
+  padding: 20px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
   transition: transform 0.1s ease, box-shadow 0.2s;
   border: 1px solid #eef2ff;
@@ -226,15 +232,15 @@ body {
 
 .stat-label {
   font-size: 0.85rem;
-  text-transform: uppercase;
+  text-transform: none;
   font-weight: 600;
   color: #475569;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.2px;
   margin-bottom: 8px;
 }
 
 .stat-value {
-  font-size: 2.2rem;
+  font-size: 1.8rem;
   font-weight: 700;
   color: #0f172a;
   margin-bottom: 8px;
@@ -259,13 +265,25 @@ body {
   color: #2563eb;
 }
 
+/* accent top borders for stat-cards */
+.stats-grid .stat-card:nth-child(1){border-top:4px solid #3b82f6}
+.stats-grid .stat-card:nth-child(2){border-top:4px solid #16a34a}
+.stats-grid .stat-card:nth-child(3){border-top:4px solid #f59e0b}
+.stats-grid .stat-card:nth-child(4){border-top:4px solid #ef4444}
+
 /* WEEKLY BARS */
 .weeks-chart {
   background: white;
-  border-radius: 24px;
-  padding: 24px;
+  border-radius: 12px;
+  padding: 20px;
   border: 1px solid #eef2ff;
   margin-bottom: 40px;
+}
+
+.chart-debug {
+  margin-top: 8px;
+  font-size: 0.85rem;
+  color: #64748b;
 }
 
 .week-bar {
@@ -314,7 +332,7 @@ body {
 
 .card {
   background: white;
-  border-radius: 24px;
+  border-radius: 12px;
   padding: 20px;
   text-align: center;
   border: 1px solid #eef2ff;
@@ -369,6 +387,9 @@ body {
 @media (max-width: 860px) {
   .sidebar {
     width: 100px;
+  }
+  .main {
+    margin-left: 100px;
   }
   .sidebar .logo span,
   .nav-menu li span:last-child,

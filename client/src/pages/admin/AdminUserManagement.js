@@ -215,14 +215,12 @@ const AdminUserManagement = () => {
   ];
 
   return (
-    <div className="bg-background text-on-background font-body-md overflow-x-hidden">
+    <div className="app">
       <AdminSidebar />
-
       {/* Main Content */}
-      <main className="md:ml-64 min-h-screen">
+      <div className="main md:ml-64">
         <AdminHeader title="Client Management" />
-        {/* Content Area */}
-        <section className="pt-32 pb-section-gap-desktop px-gutter max-w-container-max-width mx-auto">
+        <div className="content">
           {/* Page Header & Metrics */}
           <div className="mb-12">
             <h2 className="font-headline-lg text-headline-lg text-primary mb-8">Client Management</h2>
@@ -429,8 +427,8 @@ const AdminUserManagement = () => {
               </button>
             </div>
           </div>
-        </section>
-      </main>
+        </div>
+      </div>
 
       {/* Floating Action Button */}
       <button

@@ -78,6 +78,8 @@ const AdminDashboard = () => {
     }
   });
 
+  const totalWeekly = weeklyCounts.reduce((s,n)=>s+(n||0),0);
+
   const stats = [
     { label: 'Upcoming (7d)', value: upcomingBookings, sub: 'bookings' },
     { label: 'Revenue (month)', value: `$${revenueThisMonth.toFixed(2)}`, sub: 'this month' },
@@ -101,13 +103,28 @@ const AdminDashboard = () => {
 
             <div className="weeks-chart">
               <h2>Weekly Bookings</h2>
-              {weekLabels.map((d,i)=> (
-                <div className="week-bar" key={d}>
-                  <div className="bar-label">{d}</div>
-                  <div className="bar-bg"><div className="bar-fill" style={{ width: `${Math.min(100, (weeklyCounts[i] || 0) * 12)}%` }} /></div>
-                  <div className="bar-value">{weeklyCounts[i] || 0}</div>
-                </div>
-              ))}
+              {totalWeekly === 0 ? (
+                <div className="hint">No bookings this week</div>
+              ) : (
+                weekLabels.map((d,i)=> {
+                  const count = weeklyCounts[i] || 0;
+                  const widthPct = count ? Math.min(100, count * 12) : 6; // minimum visible width
+                  return (
+                    <div className="week-bar" key={d}>
+                      <div className="bar-label">{d}</div>
+                      <div className="bar-bg"><div className="bar-fill" style={{ width: `${widthPct}%`, opacity: count ? 1 : 0.35 }} /></div>
+                      <div className="bar-value">{count}</div>
+                    </div>
+                  );
+                })
+              )}
+              <div className="chart-debug">
+                Fetched {appointments.length} appointments — {appointments.length ? (() => {
+                  const last = appointments[appointments.length - 1];
+                  const dateStr = last && (last.appointment_date || last.created_at || last.date) ? new Date(last.appointment_date || last.created_at || last.date).toLocaleString() : 'no timestamp';
+                  return `Last record: ${dateStr}`;
+                })() : 'no appointments'}
+              </div>
             </div>
 
             <div className="action-cards">
