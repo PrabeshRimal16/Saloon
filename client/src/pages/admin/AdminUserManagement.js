@@ -177,8 +177,9 @@ const AdminUserManagement = () => {
   };
 
   const getRoleBadgeClass = (role) => {
-    if (role.toLowerCase() === 'admin') return 'badge-admin';
-    if (role.toLowerCase() === 'manager') return 'badge-manager';
+    const normalizedRole = (role || 'client').toString().trim().toLowerCase();
+    if (normalizedRole === 'admin') return 'badge-admin';
+    if (normalizedRole === 'manager') return 'badge-manager';
     return 'badge-client';
   };
 
@@ -198,10 +199,10 @@ const AdminUserManagement = () => {
       const term = searchTerm.toLowerCase();
       filtered = filtered.filter(
         (user) =>
-          user.name.toLowerCase().includes(term) ||
-          user.email.toLowerCase().includes(term) ||
-          user.phone.toLowerCase().includes(term) ||
-          user.role.toLowerCase().includes(term)
+          (user.name || '').toLowerCase().includes(term) ||
+          (user.email || '').toLowerCase().includes(term) ||
+          (user.phone || '').toLowerCase().includes(term) ||
+          (user.role || '').toLowerCase().includes(term)
       );
     }
     if (activeTab === 'Active') {
@@ -438,7 +439,7 @@ const AdminUserManagement = () => {
                     </td>
                     <td className="py-6 text-right">
                       <div className="flex flex-wrap justify-end gap-2">
-                        {user.role.toLowerCase() !== 'admin' && (
+                        {(user.role || '').toLowerCase() !== 'admin' && (
                           <button
                             onClick={() => handleMakeAdmin(user.id)}
                             className="px-4 py-2 btn-action"
