@@ -277,6 +277,10 @@ const AdminUserManagement = () => {
     if (page >= 1 && page <= totalPages) setCurrentPage(page);
   };
 
+  const handleInviteClient = () => {
+    alert('Invite client flow will open here.');
+  };
+
   // Sidebar navigation placeholders
   const navItems = [
     { label: 'Overview', icon: 'dashboard', onClick: () => alert('Overview') },
