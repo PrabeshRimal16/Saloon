@@ -23,10 +23,7 @@ export default function AdminSetting() {
       <main className="flex-grow md:ml-64 p-6 lg:p-12">
         <AdminHeader title="Profile Settings" />
         <div className="max-w-4xl mx-auto space-y-8">
-          <header className="space-y-2">
-            <h2 className="text-2xl font-semibold text-gray-900">Profile Settings</h2>
-            <p className="text-sm text-gray-600">Manage account preferences, personal information, and security settings.</p>
-          </header>
+          {/* Page title displayed in header (AdminHeader) */}
 
           <section className="bg-white p-6 rounded shadow">
             <h3 className="text-lg font-medium mb-4">Account Details</h3>

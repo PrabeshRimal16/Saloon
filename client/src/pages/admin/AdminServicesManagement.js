@@ -180,24 +180,12 @@ const AdminServicesManagement = () => {
       {/* Main Content */}
       <main className="md:ml-64 min-h-screen p-12">
         <AdminHeader title="Service Catalog Management" />
-        {/* Header */}
-        <header className="flex justify-between items-end mb-10">
-          <div className="hero prose">
-            <nav className="flex gap-2 mb-2">
-              <span className="font-label-sm text-label-sm text-outline uppercase">Admin</span>
-              <span className="font-label-sm text-label-sm text-outline">/</span>
-              <span className="font-label-sm text-label-sm text-primary uppercase">Service Catalog</span>
-            </nav>
-            <h2 className="hero-title">Service Catalog Management</h2>
-            <p className="hero-sub lead">Manage your service offerings — add descriptions, pricing, and visuals to delight customers.</p>
-          </div>
-          <div className="flex items-center gap-4">
-            <button onClick={openCreateForm} className="btn-accent flex items-center gap-3">
-              <span className="material-symbols-outlined text-[20px]">add</span>
-              <span className="font-label-md text-label-md uppercase tracking-widest">Add New Service</span>
-            </button>
-          </div>
-        </header>
+        <div className="mb-8 flex justify-end">
+          <button onClick={openCreateForm} className="btn-accent flex items-center gap-3">
+            <span className="material-symbols-outlined text-[20px]">add</span>
+            <span className="font-label-md text-label-md uppercase tracking-widest">Add New Service</span>
+          </button>
+        </div>
 
         {/* Filters & Search */}
         <section className="flex gap-gutter mb-8 items-center flex-wrap">

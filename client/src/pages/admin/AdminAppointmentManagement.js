@@ -106,11 +106,8 @@ const AdminAppointmentManagement = () => {
               <span className="font-label-sm text-label-sm text-primary uppercase tracking-widest font-bold">Appointments</span>
             </nav>
             <div className="flex justify-between items-end">
-              <div className="hero prose">
-                <h1 className="hero-title">Appointment Management</h1>
-                <p className="hero-sub lead">
-                  Oversee and coordinate every luxury experience. From master stylists to exclusive spa treatments, manage the flow of the modern atelier.
-                </p>
+              <div className="hidden">
+                {/* Title handled by AdminHeader */}
               </div>
               <div className="flex gap-4 items-center">
                 <button className="pill" aria-label="This week">

@@ -114,22 +114,13 @@ const AdminOfferManagement = () => {
       {/* ── Main Content ── */}
       <main className="md:ml-64 p-gutter max-w-container-max-width mx-auto">
         <AdminHeader title="Offers & Promotions Management" />
-        {/* Hero Header */}
-        <section className="mb-16 flex flex-col md:flex-row md:items-end justify-between gap-8">
-          <div className="max-w-2xl">
-            <h2 className="font-headline-lg text-headline-lg text-primary mb-4">
-              Offers &amp; Promotions Management
-            </h2>
-            <p className="text-on-surface-variant font-body-lg">
-              Curate exclusive experiences and seasonal rituals to reward our most
-              discerning clientele.
-            </p>
-          </div>
+        {/* Action Bar */}
+        <div className="mb-8 flex justify-end">
           <button className="px-8 py-4 bg-tertiary text-on-primary font-label-md text-label-md flex items-center gap-3 hover:bg-secondary transition-colors duration-300">
             <span className="material-symbols-outlined">add</span>
             CREATE NEW OFFER
           </button>
-        </section>
+        </div>
 
         {/* Summary Statistics */}
         <section className="grid grid-cols-1 md:grid-cols-4 gap-gutter mb-16">

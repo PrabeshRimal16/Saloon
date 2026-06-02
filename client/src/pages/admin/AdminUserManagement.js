@@ -223,7 +223,6 @@ const AdminUserManagement = () => {
         <div className="content">
           {/* Page Header & Metrics */}
           <div className="mb-12">
-            <h2 className="font-headline-lg text-headline-lg text-primary mb-8">Client Management</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-gutter">
               <div className="bg-surface p-8 border border-outline-variant flex flex-col justify-between h-40 group hover:border-secondary transition-colors duration-500">
                 <span className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Total Users</span>
