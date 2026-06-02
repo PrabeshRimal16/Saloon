@@ -5,6 +5,7 @@ import CustomerNavbar from '../../components/CustomerNavbar';
    Offers & Rituals Page Component
    ────────────────────────────────────────────── */
 const OffersAndRitualsPage = () => {
+  const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:5000";
   const [offers, setOffers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [notifications, setNotifications] = useState([]);
@@ -23,7 +24,7 @@ const OffersAndRitualsPage = () => {
   const fetchOffers = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:5000/api/offers");
+      const response = await fetch(`${API_BASE}/api/offers`);
       const data = await response.json();
       
       // Check for new offers
@@ -212,7 +213,7 @@ const OffersAndRitualsPage = () => {
                     <div className="relative overflow-hidden card-img-zoom mb-6 shrink-0 bg-gradient-to-br from-indigo-100 to-purple-100 aspect-[3/4] flex items-center justify-center">
                       {offer.image_url ? (
                         <img
-                          src={offer.image_url}
+                          src={offer.image_url.startsWith('/') ? `${API_BASE}${offer.image_url}` : offer.image_url}
                           alt={offer.title}
                           className="w-full h-full object-cover"
                         />

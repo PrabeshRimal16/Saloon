@@ -17,9 +17,11 @@ const AdminOfferManagement = () => {
     description: "",
     discount_percent: "",
     valid_until: "",
+    image: null,
     image_url: "",
   });
   const editIconRefs = useRef([]);
+  const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
   // ── Fetch offers from API ──
   useEffect(() => {
@@ -33,7 +35,7 @@ const AdminOfferManagement = () => {
   const fetchOffers = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:5000/api/offers");
+      const response = await fetch(`${API_BASE}/api/offers`);
       const data = await response.json();
       setOffers(data);
     } catch (error) {
@@ -146,10 +148,18 @@ const AdminOfferManagement = () => {
         ? `http://localhost:5000/api/offers/${editingId}`
         : "http://localhost:5000/api/offers";
 
+      const body = new FormData();
+      body.append("title", formData.title);
+      body.append("description", formData.description);
+      body.append("discount_percent", formData.discount_percent);
+      body.append("valid_until", formData.valid_until);
+      if (formData.image) {
+        body.append("image", formData.image);
+      }
+
       const response = await fetch(url, {
         method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body,
       });
 
       if (response.ok) {
@@ -161,8 +171,9 @@ const AdminOfferManagement = () => {
           description: "",
           discount_percent: "",
           valid_until: "",
+          image: null,
+          image_url: "",
         });
-        // Trigger notification
         addNotification(
           "success",
           editingId ? `Offer "${formData.title}" updated successfully!` : `New offer "${formData.title}" created!`
@@ -201,10 +212,20 @@ const AdminOfferManagement = () => {
       description: offer.description,
       discount_percent: offer.discount_percent || "",
       valid_until: offer.valid_until || "",
+      image: null,
       image_url: offer.image_url || "",
     });
     setShowModal(true);
   };
+
+  // ── Preview Image URL ──
+  const offerImagePreview = formData.image
+    ? URL.createObjectURL(formData.image)
+    : formData.image_url
+    ? formData.image_url.startsWith("/")
+      ? `${API_BASE}${formData.image_url}`
+      : formData.image_url
+    : null;
 
   // ── Close Modal ──
   const handleCloseModal = () => {
@@ -215,6 +236,7 @@ const AdminOfferManagement = () => {
       description: "",
       discount_percent: "",
       valid_until: "",
+      image: null,
       image_url: "",
     });
   };
@@ -501,7 +523,7 @@ const AdminOfferManagement = () => {
                   <div className="relative h-48 overflow-hidden bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center">
                     {offer.image_url ? (
                       <img
-                        src={offer.image_url}
+                        src={offer.image_url.startsWith('/') ? `${API_BASE}${offer.image_url}` : offer.image_url}
                         alt={offer.title}
                         className="w-full h-full object-cover"
                       />
@@ -629,99 +651,112 @@ const AdminOfferManagement = () => {
               </button>
             </div>
 
-            <form onSubmit={handleSaveOffer} className="p-6 space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Title *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={formData.title}
-                  onChange={(e) =>
-                    setFormData({ ...formData, title: e.target.value })
-                  }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  placeholder="e.g., Summer Glow Package"
-                />
+            <form onSubmit={handleSaveOffer} className="p-6 grid gap-6 md:grid-cols-3">
+              <div className="col-span-3 md:col-span-2 space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Title *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.title}
+                    onChange={(e) =>
+                      setFormData({ ...formData, title: e.target.value })
+                    }
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    placeholder="e.g., Summer Glow Package"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Description *
+                  </label>
+                  <textarea
+                    required
+                    value={formData.description}
+                    onChange={(e) =>
+                      setFormData({ ...formData, description: e.target.value })
+                    }
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 h-28 resize-none"
+                    placeholder="Describe your offer..."
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Discount Percentage *
+                    </label>
+                    <input
+                      type="number"
+                      required
+                      min="0"
+                      max="100"
+                      value={formData.discount_percent}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          discount_percent: e.target.value,
+                        })
+                      }
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      placeholder="e.g., 20"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Valid Until *
+                    </label>
+                    <input
+                      type="date"
+                      required
+                      value={formData.valid_until}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          valid_until: e.target.value,
+                        })
+                      }
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                  </div>
+                </div>
               </div>
 
-              <div>
+              <div className="col-span-3 md:col-span-1">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Description *
-                </label>
-                <textarea
-                  required
-                  value={formData.description}
-                  onChange={(e) =>
-                    setFormData({ ...formData, description: e.target.value })
-                  }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 h-24 resize-none"
-                  placeholder="Describe your offer..."
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Discount Percentage *
+                  Offer Image
                 </label>
                 <input
-                  type="number"
-                  required
-                  min="0"
-                  max="100"
-                  value={formData.discount_percent}
+                  type="file"
+                  accept="image/*"
                   onChange={(e) =>
                     setFormData({
                       ...formData,
-                      discount_percent: e.target.value,
+                      image: e.target.files?.[0] || null,
                     })
                   }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  placeholder="e.g., 20"
+                  className="w-full text-sm text-gray-700 mb-3"
                 />
+                <div className="w-full h-56 bg-surface-container border border-outline-variant/20 rounded-xl overflow-hidden flex items-center justify-center">
+                  {offerImagePreview ? (
+                    <img
+                      src={offerImagePreview}
+                      alt="Offer preview"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="text-on-surface-variant p-4 text-sm text-center">
+                      Drop image here or click to upload
+                    </div>
+                  )}
+                </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Valid Until *
-                </label>
-                <input
-                  type="date"
-                  required
-                  value={formData.valid_until}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      valid_until: e.target.value,
-                    })
-                  }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Image URL
-                </label>
-                <input
-                  type="url"
-                  value={formData.image_url}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      image_url: e.target.value,
-                    })
-                  }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  placeholder="https://example.com/offer-image.jpg"
-                />
-                <p className="mt-2 text-xs text-gray-500">
-                  Add a link to the offer image so it appears on both admin and customer cards.
-                </p>
-              </div>
-
-              <div className="flex gap-3 pt-4 border-t border-gray-200">
+              <div className="col-span-3 flex gap-3 pt-4 border-t border-gray-200">
                 <button
                   type="button"
                   onClick={handleCloseModal}
