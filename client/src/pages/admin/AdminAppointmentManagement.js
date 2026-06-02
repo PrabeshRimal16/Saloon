@@ -170,6 +170,7 @@ const AdminAppointmentManagement = () => {
                           <div className="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-bold text-sm">{(a.customer_name || 'C').slice(0,2).toUpperCase()}</div>
                           <div>
                             <div className="font-medium text-sm text-primary">{a.customer_name}</div>
+                            <div className="text-xs text-gray-400">{a.phone}</div>
                             <div className="text-xs text-gray-400">{a.email}</div>
                           </div>
                         </div>
