@@ -155,7 +155,16 @@ const AdminDashboard = () => {
             const x = idx * (values.length > 1 ? width / (values.length - 1) : width);
             const max = Math.max(...values, 1);
             const y = height - (value / max) * height;
-            return <circle key={idx} cx={x} cy={y} r="4" className="line-chart-point" />;
+            return (
+              <g key={idx}>
+                <circle cx={x} cy={y} r="4" className="line-chart-point" />
+                {value > 0 && (
+                  <text x={x} y={Math.max(12, y - 10)} textAnchor="middle" className="line-chart-point-label">
+                    {totalLabel === 'Revenue' ? `$${value.toFixed(0)}` : value}
+                  </text>
+                )}
+              </g>
+            );
           })}
         </svg>
         <div className="line-chart-labels">

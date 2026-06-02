@@ -377,6 +377,12 @@ body {
   stroke-width: 3;
 }
 
+.line-chart-point-label {
+  font-size: 0.7rem;
+  fill: #334155;
+  font-weight: 600;
+}
+
 .line-chart-labels {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
