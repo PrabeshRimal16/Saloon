@@ -11,7 +11,7 @@ const AdminServicesManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchFocus, setSearchFocus] = useState(false);
+  
   const itemsPerPage = 3;
 
   const getBadgeColor = (category) => {
@@ -188,7 +188,7 @@ const AdminServicesManagement = () => {
   };
 
   return (
-    <div className="bg-surface font-body-md text-on-surface">
+    <div className="bg-gray-50 font-body-md text-on-surface">
       <AdminSidebar />
 
       <AdminHeader title="Service Catalog Management" />
@@ -237,65 +237,69 @@ const AdminServicesManagement = () => {
         {/* Create / Edit Form Modal */}
         {showForm && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-            <form onSubmit={handleCreateOrUpdate} className="bg-white p-6 w-full max-w-3xl rounded shadow-lg grid grid-cols-3 gap-6">
-              <div className="col-span-2">
-                <h3 className="font-headline-md mb-3">{editingService ? 'Edit Service' : 'Create Service'}</h3>
-                <label className="block mb-2 font-label-sm">Name</label>
-                <input required className="w-full p-3 border mb-3" value={formData.name} onChange={(e)=>setFormData({...formData, name: e.target.value})} />
+              <form onSubmit={handleCreateOrUpdate} className="bg-white p-6 w-full max-w-3xl rounded-xl shadow-xl grid grid-cols-3 gap-6">
+                <div className="col-span-3 flex items-start justify-between">
+                  <h3 className="font-headline-md mb-3">{editingService ? 'Edit Service' : 'Create Service'}</h3>
+                  <button type="button" aria-label="Close" onClick={() => { setShowForm(false); setEditingService(null); }} className="text-gray-500 text-2xl">×</button>
+                </div>
+                <div className="col-span-2">
+                  <label className="block mb-2 font-label-sm">Name <span className="text-red-500">*</span></label>
+                  <input required className="w-full p-3 border mb-3" value={formData.name} onChange={(e)=>setFormData({...formData, name: e.target.value})} />
 
-                <label className="block mb-2 font-label-sm">Description</label>
-                <textarea required className="w-full p-3 border mb-3" value={formData.description} onChange={(e)=>setFormData({...formData, description: e.target.value})} />
+                  <label className="block mb-2 font-label-sm">Description <span className="text-red-500">*</span></label>
+                  <textarea required maxLength={500} className="w-full p-3 border mb-1" value={formData.description} onChange={(e)=>setFormData({...formData, description: e.target.value})} />
+                  <div className="text-xs text-gray-400 mb-3">{formData.description.length} / 500 characters</div>
 
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block mb-2 font-label-sm">Category</label>
-                    <select required className="w-full p-2 border" value={formData.category} onChange={(e)=>setFormData({...formData, category: e.target.value})}>
-                      <option value="">Select category</option>
-                      {Array.from(new Set([...(services.map(s=>s.category).filter(Boolean)), 'Hair Color', 'Skincare', "Men's Care", 'Grooming', 'Nail Artistry', 'Facial Therapy'])).map(cat=> (
-                        <option key={cat} value={cat}>{cat}</option>
-                      ))}
-                    </select>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block mb-2 font-label-sm">Category <span className="text-red-500">*</span></label>
+                      <select required className="w-full p-2 border" value={formData.category} onChange={(e)=>setFormData({...formData, category: e.target.value})}>
+                        <option value="">Select category</option>
+                        {Array.from(new Set([...(services.map(s=>s.category).filter(Boolean)), 'Hair Color', 'Skincare', "Men's Care", 'Grooming', 'Nail Artistry', 'Facial Therapy'])).map(cat=> (
+                          <option key={cat} value={cat}>{cat}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block mb-2 font-label-sm">Duration <span className="text-red-500">*</span></label>
+                      <input required className="w-full p-2 border" value={formData.duration} onChange={(e)=>setFormData({...formData, duration: e.target.value})} placeholder="e.g., 60" />
+                      <p className="text-xs text-on-surface-variant mt-1">Duration in minutes</p>
+                    </div>
                   </div>
-                  <div>
-                    <label className="block mb-2 font-label-sm">Duration</label>
-                    <input required className="w-full p-2 border" value={formData.duration} onChange={(e)=>setFormData({...formData, duration: e.target.value})} placeholder="e.g., 60" />
-                    <p className="text-xs text-on-surface-variant mt-1">Duration in minutes</p>
+
+                  <div className="mt-3">
+                    <label className="block mb-2 font-label-sm">Price <span className="text-red-500">*</span></label>
+                    <input required type="number" step="0.01" className="w-40 p-2 border" value={formData.price} onChange={(e)=>setFormData({...formData, price: e.target.value})} />
                   </div>
                 </div>
 
-                <div className="mt-3">
-                  <label className="block mb-2 font-label-sm">Price</label>
-                  <input required type="number" step="0.01" className="w-40 p-2 border" value={formData.price} onChange={(e)=>setFormData({...formData, price: e.target.value})} />
-                </div>
-              </div>
+                <div className="col-span-1">
+                  <div className="mb-4">
+                    <label className="block mb-2 font-label-sm">Image</label>
+                    <input type="file" accept="image/*" onChange={(e)=>setFormData({...formData, image: e.target.files[0]})} />
+                  </div>
+                  <div className="w-full h-48 bg-surface-container border border-outline-variant/10 flex items-center justify-center overflow-hidden">
+                    {(() => {
+                      const API_BASE = process.env.REACT_APP_API_URL || '';
+                      if (formData.image) {
+                        const url = URL.createObjectURL(formData.image);
+                        return <img src={url} alt="preview" className="w-full h-full object-cover rounded-lg" />;
+                      }
+                      if (editingService && (editingService.image_url || editingService.imageUrl)) {
+                        const imgPath = editingService.image_url && editingService.image_url.startsWith('/') ? `${API_BASE}${editingService.image_url}` : (editingService.imageUrl || editingService.image_url);
+                        return <img src={imgPath} alt="current" className="w-full h-full object-cover rounded-lg" />;
+                      }
+                      return <div className="text-on-surface-variant p-4 text-sm">Drop image here or click to upload</div>;
+                    })()}
+                  </div>
 
-              <div className="col-span-1">
-                <div className="mb-4">
-                  <label className="block mb-2 font-label-sm">Image</label>
-                  <input type="file" accept="image/*" onChange={(e)=>setFormData({...formData, image: e.target.files[0]})} />
+                  <div className="mt-6 flex justify-end gap-3">
+                    <button type="button" onClick={()=>{ setShowForm(false); setEditingService(null); setFormData({ name: '', description: '', category: '', duration: '', price: '', image: null }); }} className="px-4 py-2 border rounded-lg">Cancel</button>
+                    <button type="submit" className="px-6 py-2 bg-primary text-on-primary rounded-lg">Save</button>
+                  </div>
                 </div>
-                <div className="w-full h-48 bg-surface-container border border-outline-variant/10 flex items-center justify-center overflow-hidden">
-                  {(() => {
-                    const API_BASE = process.env.REACT_APP_API_URL || '';
-                    if (formData.image) {
-                      const url = URL.createObjectURL(formData.image);
-                      return <img src={url} alt="preview" className="w-full h-full object-cover" />;
-                    }
-                    if (editingService && (editingService.image_url || editingService.imageUrl)) {
-                      const imgPath = editingService.image_url && editingService.image_url.startsWith('/') ? `${API_BASE}${editingService.image_url}` : (editingService.imageUrl || editingService.image_url);
-                      return <img src={imgPath} alt="current" className="w-full h-full object-cover" />;
-                    }
-                    return <div className="text-on-surface-variant p-4">No image selected</div>;
-                  })()}
-                </div>
-
-                <div className="mt-6 flex justify-end gap-3">
-                  <button type="button" onClick={()=>{ setShowForm(false); setEditingService(null); setFormData({ name: '', description: '', category: '', duration: '', price: '', image: null }); }} className="px-4 py-2 border">Cancel</button>
-                  <button type="submit" className="px-6 py-2 bg-primary text-on-primary">Save</button>
-                </div>
-              </div>
-            </form>
-          </div>
+              </form>
+            </div>
         )}
 
         {/* Service Table */}
