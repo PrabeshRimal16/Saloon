@@ -69,8 +69,9 @@ const AdminUserManagement = () => {
   const [users, setUsers] = useState(initialUsers);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('All Users');
+  const [sortOption, setSortOption] = useState('newest');
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchFocus, setSearchFocus] = useState(false);
+  const [confirmDialog, setConfirmDialog] = useState(null);
   const itemsPerPage = 5;
   const [loadingUsers, setLoadingUsers] = useState(false);
   const [error, setError] = useState(null);
@@ -81,15 +82,17 @@ const AdminUserManagement = () => {
     setLoadingUsers(true);
     setError(null);
     try {
-      // cache-bust with timestamp
       const res = await axios.get(`${apiBaseUrl}/api/users?_t=${Date.now()}`, { withCredentials: true });
-      const mapped = res.data.map(u => ({
+      const mapped = res.data.map((u) => ({
         id: u.id,
-        name: u.name,
-        email: u.email,
+        name: u.name || 'Unknown',
+        email: u.email || 'unknown@salon.com',
         avatarUrl: u.avatar_url || u.avatarUrl || u.photo || '',
-        joinedDate: u.created_at ? new Date(u.created_at).toLocaleDateString() : '',
-        status: (u.role === 'restricted') ? 'Restricted' : 'Active'
+        joinedDate: u.created_at ? new Date(u.created_at).toISOString() : u.joinedDate || '',
+        phone: u.phone || u.phone_number || '—',
+        role: u.role ? u.role.charAt(0).toUpperCase() + u.role.slice(1) : 'Client',
+        status: u.status ? u.status : (u.role === 'restricted' ? 'Restricted' : 'Active'),
+        isOnline: u.is_online || u.online || false,
       }));
       setUsers(mapped);
     } catch (err) {
@@ -100,35 +103,128 @@ const AdminUserManagement = () => {
     }
   };
 
-  // Derived data: filtered users based on search and tab
+  const formatDate = (value) => {
+    if (!value) return '—';
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return value;
+    return new Intl.DateTimeFormat('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    }).format(date);
+  };
+
+  const exportUsersCsv = () => {
+    const headers = ['Name', 'Email', 'Phone', 'Role', 'Status', 'Joined Date'];
+    const rows = filteredUsers.map((user) => [
+      user.name,
+      user.email,
+      user.phone,
+      user.role,
+      user.status,
+      formatDate(user.joinedDate),
+    ]);
+    const csvContent = [headers, ...rows]
+      .map((row) => row.map((item) => `"${String(item).replace(/"/g, '""')}"`).join(','))
+      .join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'users-export.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleSortChange = (e) => {
+    setSortOption(e.target.value);
+  };
+
+  const handleMakeAdmin = async (userId) => {
+    try {
+      await axios.post(`${apiBaseUrl}/api/users/${userId}/make-admin`, {}, { withCredentials: true });
+      await fetchUsers();
+    } catch (err) {
+      console.error(err);
+      alert('Unable to update role');
+    }
+  };
+
+  const handleConfirmDialog = (type, user) => {
+    setConfirmDialog({ type, user });
+  };
+
+  const handleCancelConfirm = () => {
+    setConfirmDialog(null);
+  };
+
+  const confirmAction = async () => {
+    if (!confirmDialog) return;
+    const { type, user } = confirmDialog;
+    try {
+      if (type === 'restrict') {
+        await handleRestrictToggle(user.id, user.status);
+      } else if (type === 'remove') {
+        await handleRemoveUser(user.id);
+      }
+    } finally {
+      setConfirmDialog(null);
+    }
+  };
+
+  const getRoleBadgeClass = (role) => {
+    if (role.toLowerCase() === 'admin') return 'badge-admin';
+    if (role.toLowerCase() === 'manager') return 'badge-manager';
+    return 'badge-client';
+  };
+
+  const getStatusBadgeClass = (status) => {
+    return status === 'Active'
+      ? 'badge-active'
+      : 'badge-restricted';
+  };
+
+  const getOnlineDotClass = (isOnline) => {
+    return isOnline ? 'bg-green-500' : 'bg-neutral-500/40';
+  };
+
   const filteredUsers = useMemo(() => {
     let filtered = users;
-    // Search by name or email
     if (searchTerm.trim() !== '') {
       const term = searchTerm.toLowerCase();
       filtered = filtered.filter(
         (user) =>
           user.name.toLowerCase().includes(term) ||
-          user.email.toLowerCase().includes(term)
+          user.email.toLowerCase().includes(term) ||
+          user.phone.toLowerCase().includes(term) ||
+          user.role.toLowerCase().includes(term)
       );
     }
-    // Filter by status tab
     if (activeTab === 'Active') {
       filtered = filtered.filter((user) => user.status === 'Active');
     } else if (activeTab === 'Restricted') {
       filtered = filtered.filter((user) => user.status === 'Restricted');
     }
-    return filtered;
-  }, [users, searchTerm, activeTab]);
 
-  // Pagination
+    if (sortOption === 'newest') {
+      filtered = filtered.slice().sort((a, b) => new Date(b.joinedDate) - new Date(a.joinedDate));
+    } else if (sortOption === 'oldest') {
+      filtered = filtered.slice().sort((a, b) => new Date(a.joinedDate) - new Date(b.joinedDate));
+    } else if (sortOption === 'name') {
+      filtered = filtered.slice().sort((a, b) => a.name.localeCompare(b.name));
+    }
+    return filtered;
+  }, [users, searchTerm, activeTab, sortOption]);
+
   const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
   const paginatedUsers = useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage;
     return filteredUsers.slice(start, start + itemsPerPage);
   }, [filteredUsers, currentPage, itemsPerPage]);
 
-  // Reset to page 1 when filters change
   const handleFilterChange = (newTab) => {
     setActiveTab(newTab);
     setCurrentPage(1);
@@ -139,13 +235,11 @@ const AdminUserManagement = () => {
     setCurrentPage(1);
   };
 
-  // User actions (call server)
   const handleRestrictToggle = async (userId, currentStatus) => {
     try {
       const shouldRestrict = currentStatus === 'Active';
       const url = `${apiBaseUrl}/api/users/${userId}/${shouldRestrict ? 'restrict' : 'unrestrict'}`;
-      const res = await axios.post(url, {}, { withCredentials: true });
-      // refresh list from server to ensure consistency
+      await axios.post(url, {}, { withCredentials: true });
       await fetchUsers();
     } catch (err) {
       console.error(err);
@@ -154,11 +248,9 @@ const AdminUserManagement = () => {
   };
 
   const handleRemoveUser = async (userId) => {
-    if (!window.confirm('Are you sure you want to remove this user?')) return;
     try {
       const res = await axios.delete(`${apiBaseUrl}/api/users/${userId}`, { withCredentials: true });
       if (res.status === 200) {
-        // refresh from server in case other changes exist
         await fetchUsers();
       } else {
         alert('Delete did not complete (server returned ' + res.status + ')');
@@ -169,7 +261,6 @@ const AdminUserManagement = () => {
     }
   };
 
-  // Fetch users from server on mount
   useEffect(() => {
     let mounted = true;
     fetchUsers();
@@ -181,26 +272,6 @@ const AdminUserManagement = () => {
   const activeUsers = users.filter((u) => u.status === 'Active').length;
   const restrictedUsers = users.filter((u) => u.status === 'Restricted').length;
 
-  // Helper: status badge class
-  const getStatusBadgeClass = (status) => {
-    if (status === 'Active') {
-      return 'bg-surface-container-high text-primary border border-outline-variant';
-    }
-    return 'bg-error-container text-on-error-container border border-error/20';
-  };
-
-  // Helper: online dot color
-  const getOnlineDotClass = (status) => {
-    return status === 'Active' ? 'bg-green-500' : 'bg-error';
-  };
-
-  // Placeholder handlers for other interactive elements
-  const handleNewAppointment = () => alert('Create new appointment');
-  const handleInviteClient = () => alert('Invite client flow');
-  const handleNotifications = () => alert('No new notifications');
-  const handleHelp = () => alert('Help & support');
-  const handleExport = () => alert('Export users list');
-  const handleSort = () => alert('Sort functionality coming soon');
   const handlePageChange = (page) => {
     if (page >= 1 && page <= totalPages) setCurrentPage(page);
   };
