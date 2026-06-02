@@ -51,6 +51,20 @@ const AdminServicesManagement = () => {
   // Get unique categories for filter
   const categories = ['All', ...new Set(services.map(s => s.category || '').filter(Boolean))];
 
+  // Summary stats for UI
+  const totalServices = services.length;
+  const uniqueCategoriesCount = new Set(services.map(s => s.category).filter(Boolean)).size;
+  const avgPrice = totalServices ? (services.reduce((sum, s) => sum + (Number(s.price) || 0), 0) / totalServices) : 0;
+
+  const getRowAccent = (category) => {
+    if (!category) return '';
+    const key = category.toLowerCase();
+    if (key.includes('hair')) return 'border-l-4 border-l-amber-400';
+    if (key.includes('skin') || key.includes('facial')) return 'border-l-4 border-l-pink-300';
+    if (key.includes('nail')) return 'border-l-4 border-l-sky-300';
+    return '';
+  };
+
   // Filter services based on search and category
   const filteredServices = useMemo(() => {
     let filtered = services;
@@ -181,45 +195,42 @@ const AdminServicesManagement = () => {
 
       {/* Main Content */}
       <main className="ml-64 pt-20 px-8 pb-8">
-        <div className="sticky top-16 z-30 mb-8 flex justify-end">
-          <button onClick={openCreateForm} className="btn-accent flex items-center gap-3">
-            <span className="material-symbols-outlined text-[20px]">add</span>
-            <span className="font-label-md text-label-md uppercase tracking-widest">Add New Service</span>
-          </button>
+        <div className="sticky top-16 z-30 mb-4 flex items-center justify-between bg-white rounded-xl p-4 shadow-sm">
+          <div className="flex items-center gap-4">
+            <div className="text-sm font-medium">Services ({totalServices} total)</div>
+            <div className="text-xs text-gray-500">{uniqueCategoriesCount} categories</div>
+          </div>
+          <div className="flex items-center gap-3">
+            <button onClick={openCreateForm} className="inline-flex items-center gap-2 bg-primary text-on-primary px-4 py-2 rounded-lg">
+              <span className="material-symbols-outlined">add</span>
+              Add New Service
+            </button>
+          </div>
         </div>
 
         {/* Filters & Search */}
-        <section className="flex gap-gutter mb-8 items-center flex-wrap">
-          <div className="flex-1 relative">
-            <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">search</span>
+        <section className="flex justify-between items-center gap-4 bg-white rounded-xl p-4 shadow-sm mb-6">
+          <div className="flex-1 flex items-center gap-3">
+            <span className="material-symbols-outlined text-outline">search</span>
             <input
               type="text"
               value={searchTerm}
               onChange={handleSearchChange}
-              onFocus={() => setSearchFocus(true)}
-              onBlur={() => setSearchFocus(false)}
-              className={`w-full pl-12 pr-12 py-3 bg-surface-container-lowest border border-outline-variant/10 focus:border-secondary focus:ring-0 transition-all font-body-md text-body-md outline-none search-input ${searchFocus ? 'ring-1 ring-secondary/30' : ''}`}
+              className="flex-1 px-3 py-2 border rounded-lg"
               placeholder="Search services by name or description..."
             />
-            {searchTerm && <button onClick={()=>{ setSearchTerm(''); setCurrentPage(1); }} className="absolute right-3 top-1/2 -translate-y-1/2 text-outline">✕</button>}
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2">
-              <label className="font-label-sm text-label-sm text-outline">Category</label>
-              <select value={selectedCategory} onChange={(e)=>handleFilterChange(e.target.value)} className="p-2 border search-input">
-                {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
-              </select>
-            </div>
-            <div className="flex items-center gap-2">
-              <label className="font-label-sm text-label-sm text-outline">Sort</label>
-              <select onChange={(e)=>{ const v=e.target.value; if(v==='price_asc') setServices(prev=>[...prev].sort((a,b)=>a.price-b.price)); if(v==='price_desc') setServices(prev=>[...prev].sort((a,b)=>b.price-a.price)); }} className="p-2 border">
-                <option value="">Default</option>
-                <option value="price_asc">Price: Low → High</option>
-                <option value="price_desc">Price: High → Low</option>
-              </select>
-            </div>
-            <button onClick={()=>{ setSearchTerm(''); setSelectedCategory('All'); fetchServices(); }} className="btn">Reset</button>
+            <select value={selectedCategory} onChange={(e)=>handleFilterChange(e.target.value)} className="p-2 border rounded-lg">
+              {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+            </select>
+            <select onChange={(e)=>{ const v=e.target.value; if(v==='price_asc') setServices(prev=>[...prev].sort((a,b)=>a.price-b.price)); if(v==='price_desc') setServices(prev=>[...prev].sort((a,b)=>b.price-a.price)); }} className="p-2 border rounded-lg">
+              <option value="">Sort</option>
+              <option value="price_asc">Price: Low → High</option>
+              <option value="price_desc">Price: High → Low</option>
+            </select>
+            <button onClick={()=>{ setSearchTerm(''); setSelectedCategory('All'); fetchServices(); }} className="px-3 py-2 border rounded-lg">Reset</button>
           </div>
         </section>
 
@@ -288,55 +299,55 @@ const AdminServicesManagement = () => {
         )}
 
         {/* Service Table */}
-        <div className="card bg-white border border-outline-variant/20 overflow-hidden">
+        <div className="rounded-xl shadow-sm border border-gray-100 bg-white overflow-hidden border-t-4 border-indigo-500">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-surface-container-low border-b border-outline-variant/30">
-                <th className="px-8 py-6 font-label-md text-label-md uppercase tracking-wider text-outline">Service Details</th>
-                <th className="px-8 py-6 font-label-md text-label-md uppercase tracking-wider text-outline">Category</th>
-                <th className="px-8 py-6 font-label-md text-label-md uppercase tracking-wider text-outline">Duration</th>
-                <th className="px-8 py-6 font-label-md text-label-md uppercase tracking-wider text-outline">Price</th>
-                <th className="px-8 py-6 font-label-md text-label-md uppercase tracking-wider text-outline text-right">Actions</th>
+                <th className="px-8 py-4 text-xs text-gray-500 font-semibold tracking-wider">Service details</th>
+                <th className="px-8 py-4 text-xs text-gray-500 font-semibold tracking-wider">Category</th>
+                <th className="px-8 py-4 text-xs text-gray-500 font-semibold tracking-wider">Duration</th>
+                <th className="px-8 py-4 text-xs text-gray-500 font-semibold tracking-wider">Price</th>
+                <th className="px-8 py-4 text-xs text-gray-500 font-semibold tracking-wider text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-outline-variant/10">
+            <tbody>
               {paginatedServices.map((service) => (
-                <tr key={service.id} className="service-row group hover:bg-surface-container-low transition-all duration-300">
-                  <td className="px-8 py-8">
+                <tr key={service.id} className={`group hover:bg-gray-50 transition-colors duration-150 ${getRowAccent(service.category)}`}>
+                  <td className="px-8 py-6">
                     <div className="flex items-center gap-6">
-                      <div className="w-16 h-16 bg-surface-container flex-shrink-0 overflow-hidden border border-outline-variant/10">
+                      <div className="w-16 h-16 rounded-lg bg-surface-container flex-shrink-0 overflow-hidden border border-outline-variant/10">
                             {(() => {
                               const API_BASE = process.env.REACT_APP_API_URL || '';
                               const src = service.imageUrl && service.imageUrl.startsWith('/') ? `${API_BASE}${service.imageUrl}` : service.imageUrl;
-                              return <img className="w-full h-full object-cover transition-all duration-700" src={src} alt={service.name} />;
+                              return <img className="w-full h-full object-cover rounded-lg transition-all duration-700" src={src} alt={service.name} onError={(e)=>{ e.target.onerror = null; e.target.src = 'https://via.placeholder.com/64x64?text=No+Image'; }} />;
                             })()}
                       </div>
                       <div>
                         <p className="font-headline-md text-[20px] text-primary mb-1">{service.name}</p>
-                        <p className="font-body-md text-body-md text-outline">{service.description}</p>
+                        <p className="font-body-md text-sm text-gray-400">{service.description}</p>
                       </div>
                     </div>
                   </td>
-                      <td className="px-8 py-8">
+                      <td className="px-8 py-6">
                         {service.category ? (
                           <span className={`px-4 py-1.5 rounded-full font-label-sm text-label-sm uppercase ${getBadgeColor(service.category)}`}>{service.category}</span>
                         ) : (
-                          <span className="px-4 py-1.5 rounded-full font-label-sm text-label-sm uppercase bg-surface-container">—</span>
+                          <div className="text-xs text-gray-400 italic">Not set</div>
                         )}
                       </td>
-                  <td className="px-8 py-8">
-                    <p className="font-body-md text-body-md">{service.duration ? `${service.duration} min` : '—'}</p>
+                  <td className="px-8 py-6">
+                    <p className="font-body-md text-sm text-gray-700">{service.duration ? `${service.duration} min` : <span className="text-xs text-gray-400 italic">Not set</span>}</p>
                   </td>
-                  <td className="px-8 py-8">
+                  <td className="px-8 py-6">
                     <p className="font-label-md text-label-md font-bold text-secondary">${(Number(service.price) || 0).toFixed(2)}</p>
                   </td>
-                  <td className="px-8 py-8 text-right">
+                  <td className="px-8 py-6 text-right">
                     <div className="flex justify-end gap-3">
-                      <button onClick={() => handleEditService(service)} className="flex items-center gap-2 bg-primary text-on-primary px-4 py-2 hover:bg-secondary transition-all duration-300">
-                        <span className="material-symbols-outlined text-[18px]">edit</span>
-                        <span className="font-label-sm text-label-sm uppercase tracking-wider">Edit</span>
+                      <button onClick={() => handleEditService(service)} className="border border-indigo-200 text-indigo-600 hover:bg-indigo-50 rounded-lg px-3 py-1.5 text-sm flex items-center gap-1">
+                        <span className="material-symbols-outlined text-[16px]">edit</span>
+                        Edit
                       </button>
-                      <button onClick={() => handleDeleteService(service.id)} className="flex items-center justify-center p-2 border border-outline-variant/30 hover:border-error hover:text-error transition-all group/remove" title="Remove Service">
+                      <button onClick={() => handleDeleteService(service.id)} className="border border-red-200 text-red-400 hover:bg-red-50 rounded-lg p-2" title="Remove Service">
                         <span className="material-symbols-outlined">delete</span>
                       </button>
                     </div>
@@ -349,7 +360,7 @@ const AdminServicesManagement = () => {
                     <div className="space-y-4">
                       <div>No services found.</div>
                       <div>
-                        <button onClick={openCreateForm} className="px-4 py-2 bg-primary text-on-primary">Add your first service</button>
+                        <button onClick={openCreateForm} className="px-4 py-2 bg-primary text-on-primary rounded-md">Add your first service</button>
                       </div>
                     </div>
                   </td>
@@ -360,27 +371,27 @@ const AdminServicesManagement = () => {
         </div>
 
         {/* Pagination */}
-        <footer className="mt-10 flex justify-between items-center px-2 flex-wrap gap-4">
-          <p className="font-label-sm text-label-sm text-outline">
+        <footer className="mt-6 flex justify-between items-center px-2 flex-wrap gap-4">
+          <p className="text-sm text-gray-500">
             Showing {filteredServices.length ? (currentPage - 1) * itemsPerPage + 1 : 0} to {Math.min(currentPage * itemsPerPage, filteredServices.length)} of {filteredServices.length} services
           </p>
-          <div className="flex gap-2">
-            <button onClick={() => goToPage(currentPage - 1)} disabled={currentPage === 1} className="w-10 h-10 flex items-center justify-center border border-outline-variant/30 text-outline hover:border-primary hover:text-primary transition-all disabled:opacity-30 disabled:cursor-not-allowed">
+          <div className="flex items-center gap-2">
+            <button onClick={() => goToPage(currentPage - 1)} disabled={currentPage === 1} className="px-3 py-1 border rounded-lg disabled:opacity-30">
               <span className="material-symbols-outlined">chevron_left</span>
             </button>
-            {Array.from({ length: Math.min(totalPages, 3) }, (_, i) => {
+            {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
               let pageNum = i + 1;
-              if (totalPages > 3 && currentPage > 2) {
-                pageNum = currentPage - 1 + i;
+              if (totalPages > 5 && currentPage > 3) {
+                pageNum = currentPage - 2 + i;
                 if (pageNum > totalPages) return null;
               }
               return (
-                <button key={pageNum} onClick={() => goToPage(pageNum)} className={`w-10 h-10 flex items-center justify-center font-label-md transition-all ${currentPage === pageNum ? 'bg-primary text-on-primary' : 'border border-outline-variant/30 hover:border-primary'}`}>
+                <button key={pageNum} onClick={() => goToPage(pageNum)} className={`w-8 h-8 flex items-center justify-center text-sm ${currentPage === pageNum ? 'bg-indigo-600 text-white rounded-md' : 'border border-outline-variant/30 rounded-md'}`}>
                   {pageNum}
                 </button>
               );
             })}
-            <button onClick={() => goToPage(currentPage + 1)} disabled={currentPage === totalPages || totalPages === 0} className="w-10 h-10 flex items-center justify-center border border-outline-variant/30 text-outline hover:border-primary hover:text-primary transition-all disabled:opacity-30 disabled:cursor-not-allowed">
+            <button onClick={() => goToPage(currentPage + 1)} disabled={currentPage === totalPages || totalPages === 0} className="px-3 py-1 border rounded-lg disabled:opacity-30">
               <span className="material-symbols-outlined">chevron_right</span>
             </button>
           </div>
