@@ -217,9 +217,11 @@ const AdminUserManagement = () => {
   return (
     <div className="app">
       <AdminSidebar />
+
+      <AdminHeader title="Client Management" />
+
       {/* Main Content */}
       <div className="main md:ml-64">
-        <AdminHeader title="Client Management" />
         <div className="content">
           {/* Page Header & Metrics */}
           <div className="mb-12">

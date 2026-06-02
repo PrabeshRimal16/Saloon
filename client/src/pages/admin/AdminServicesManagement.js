@@ -177,9 +177,10 @@ const AdminServicesManagement = () => {
     <div className="bg-surface font-body-md text-on-surface">
       <AdminSidebar />
 
+      <AdminHeader title="Service Catalog Management" />
+
       {/* Main Content */}
-      <main className="md:ml-64 min-h-screen p-12">
-        <AdminHeader title="Service Catalog Management" />
+      <main className="md:ml-64 min-h-screen px-6 pb-12">
         <div className="mb-8 flex justify-end">
           <button onClick={openCreateForm} className="btn-accent flex items-center gap-3">
             <span className="material-symbols-outlined text-[20px]">add</span>

@@ -20,8 +20,9 @@ export default function AdminSetting() {
     <div className="font-body-md text-body-md min-h-screen bg-gray-50">
       <AdminSidebar />
 
-      <main className="flex-grow md:ml-64 p-6 lg:p-12">
-        <AdminHeader title="Profile Settings" />
+      <AdminHeader title="Profile Settings" />
+
+      <main className="flex-grow md:ml-64 px-6 lg:px-12 pb-12">
         <div className="max-w-4xl mx-auto space-y-8">
           {/* Page title displayed in header (AdminHeader) */}
 

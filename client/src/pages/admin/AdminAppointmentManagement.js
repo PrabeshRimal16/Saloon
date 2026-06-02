@@ -94,9 +94,10 @@ const AdminAppointmentManagement = () => {
 
       <AdminSidebar />
 
+      <AdminHeader title="Appointment Management" />
+
       {/* Main Content */}
       <div className="main md:ml-64">
-        <AdminHeader title="Appointment Management" />
         <div className="content">
           {/* Breadcrumb & Title */}
           <section className="mb-12">

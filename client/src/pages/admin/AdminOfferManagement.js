@@ -111,9 +111,10 @@ const AdminOfferManagement = () => {
 
       <AdminSidebar />
 
+      <AdminHeader title="Offers & Promotions Management" />
+
       {/* ── Main Content ── */}
-      <main className="md:ml-64 p-gutter max-w-container-max-width mx-auto">
-        <AdminHeader title="Offers & Promotions Management" />
+      <main className="md:ml-64 max-w-container-max-width mx-auto px-gutter">
         {/* Action Bar */}
         <div className="mb-8 flex justify-end">
           <button className="px-8 py-4 bg-tertiary text-on-primary font-label-md text-label-md flex items-center gap-3 hover:bg-secondary transition-colors duration-300">
