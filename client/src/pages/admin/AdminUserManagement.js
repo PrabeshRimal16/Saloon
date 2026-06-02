@@ -165,7 +165,7 @@ const AdminUserManagement = () => {
     if (!confirmDialog) return;
     const { type, user } = confirmDialog;
     try {
-      if (type === 'restrict') {
+      if (type === 'restrict' || type === 'unrestrict') {
         await handleRestrictToggle(user.id, user.status);
       } else if (type === 'remove') {
         await handleRemoveUser(user.id);
@@ -329,78 +329,89 @@ const AdminUserManagement = () => {
           </div>
 
           {/* Table Controls */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 border-b border-outline-variant pb-6">
-            <div className="flex gap-8">
-              {['All Users', 'Active', 'Restricted'].map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => handleFilterChange(tab)}
-                  className={`font-label-md text-label-md uppercase tracking-widest pb-2 transition-colors ${
-                    activeTab === tab
-                      ? 'border-b-2 border-primary text-primary'
-                      : 'text-on-surface-variant hover:text-primary'
-                  }`}
+          <div className="flex flex-col gap-5 mb-8 border-b border-outline-variant pb-6">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div className="flex gap-6 flex-wrap">
+                {['All Users', 'Active', 'Restricted'].map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => handleFilterChange(tab)}
+                    className={`px-4 py-2 rounded-full font-label-sm uppercase tracking-widest transition-all ${
+                      activeTab === tab
+                        ? 'gold-tab-active'
+                        : 'gold-tab'
+                    }`}
+                  >
+                    {tab}
+                  </button>
+                ))}
+              </div>
+              <div className="flex flex-wrap items-center gap-3">
+                <div className="relative w-full max-w-xs">
+                  <span className="material-symbols-outlined table-search-icon">search</span>
+                  <input
+                    value={searchTerm}
+                    onChange={handleSearchChange}
+                    placeholder="Search members, email, phone or role"
+                    className="search-input"
+                  />
+                </div>
+                <select
+                  value={sortOption}
+                  onChange={handleSortChange}
+                  className="px-4 py-3 rounded-full border border-outline-variant bg-surface text-on-surface font-label-sm tracking-widest"
                 >
-                  {tab}
+                  <option value="newest">Newest Joined</option>
+                  <option value="oldest">Oldest Joined</option>
+                  <option value="name">Name A‑Z</option>
+                </select>
+                <button
+                  onClick={exportUsersCsv}
+                  className="btn-gold"
+                >
+                  <span className="material-symbols-outlined text-sm">download</span>
+                  Export
                 </button>
-              ))}
-            </div>
-            <div className="flex items-center gap-4">
-              <button
-                onClick={handleSort}
-                className="flex items-center gap-2 px-6 py-2 border border-outline-variant font-label-sm text-label-sm uppercase tracking-widest hover:border-primary transition-all"
-              >
-                <span className="material-symbols-outlined text-sm">filter_list</span>
-                Sort By
-              </button>
-              <button
-                onClick={handleExport}
-                className="flex items-center gap-2 px-6 py-2 border border-outline-variant font-label-sm text-label-sm uppercase tracking-widest hover:border-primary transition-all"
-              >
-                <span className="material-symbols-outlined text-sm">download</span>
-                Export
-              </button>
-              <button
-                onClick={fetchUsers}
-                disabled={loadingUsers}
-                className="flex items-center gap-2 px-6 py-2 border border-outline-variant font-label-sm text-label-sm uppercase tracking-widest hover:border-primary transition-all"
-              >
-                <span className="material-symbols-outlined text-sm">refresh</span>
-                {loadingUsers ? 'Refreshing...' : 'Refresh'}
-              </button>
+                <button
+                  onClick={fetchUsers}
+                  disabled={loadingUsers}
+                  className="btn-black"
+                >
+                  <span className="material-symbols-outlined text-sm">refresh</span>
+                  {loadingUsers ? 'Refreshing...' : 'Refresh'}
+                </button>
+              </div>
             </div>
           </div>
 
           {/* Client Table */}
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full text-left border-separate border-spacing-y-4">
               <thead>
-                <tr className="border-b border-outline-variant">
-                  <th className="py-6 font-label-md text-label-md uppercase text-on-surface-variant tracking-widest w-1/3">Name &amp; Identity</th>
-                  <th className="py-6 font-label-md text-label-md uppercase text-on-surface-variant tracking-widest">Joined Date</th>
-                  <th className="py-6 font-label-md text-label-md uppercase text-on-surface-variant tracking-widest">Status</th>
-                  <th className="py-6 font-label-md text-label-md uppercase text-on-surface-variant tracking-widest text-right">Actions</th>
+                <tr>
+                  <th className="py-4 font-label-md text-label-md uppercase text-on-surface-variant tracking-widest w-2/5">Name & Identity</th>
+                  <th className="py-4 font-label-md text-label-md uppercase text-on-surface-variant tracking-widest">Joined</th>
+                  <th className="py-4 font-label-md text-label-md uppercase text-on-surface-variant tracking-widest">Phone</th>
+                  <th className="py-4 font-label-md text-label-md uppercase text-on-surface-variant tracking-widest">Role</th>
+                  <th className="py-4 font-label-md text-label-md uppercase text-on-surface-variant tracking-widest">Status</th>
+                  <th className="py-4 font-label-md text-label-md uppercase text-on-surface-variant tracking-widest text-right">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {paginatedUsers.map((user) => (
+                {paginatedUsers.map((user, index) => (
                   <tr
                     key={user.id}
-                    className="group border-b border-outline-variant hover:bg-surface-container-lowest transition-all duration-300 hover:translate-x-1"
+                    className={`table-row ${index % 2 === 0 ? 'table-row-even' : 'table-row-odd'}`}
                   >
                     <td className="py-6">
                       <div className="flex items-center gap-4">
                         <div className="relative">
                           <img
                             alt={user.name}
-                            className="w-12 h-12 rounded-full object-cover"
-                            src={user.avatarUrl}
+                            className="w-12 h-12 rounded-full object-cover border-2 border-gold"
+                            src={user.avatarUrl || 'https://via.placeholder.com/80?text=+'}
                           />
-                          <div
-                            className={`absolute -bottom-1 -right-1 w-4 h-4 ${getOnlineDotClass(
-                              user.status
-                            )} border-2 border-surface rounded-full`}
-                          ></div>
+                          <span className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-black ${getOnlineDotClass(user.isOnline)}`}></span>
                         </div>
                         <div>
                           <p className="font-body-lg text-primary font-semibold">{user.name}</p>
@@ -408,36 +419,37 @@ const AdminUserManagement = () => {
                         </div>
                       </div>
                     </td>
-                    <td className="py-6 font-body-md text-on-surface-variant">{user.joinedDate}</td>
+                    <td className="py-6 font-body-md text-on-surface-variant">{formatDate(user.joinedDate)}</td>
+                    <td className="py-6 font-body-md text-on-surface-variant">{user.phone}</td>
                     <td className="py-6">
-                      <span
-                        className={`px-3 py-1 font-label-sm uppercase text-[10px] tracking-widest ${getStatusBadgeClass(
-                          user.status
-                        )}`}
-                      >
+                      <span className={`px-3 py-1 rounded-full font-label-sm uppercase tracking-[0.18em] ${getRoleBadgeClass(user.role)}`}>
+                        {user.role}
+                      </span>
+                    </td>
+                    <td className="py-6">
+                      <span className={`px-3 py-1 rounded-full font-label-sm uppercase tracking-[0.18em] ${getStatusBadgeClass(user.status)}`}>
                         {user.status}
                       </span>
                     </td>
                     <td className="py-6 text-right">
-                      <div className="flex justify-end gap-3">
-                        {user.status === 'Active' ? (
+                      <div className="flex flex-wrap justify-end gap-2">
+                        {user.role.toLowerCase() !== 'admin' && (
                           <button
-                            onClick={() => handleRestrictToggle(user.id, user.status)}
-                            className="px-4 py-2 border border-outline text-on-surface-variant font-label-sm uppercase text-[10px] tracking-widest hover:bg-inverse-surface hover:text-surface transition-all"
+                            onClick={() => handleMakeAdmin(user.id)}
+                            className="px-4 py-2 btn-action"
                           >
-                            Restrict
-                          </button>
-                        ) : (
-                          <button
-                            onClick={() => handleRestrictToggle(user.id, user.status)}
-                            className="px-4 py-2 border border-secondary text-secondary font-label-sm uppercase text-[10px] tracking-widest hover:bg-secondary hover:text-on-secondary transition-all"
-                          >
-                            Unrestrict
+                            Make Admin
                           </button>
                         )}
                         <button
-                          onClick={() => handleRemoveUser(user.id)}
-                          className="px-4 py-2 border border-error/30 text-error font-label-sm uppercase text-[10px] tracking-widest hover:bg-error hover:text-white transition-all"
+                          onClick={() => handleConfirmDialog(user.status === 'Active' ? 'restrict' : 'unrestrict', user)}
+                          className={`px-4 py-2 btn-action ${user.status === 'Active' ? 'btn-outline' : 'btn-gold-outline'}`}
+                        >
+                          {user.status === 'Active' ? 'Restrict' : 'Lift Restriction'}
+                        </button>
+                        <button
+                          onClick={() => handleConfirmDialog('remove', user)}
+                          className="px-4 py-2 btn-danger"
                         >
                           Remove
                         </button>
@@ -447,14 +459,37 @@ const AdminUserManagement = () => {
                 ))}
                 {paginatedUsers.length === 0 && (
                   <tr>
-                    <td colSpan="4" className="py-12 text-center text-on-surface-variant">
-                      No users found.
+                    <td colSpan="6" className="py-16 text-center">
+                      <div className="empty-state-panel">
+                        <span className="material-symbols-outlined text-[3rem] text-gold">sparkles</span>
+                        <p className="mt-4 font-headline-sm text-primary">No matching members found</p>
+                        <p className="mt-2 text-on-surface-variant max-w-sm mx-auto">Refine your search or reset the filters to reveal active salon members and VIP clients.</p>
+                      </div>
                     </td>
                   </tr>
                 )}
               </tbody>
             </table>
           </div>
+
+          {confirmDialog && (
+            <div className="modal-backdrop">
+              <div className="modal-panel">
+                <h2 className="font-headline-lg text-primary">Confirm action</h2>
+                <p className="mt-3 text-on-surface-variant">
+                  Are you sure you want to {confirmDialog.type === 'remove' ? 'remove' : confirmDialog.type === 'restrict' ? 'restrict' : 'restore'} <strong>{confirmDialog.user.name}</strong>?
+                </p>
+                <div className="mt-6 flex flex-wrap gap-3 justify-end">
+                  <button onClick={handleCancelConfirm} className="px-5 py-3 btn-black">
+                    Cancel
+                  </button>
+                  <button onClick={confirmAction} className="px-5 py-3 btn-danger">
+                    Confirm
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Pagination */}
           <div className="mt-12 flex items-center justify-between border-t border-outline-variant pt-8 flex-wrap gap-4">
