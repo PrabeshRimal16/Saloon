@@ -393,18 +393,7 @@ const AdminUserManagement = () => {
                     <th className="table-header-cell min-w-[200px] text-right">Actions</th>
                   </tr>
                 </thead>
-            <table className="w-full text-left border-separate border-spacing-y-4">
-              <thead>
-                <tr>
-                  <th className="py-4 font-label-md text-label-md uppercase text-on-surface-variant tracking-widest w-2/5">Name & Identity</th>
-                  <th className="py-4 font-label-md text-label-md uppercase text-on-surface-variant tracking-widest">Joined</th>
-                  <th className="py-4 font-label-md text-label-md uppercase text-on-surface-variant tracking-widest">Phone</th>
-                  <th className="py-4 font-label-md text-label-md uppercase text-on-surface-variant tracking-widest">Role</th>
-                  <th className="py-4 font-label-md text-label-md uppercase text-on-surface-variant tracking-widest">Status</th>
-                  <th className="py-4 font-label-md text-label-md uppercase text-on-surface-variant tracking-widest text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
+                <tbody>
                 {paginatedUsers.map((user, index) => (
                   <tr
                     key={user.id}
