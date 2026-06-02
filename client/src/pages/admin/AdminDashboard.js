@@ -102,6 +102,71 @@ const AdminDashboard = () => {
   const totalWeekly = weeklyCounts.reduce((s, n) => s + (n || 0), 0);
   const weeklyBookings = totalWeekly;
 
+  const monthLabels = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const currentYear = now.getFullYear();
+  const yearLabels = Array.from({ length: 4 }, (_, idx) => currentYear - (3 - idx));
+
+  const monthlyRevenue = monthLabels.map((_, monthIndex) =>
+    appointments.reduce((sum, a) => {
+      const d = getAppointmentDate(a);
+      if (!d || isCancelled(a) || d.getFullYear() !== currentYear || d.getMonth() !== monthIndex) return sum;
+      return sum + (Number(a.price ?? a.service_price ?? 0) || 0);
+    }, 0)
+  );
+
+  const yearlyRevenue = yearLabels.map((year) =>
+    appointments.reduce((sum, a) => {
+      const d = getAppointmentDate(a);
+      if (!d || isCancelled(a) || d.getFullYear() !== year) return sum;
+      return sum + (Number(a.price ?? a.service_price ?? 0) || 0);
+    }, 0)
+  );
+
+  const buildLinePoints = (values, width, height) => {
+    const max = Math.max(...values, 1);
+    const step = values.length > 1 ? width / (values.length - 1) : width;
+    return values
+      .map((value, index) => {
+        const x = index * step;
+        const y = height - (value / max) * height;
+        return `${x},${y}`;
+      })
+      .join(' ');
+  };
+
+  const renderLineChart = (title, labels, values, totalLabel) => {
+    const width = 360;
+    const height = 140;
+    const points = buildLinePoints(values, width, height);
+    const totalValue = values.reduce((sum, value) => sum + value, 0);
+
+    return (
+      <div className="line-chart">
+        <div className="line-chart-header">
+          <div>
+            <h3>{title}</h3>
+            <p className="line-chart-sub">{totalLabel} total: {totalLabel === 'Revenue' ? `$${totalValue.toFixed(2)}` : totalValue}</p>
+          </div>
+          <div className="line-chart-summary">{totalLabel === 'Revenue' ? `$${totalValue.toFixed(2)}` : totalValue}</div>
+        </div>
+        <svg viewBox={`0 0 ${width} ${height}`} className="line-chart-svg">
+          <polyline points={points} className="line-chart-line" />
+          {values.map((value, idx) => {
+            const x = idx * (values.length > 1 ? width / (values.length - 1) : width);
+            const max = Math.max(...values, 1);
+            const y = height - (value / max) * height;
+            return <circle key={idx} cx={x} cy={y} r="4" className="line-chart-point" />;
+          })}
+        </svg>
+        <div className="line-chart-labels">
+          {labels.map((label) => (
+            <div key={label} className="line-chart-label-item">{label}</div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   const stats = [
     { label: 'Upcoming (7d)', value: upcomingBookings, sub: 'bookings' },
     { label: 'Revenue (month)', value: `$${revenueThisMonth.toFixed(2)}`, sub: 'this month' },
@@ -147,6 +212,11 @@ const AdminDashboard = () => {
                   return `Last record: ${dateStr}`;
                 })() : 'no appointments'}
               </div>
+            </div>
+
+            <div className="charts-grid">
+              {renderLineChart('Revenue by month', monthLabels, monthlyRevenue, 'Revenue')}
+              {renderLineChart('Revenue by year', yearLabels, yearlyRevenue, 'Revenue')}
             </div>
 
             <div className="action-cards">

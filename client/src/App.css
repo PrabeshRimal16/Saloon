@@ -323,6 +323,80 @@ body {
   color: #1e293b;
 }
 
+.line-chart {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid #eef2ff;
+  margin-bottom: 32px;
+}
+
+.line-chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.line-chart-header h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: #0f172a;
+}
+
+.line-chart-sub {
+  margin: 4px 0 0;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.line-chart-summary {
+  color: #0f172a;
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+.line-chart-svg {
+  width: 100%;
+  height: 160px;
+  overflow: visible;
+}
+
+.line-chart-line {
+  fill: none;
+  stroke: #2563eb;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.line-chart-point {
+  fill: #ffffff;
+  stroke: #2563eb;
+  stroke-width: 3;
+}
+
+.line-chart-labels {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin-top: 16px;
+}
+
+.line-chart-label-item {
+  text-align: center;
+  font-size: 0.78rem;
+  color: #64748b;
+}
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
 /* ACTION CARDS */
 .action-cards {
   display: grid;
