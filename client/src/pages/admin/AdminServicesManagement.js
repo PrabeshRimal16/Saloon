@@ -48,9 +48,9 @@ const AdminServicesManagement = () => {
   };
 
   const formatPrice = (value) => {
-    return new Intl.NumberFormat('ne-NP', {
+    return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: 'NPR',
+      currency: 'USD',
       maximumFractionDigits: 2,
     }).format(Number(value) || 0);
   };
