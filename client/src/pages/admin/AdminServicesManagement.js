@@ -180,8 +180,8 @@ const AdminServicesManagement = () => {
       <AdminHeader title="Service Catalog Management" />
 
       {/* Main Content */}
-      <main className="md:ml-64 min-h-screen px-6 pb-12">
-        <div className="mb-8 flex justify-end">
+      <main className="ml-64 pt-20 px-8 pb-8">
+        <div className="sticky top-16 z-30 mb-8 flex justify-end">
           <button onClick={openCreateForm} className="btn-accent flex items-center gap-3">
             <span className="material-symbols-outlined text-[20px]">add</span>
             <span className="font-label-md text-label-md uppercase tracking-widest">Add New Service</span>
@@ -318,10 +318,14 @@ const AdminServicesManagement = () => {
                     </div>
                   </td>
                       <td className="px-8 py-8">
-                        <span className={`px-4 py-1.5 rounded-full font-label-sm text-label-sm uppercase ${getBadgeColor(service.category)}`}>{service.category}</span>
+                        {service.category ? (
+                          <span className={`px-4 py-1.5 rounded-full font-label-sm text-label-sm uppercase ${getBadgeColor(service.category)}`}>{service.category}</span>
+                        ) : (
+                          <span className="px-4 py-1.5 rounded-full font-label-sm text-label-sm uppercase bg-surface-container">—</span>
+                        )}
                       </td>
                   <td className="px-8 py-8">
-                    <p className="font-body-md text-body-md">{service.duration}</p>
+                    <p className="font-body-md text-body-md">{service.duration ? `${service.duration} min` : '—'}</p>
                   </td>
                   <td className="px-8 py-8">
                     <p className="font-label-md text-label-md font-bold text-secondary">${(Number(service.price) || 0).toFixed(2)}</p>

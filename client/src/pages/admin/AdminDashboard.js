@@ -90,7 +90,7 @@ const AdminDashboard = () => {
   return (
     <div className="app">
       <AdminSidebar />
-      <div className="main md:ml-64">
+      <div className="main ml-64 pt-20 px-8 pb-8">
         <AdminHeader title="Overview" />
         <div className="content">
 

@@ -97,7 +97,7 @@ const AdminAppointmentManagement = () => {
       <AdminHeader title="Appointment Management" />
 
       {/* Main Content */}
-      <div className="main md:ml-64">
+      <div className="main ml-64 pt-20 px-8 pb-8">
         <div className="content">
           {/* Breadcrumb & Title */}
           <section className="mb-12">

@@ -22,7 +22,7 @@ export default function AdminSetting() {
 
       <AdminHeader title="Profile Settings" />
 
-      <main className="flex-grow md:ml-64 px-6 lg:px-12 pb-12">
+      <main className="flex-grow ml-64 pt-20 px-8 pb-8">
         <div className="max-w-4xl mx-auto space-y-8">
           {/* Page title displayed in header (AdminHeader) */}
 

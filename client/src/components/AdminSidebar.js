@@ -14,8 +14,8 @@ export default function AdminSidebar() {
 	};
 
 	return (
-		<aside className="sidebar">
-			<div className="p-6 border-b border-gray-800">
+		    <aside className="fixed top-0 left-0 h-screen w-64 bg-[#1a2035] flex flex-col z-40 text-[#e2e8f0]">
+			    <div className="pt-16 p-6 border-b border-gray-800">
 				<NavLink to="/admin" className="text-2xl font-serif text-white">Admin</NavLink>
 				{/* user preview */}
 				<div className="mt-4 flex items-center gap-3">

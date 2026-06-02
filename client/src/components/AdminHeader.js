@@ -32,8 +32,8 @@ export default function AdminHeader({ title }) {
   const avatarSrc = user?.avatar_url || user?.photo || user?.avatar || user?.avatarUrl || user?.picture || null;
 
   return (
-    <header ref={headerRef} className="app-header w-full fixed top-0 left-0 right-0 z-50 border-b border-transparent">
-      <div className="max-w-screen-xl mx-auto flex items-center justify-between px-4 lg:px-10 h-full">
+    <header ref={headerRef} className="app-header fixed top-0 left-0 right-0 z-50 h-16 border-b border-transparent">
+      <div className="max-w-screen-xl mx-auto flex items-center justify-between pl-64 px-4 lg:px-10 h-full">
         <div>
           <h1 className="text-2xl font-serif">{title || 'Admin'}</h1>
           <p className="text-sm" style={{color:'rgba(255,255,255,0.85)'}}>Manage site settings and content</p>
