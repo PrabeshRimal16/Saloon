@@ -46,7 +46,6 @@ export default function AdminSidebar() {
 			</nav>
 			<div className="p-4 border-t border-gray-800">
 				<button onClick={handleLogout} className="w-full text-left px-4 py-2 rounded-md bg-red-600 hover:bg-red-700 text-white">Logout</button>
-				<div className="mt-3 version-text">v1.0</div>
 			</div>
 		</aside>
 	);
