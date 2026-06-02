@@ -48,7 +48,7 @@ const AdminOfferManagement = () => {
   // ── Fetch Notifications ──
   const fetchNotifications = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/notifications/admin");
+      const response = await fetch(`${API_BASE}/api/notifications/admin`);
       if (response.ok) {
         const data = await response.json();
         setNotifications(data);
@@ -145,8 +145,8 @@ const AdminOfferManagement = () => {
     try {
       const method = editingId ? "PUT" : "POST";
       const url = editingId
-        ? `http://localhost:5000/api/offers/${editingId}`
-        : "http://localhost:5000/api/offers";
+        ? `${API_BASE}/api/offers/${editingId}`
+        : `${API_BASE}/api/offers`;
 
       const body = new FormData();
       body.append("title", formData.title);
@@ -189,7 +189,7 @@ const AdminOfferManagement = () => {
   const handleDeleteOffer = async (id) => {
     if (window.confirm("Are you sure you want to delete this offer?")) {
       try {
-        const response = await fetch(`http://localhost:5000/api/offers/${id}`, {
+        const response = await fetch(`${API_BASE}/api/offers/${id}`, {
           method: "DELETE",
         });
 
@@ -638,7 +638,7 @@ const AdminOfferManagement = () => {
       {/* ── Modal for Create/Edit Offer ── */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-xl max-w-md w-full">
+          <div className="bg-white rounded-3xl shadow-xl max-w-3xl w-full">
             <div className="p-6 border-b border-gray-200 flex justify-between items-center">
               <h2 className="text-xl font-bold text-gray-900">
                 {editingId ? "Edit Offer" : "Create New Offer"}
@@ -730,30 +730,51 @@ const AdminOfferManagement = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Offer Image
                 </label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      image: e.target.files?.[0] || null,
-                    })
-                  }
-                  className="w-full text-sm text-gray-700 mb-3"
-                />
-                <div className="w-full h-56 bg-surface-container border border-outline-variant/20 rounded-xl overflow-hidden flex items-center justify-center">
-                  {offerImagePreview ? (
-                    <img
-                      src={offerImagePreview}
-                      alt="Offer preview"
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="text-on-surface-variant p-4 text-sm text-center">
-                      Drop image here or click to upload
-                    </div>
-                  )}
+                <div className="relative">
+                  <input
+                    id="offer-image-upload"
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        image: e.target.files?.[0] || null,
+                      })
+                    }
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  />
+                  <div className="h-56 rounded-3xl border-2 border-dashed border-gray-300 bg-gray-50 flex flex-col items-center justify-center gap-3 text-center p-4 transition duration-200 hover:border-indigo-500 hover:bg-white cursor-pointer overflow-hidden">
+                    {offerImagePreview ? (
+                      <img
+                        src={offerImagePreview}
+                        alt="Offer preview"
+                        className="absolute inset-0 w-full h-full object-cover"
+                      />
+                    ) : (
+                      <>
+                        <span className="material-symbols-outlined text-4xl text-indigo-500">
+                          cloud_upload
+                        </span>
+                        <div className="space-y-1">
+                          <p className="text-sm font-medium text-gray-900">
+                            Click to upload or replace image
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            JPG, PNG, GIF up to 5MB
+                          </p>
+                        </div>
+                      </>
+                    )}
+                    {offerImagePreview && (
+                      <div className="absolute inset-0 bg-black/15" />
+                    )}
+                  </div>
                 </div>
+                {formData.image && (
+                  <p className="mt-3 text-sm text-gray-600 truncate">
+                    Selected file: {formData.image.name}
+                  </p>
+                )}
               </div>
 
               <div className="col-span-3 flex gap-3 pt-4 border-t border-gray-200">

@@ -43,42 +43,64 @@ const AdminDashboard = () => {
 
   // derive stats from appointments
   const now = new Date();
-  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0);
+  const startOfNextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1, 0, 0, 0, 0);
+  const endOfMonth = new Date(startOfNextMonth.getTime() - 1);
 
-  const upcomingWindowEnd = new Date();
-  upcomingWindowEnd.setDate(now.getDate() + 7);
+  const upcomingWindowEnd = new Date(now.getTime());
+  upcomingWindowEnd.setDate(upcomingWindowEnd.getDate() + 7);
+  upcomingWindowEnd.setHours(23, 59, 59, 999);
+
+  const startOfWeek = new Date(now);
+  const weekDayIndex = (now.getDay() + 6) % 7; // Monday=0, Sunday=6
+  startOfWeek.setDate(now.getDate() - weekDayIndex);
+  startOfWeek.setHours(0, 0, 0, 0, 0);
+  const endOfWeek = new Date(startOfWeek);
+  endOfWeek.setDate(startOfWeek.getDate() + 6);
+  endOfWeek.setHours(23, 59, 59, 999);
+
+  const getAppointmentDate = (a) => (a.appointment_date ? new Date(a.appointment_date) : null);
+  const isCancelled = (a) => String(a.status || '').toLowerCase() === 'cancelled';
+  const msPerDay = 1000 * 60 * 60 * 24;
 
   const upcomingBookings = appointments.filter((a) => {
-    const d = a.appointment_date ? new Date(a.appointment_date) : null;
-    return d && d >= now && d <= upcomingWindowEnd;
+    const d = getAppointmentDate(a);
+    return d && d >= now && d <= upcomingWindowEnd && !isCancelled(a);
   }).length;
 
   const revenueThisMonth = appointments.reduce((sum, a) => {
-    const d = a.appointment_date ? new Date(a.appointment_date) : null;
-    const price = Number(a.price ?? a.service_price ?? a.service_price ?? 0) || 0;
-    if (d && d >= startOfMonth && d <= endOfMonth) return sum + price;
+    const d = getAppointmentDate(a);
+    if (!d || isCancelled(a)) return sum;
+    const price = Number(a.price ?? a.service_price ?? 0) || 0;
+    if (d >= startOfMonth && d < startOfNextMonth) return sum + price;
     return sum;
   }, 0);
 
-  const activeClients = new Set(appointments.map((a) => a.user_id || a.user_id || a.user_id)).size;
-  const pending = appointments.filter((a) => !a.status || a.status === 'pending' || a.status === 'new').length;
+  const activeClients = new Set(
+    appointments
+      .filter((a) => !isCancelled(a) && getAppointmentDate(a) && getAppointmentDate(a) >= startOfMonth && getAppointmentDate(a) < startOfNextMonth)
+      .map((a) => a.user_id)
+  ).size;
+  const pending = appointments.filter((a) => {
+    const status = String(a.status || 'pending').toLowerCase();
+    return status === 'pending' || status === 'new';
+  }).length;
 
   // weekly breakdown (Mon-Sun) for upcoming 7 days
-  const weekLabels = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-  const weeklyCounts = weekLabels.map((_, idx) => 0);
-  // count bookings per weekday for next 7 days
+  const weekLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const weeklyCounts = weekLabels.map(() => 0);
+  // count bookings per weekday for current calendar week
   appointments.forEach((a) => {
-    const d = a.appointment_date ? new Date(a.appointment_date) : null;
-    if (!d) return;
-    const diff = Math.ceil((d - now) / (1000*60*60*24));
-    if (diff >= 0 && diff < 7) {
-      const dayIdx = (d.getDay() + 6) % 7; // convert Sun=0 to index 6, Mon=0
-      weeklyCounts[dayIdx] = (weeklyCounts[dayIdx] || 0) + 1;
+    const d = getAppointmentDate(a);
+    if (!d || isCancelled(a)) return;
+    if (d >= startOfWeek && d <= endOfWeek) {
+      const dayIdx = (d.getDay() + 6) % 7; // Monday = 0, Sunday = 6
+      weeklyCounts[dayIdx] += 1;
     }
   });
 
-  const totalWeekly = weeklyCounts.reduce((s,n)=>s+(n||0),0);
+  const totalWeekly = weeklyCounts.reduce((s, n) => s + (n || 0), 0);
+  const weeklyBookings = totalWeekly;
 
   const stats = [
     { label: 'Upcoming (7d)', value: upcomingBookings, sub: 'bookings' },
@@ -129,8 +151,8 @@ const AdminDashboard = () => {
 
             <div className="action-cards">
               <div className="card">
-                <div className="card-number">{stats[0].value}</div>
-                <div className="card-label">New bookings</div>
+                <div className="card-number">{weeklyBookings}</div>
+                <div className="card-label">Bookings this week</div>
               </div>
               <div className="card revenue">
                 <div className="card-number">{stats[1].value}</div>
