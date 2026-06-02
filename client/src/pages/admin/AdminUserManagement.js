@@ -141,6 +141,7 @@ const AdminUserManagement = () => {
 
   const handleSortChange = (e) => {
     setSortOption(e.target.value);
+    setCurrentPage(1);
   };
 
   const handleMakeAdmin = async (userId) => {
