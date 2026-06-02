@@ -17,13 +17,7 @@ const AdminServicesManagement = () => {
   const itemsPerPage = 5;
 
   const getBadgeColor = (category) => {
-    if (!category) return 'bg-surface-container';
-    const key = category.toLowerCase();
-    if (key.includes('hair')) return 'bg-amber-100 text-amber-800';
-    if (key.includes('skin') || key.includes('facial')) return 'bg-pink-100 text-pink-800';
-    if (key.includes('nail')) return 'bg-sky-100 text-sky-800';
-    if (key.includes('men')) return 'bg-slate-100 text-slate-800';
-    return 'bg-surface-container';
+    return 'gold-badge';
   };
 
   useEffect(() => {
@@ -207,6 +201,7 @@ const AdminServicesManagement = () => {
     fd.append('category', formData.category);
     fd.append('duration', formData.duration);
     fd.append('price', formData.price);
+    fd.append('active', formData.active ? 'true' : 'false');
     if (formData.image) fd.append('image', formData.image);
 
     try {
@@ -246,7 +241,15 @@ const AdminServicesManagement = () => {
 
   const handleEditService = (service) => {
     setEditingService(service);
-    setFormData({ name: service.name || '', description: service.description || '', category: service.category || '', duration: service.duration || '', price: service.price || '', image: null });
+    setFormData({
+      name: service.name || '',
+      description: service.description || '',
+      category: service.category || '',
+      duration: service.duration || '',
+      price: service.price || '',
+      image: null,
+      active: typeof service.active === 'boolean' ? service.active : true,
+    });
     setShowForm(true);
   };
 
@@ -287,13 +290,13 @@ const AdminServicesManagement = () => {
 
       {/* Main Content */}
       <main className="ml-64 pt-20 px-8 pb-8">
-        <div className="sticky top-16 z-30 mb-4 flex items-center justify-between bg-white rounded-xl p-4 shadow-sm">
-          <div className="flex items-center gap-4">
-            <div className="text-sm font-medium">Services ({totalServices} total)</div>
-            <div className="text-xs text-gray-500">{uniqueCategoriesCount} categories</div>
+        <div className="sticky top-16 z-30 mb-4 card" style={{ background: '#ffffff', border: '1px solid rgba(15,23,42,0.08)', padding: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#111111' }}>Services ({totalServices} total)</div>
+            <div style={{ fontSize: '0.85rem', color: '#6b7280' }}>{uniqueCategoriesCount} categories</div>
           </div>
-          <div className="flex items-center gap-3">
-            <button onClick={openCreateForm} className="inline-flex items-center gap-2 bg-primary text-on-primary px-4 py-2 rounded-lg">
+          <div>
+            <button onClick={openCreateForm} className="btn gold-btn" type="button">
               <span className="material-symbols-outlined">add</span>
               Add New Service
             </button>
@@ -301,28 +304,31 @@ const AdminServicesManagement = () => {
         </div>
 
         {/* Filters & Search */}
-        <section className="flex justify-between items-center gap-4 bg-white rounded-xl p-4 shadow-sm mb-6">
-          <div className="flex-1 flex items-center gap-3">
-            <span className="material-symbols-outlined text-outline">search</span>
+        <section className="card" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: '1rem', marginBottom: '1.5rem', border: '1px solid rgba(15,23,42,0.08)', padding: '1rem' }}>
+          <div style={{ flex: '1 1 320px', display: 'flex', alignItems: 'center', gap: '0.75rem', minWidth: 0 }}>
+            <span className="material-symbols-outlined" style={{ color: '#6b7280' }}>search</span>
             <input
               type="text"
               value={searchTerm}
               onChange={handleSearchChange}
-              className="flex-1 px-3 py-2 border rounded-lg"
+              className="input"
               placeholder="Search services by name or description..."
+              style={{ width: '100%' }}
             />
           </div>
 
-          <div className="flex items-center gap-3">
-            <select value={selectedCategory} onChange={(e)=>handleFilterChange(e.target.value)} className="p-2 border rounded-lg">
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', alignItems: 'center' }}>
+            <select value={selectedCategory} onChange={(e) => handleFilterChange(e.target.value)} className="input" style={{ minWidth: '180px' }}>
               {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
             </select>
-            <select onChange={(e)=>{ const v=e.target.value; if(v==='price_asc') setServices(prev=>[...prev].sort((a,b)=>a.price-b.price)); if(v==='price_desc') setServices(prev=>[...prev].sort((a,b)=>b.price-a.price)); }} className="p-2 border rounded-lg">
+            <select value={sortOption} onChange={(e) => handleSortChange(e.target.value)} className="input" style={{ minWidth: '180px' }}>
               <option value="">Sort</option>
               <option value="price_asc">Price: Low → High</option>
               <option value="price_desc">Price: High → Low</option>
+              <option value="newest">Newest First</option>
+              <option value="oldest">Oldest First</option>
             </select>
-            <button onClick={()=>{ setSearchTerm(''); setSelectedCategory('All'); fetchServices(); }} className="px-3 py-2 border rounded-lg">Reset</button>
+            <button onClick={handleResetFilters} className="btn btn-secondary" type="button">Reset</button>
           </div>
         </section>
 
@@ -395,69 +401,108 @@ const AdminServicesManagement = () => {
         )}
 
         {/* Service Table */}
-        <div className="rounded-xl shadow-sm border border-gray-100 bg-white overflow-hidden border-t-4 border-indigo-500">
-          <table className="w-full text-left border-collapse">
+        <div className="card" style={{ border: '1px solid rgba(15,23,42,0.08)', overflow: 'hidden' }}>
+          <table className="table-slim" style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
-              <tr className="bg-surface-container-low border-b border-outline-variant/30">
-                <th className="px-8 py-4 text-xs text-gray-500 font-semibold tracking-wider">Service details</th>
-                <th className="px-8 py-4 text-xs text-gray-500 font-semibold tracking-wider">Category</th>
-                <th className="px-8 py-4 text-xs text-gray-500 font-semibold tracking-wider">Duration</th>
-                <th className="px-8 py-4 text-xs text-gray-500 font-semibold tracking-wider">Price</th>
-                <th className="px-8 py-4 text-xs text-gray-500 font-semibold tracking-wider text-right">Actions</th>
+              <tr style={{ background: '#f8f4e9', borderBottom: '1px solid rgba(15,23,42,0.08)' }}>
+                <th style={{ padding: '1rem', textAlign: 'left', color: '#4b5563', fontSize: '0.78rem', letterSpacing: '0.08em' }}>Service</th>
+                <th style={{ padding: '1rem', textAlign: 'left', color: '#4b5563', fontSize: '0.78rem', letterSpacing: '0.08em' }}>Category</th>
+                <th style={{ padding: '1rem', textAlign: 'left', color: '#4b5563', fontSize: '0.78rem', letterSpacing: '0.08em' }}>Duration</th>
+                <th style={{ padding: '1rem', textAlign: 'left', color: '#4b5563', fontSize: '0.78rem', letterSpacing: '0.08em' }}>Price</th>
+                <th style={{ padding: '1rem', textAlign: 'left', color: '#4b5563', fontSize: '0.78rem', letterSpacing: '0.08em' }}>Status</th>
+                <th style={{ padding: '1rem', textAlign: 'right', color: '#4b5563', fontSize: '0.78rem', letterSpacing: '0.08em' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {paginatedServices.map((service) => (
-                <tr key={service.id} className={`group hover:bg-gray-50 transition-colors duration-150 ${getRowAccent(service.category)}`}>
-                  <td className="px-8 py-6">
-                    <div className="flex items-center gap-6">
-                      <div className="w-16 h-16 rounded-lg bg-surface-container flex-shrink-0 overflow-hidden border border-outline-variant/10">
-                            {(() => {
-                              const API_BASE = process.env.REACT_APP_API_URL || '';
-                              const src = service.imageUrl && service.imageUrl.startsWith('/') ? `${API_BASE}${service.imageUrl}` : service.imageUrl;
-                              return <img className="w-full h-full object-cover rounded-lg transition-all duration-700" src={src} alt={service.name} onError={(e)=>{ e.target.onerror = null; e.target.src = 'https://via.placeholder.com/64x64?text=No+Image'; }} />;
-                            })()}
+              {paginatedServices.map((service) => {
+                const isSelected = service.id === selectedServiceId;
+                const rowStyle = {
+                  background: isSelected ? 'rgba(201,168,76,0.08)' : 'transparent',
+                  borderLeft: isSelected ? '4px solid #C9A84C' : '4px solid transparent',
+                  cursor: 'pointer',
+                };
+                const API_BASE = process.env.REACT_APP_API_URL || '';
+                const imageSrc = service.imageUrl ? (service.imageUrl.startsWith('/') ? `${API_BASE}${service.imageUrl}` : service.imageUrl) : '';
+                return (
+                  <tr key={service.id} style={rowStyle} className="service-row" onClick={() => handleRowSelect(service)}>
+                    <td style={{ padding: '1rem', verticalAlign: 'middle' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                        <label style={{ position: 'relative', display: 'block', width: 64, height: 64, borderRadius: 16, overflow: 'hidden', background: '#faf5e6', border: '1px solid rgba(15,23,42,0.08)', cursor: 'pointer' }}>
+                          {imageSrc ? (
+                            <img src={imageSrc} alt={service.name || 'Service'} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.onerror = null; e.target.src = ''; }} />
+                          ) : (
+                            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#a16207' }}>
+                              <span className="material-symbols-outlined" style={{ fontSize: '28px' }}>content_cut</span>
+                            </div>
+                          )}
+                          <input
+                            type="file"
+                            accept="image/*"
+                            style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer' }}
+                            onClick={(e) => e.stopPropagation()}
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) handleUploadImage(service, file);
+                            }}
+                          />
+                        </label>
+                        <div>
+                          <div style={{ fontSize: '1rem', fontWeight: 700, color: '#111827', marginBottom: '0.25rem' }}>{service.name}</div>
+                          <div style={{ fontSize: '0.88rem', color: '#6b7280', maxWidth: 420 }}>{service.description || 'No service description yet.'}</div>
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-headline-md text-[20px] text-primary mb-1">{service.name}</p>
-                        <p className="font-body-md text-sm text-gray-400">{service.description}</p>
+                    </td>
+                    <td style={{ padding: '1rem', verticalAlign: 'middle' }}>
+                      {service.category ? (
+                        <span className="badge gold-badge">{service.category}</span>
+                      ) : (
+                        <span style={{ fontSize: '0.85rem', color: '#9ca3af', fontStyle: 'italic' }}>Not set</span>
+                      )}
+                    </td>
+                    <td style={{ padding: '1rem', verticalAlign: 'middle' }}>
+                      <span style={{ color: service.duration ? '#111827' : '#9ca3af', fontStyle: service.duration ? 'normal' : 'italic' }}>
+                        {service.duration ? `${service.duration} min` : '—'}
+                      </span>
+                    </td>
+                    <td style={{ padding: '1rem', verticalAlign: 'middle' }}>
+                      <span style={{ fontWeight: 700, color: '#111827' }}>{formatPrice(service.price)}</span>
+                    </td>
+                    <td style={{ padding: '1rem', verticalAlign: 'middle' }}>
+                      <label className="status-switch" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }} onClick={(e) => e.stopPropagation()}>
+                        <input
+                          type="checkbox"
+                          checked={service.active}
+                          onChange={() => handleToggleActive(service)}
+                          style={{ display: 'none' }}
+                        />
+                        <span className="switch-track" style={{ width: 42, height: 22, borderRadius: 9999, background: service.active ? '#C9A84C' : '#d1d5db', position: 'relative', transition: 'background 0.2s ease' }}>
+                          <span style={{ position: 'absolute', top: 2, left: service.active ? 20 : 2, width: 18, height: 18, borderRadius: '50%', background: '#fff', transition: 'left 0.2s ease' }} />
+                        </span>
+                        <span style={{ fontSize: '0.85rem', color: service.active ? '#115e59' : '#6b7280' }}>{service.active ? 'Active' : 'Inactive'}</span>
+                      </label>
+                    </td>
+                    <td style={{ padding: '1rem', textAlign: 'right', verticalAlign: 'middle' }}>
+                      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', flexWrap: 'wrap' }}>
+                        <button type="button" onClick={(e) => { e.stopPropagation(); handleEditService(service); }} className="btn gold-outline-btn">
+                          <span className="material-symbols-outlined">edit</span>
+                          Edit
+                        </button>
+                        <button type="button" onClick={(e) => { e.stopPropagation(); handleDeleteService(service.id); }} className="btn danger-outline-btn">
+                          <span className="material-symbols-outlined">delete</span>
+                        </button>
                       </div>
-                    </div>
-                  </td>
-                      <td className="px-8 py-6">
-                        {service.category ? (
-                          <span className={`px-4 py-1.5 rounded-full font-label-sm text-label-sm uppercase ${getBadgeColor(service.category)}`}>{service.category}</span>
-                        ) : (
-                          <div className="text-xs text-gray-400 italic">Not set</div>
-                        )}
-                      </td>
-                  <td className="px-8 py-6">
-                    <p className="font-body-md text-sm text-gray-700">{service.duration ? `${service.duration} min` : <span className="text-xs text-gray-400 italic">Not set</span>}</p>
-                  </td>
-                  <td className="px-8 py-6">
-                    <p className="font-label-md text-label-md font-bold text-secondary">${(Number(service.price) || 0).toFixed(2)}</p>
-                  </td>
-                  <td className="px-8 py-6 text-right">
-                    <div className="flex justify-end gap-3">
-                      <button onClick={() => handleEditService(service)} className="border border-indigo-200 text-indigo-600 hover:bg-indigo-50 rounded-lg px-3 py-1.5 text-sm flex items-center gap-1">
-                        <span className="material-symbols-outlined text-[16px]">edit</span>
-                        Edit
-                      </button>
-                      <button onClick={() => handleDeleteService(service.id)} className="border border-red-200 text-red-400 hover:bg-red-50 rounded-lg p-2" title="Remove Service">
-                        <span className="material-symbols-outlined">delete</span>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                    </td>
+                  </tr>
+                );
+              })}
               {paginatedServices.length === 0 && (
                 <tr>
-                  <td colSpan="5" className="text-center py-12 text-on-surface-variant">
-                    <div className="space-y-4">
-                      <div>No services found.</div>
-                      <div>
-                        <button onClick={openCreateForm} className="px-4 py-2 bg-primary text-on-primary rounded-md">Add your first service</button>
-                      </div>
+                  <td colSpan="6" style={{ padding: '4rem 1rem', textAlign: 'center', color: '#6b7280' }}>
+                    <div style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
+                      <span className="material-symbols-outlined" style={{ fontSize: '48px', color: '#C9A84C' }}>search_off</span>
+                      <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#111827' }}>No services found.</div>
+                      <div style={{ maxWidth: 420, color: '#6b7280' }}>Try a different search or reset filters to discover services.</div>
+                      <button type="button" onClick={handleResetFilters} className="btn gold-btn">Reset filters</button>
                     </div>
                   </td>
                 </tr>
