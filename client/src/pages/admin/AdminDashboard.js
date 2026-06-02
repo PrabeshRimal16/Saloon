@@ -102,16 +102,28 @@ const AdminDashboard = () => {
   const totalWeekly = weeklyCounts.reduce((s, n) => s + (n || 0), 0);
   const weeklyBookings = totalWeekly;
 
-  const monthLabels = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   const currentYear = now.getFullYear();
-  const yearLabels = Array.from({ length: 4 }, (_, idx) => currentYear - (3 - idx));
+  const currentMonthIndex = now.getMonth();
 
+  const monthLabels = monthNames.slice(0, currentMonthIndex + 1);
   const monthlyBookings = monthLabels.map((_, monthIndex) =>
     appointments.filter((a) => {
       const d = getAppointmentDate(a);
       return d && !isCancelled(a) && d.getFullYear() === currentYear && d.getMonth() === monthIndex;
     }).length
   );
+
+  const activeYears = new Set(
+    appointments
+      .filter((a) => {
+        const d = getAppointmentDate(a);
+        return d && !isCancelled(a);
+      })
+      .map((a) => getAppointmentDate(a).getFullYear())
+  );
+  activeYears.add(currentYear);
+  const yearLabels = Array.from(activeYears).sort((a, b) => a - b);
 
   const yearlyBookings = yearLabels.map((year) =>
     appointments.filter((a) => {
@@ -120,16 +132,123 @@ const AdminDashboard = () => {
     }).length
   );
 
-  const buildLinePoints = (values, width, height) => {
+  const getYAxisTicks = (maxValue) => {
+    const maxTick = Math.max(0, Math.ceil(maxValue));
+    if (maxTick <= 4) {
+      return Array.from({ length: maxTick + 1 }, (_, idx) => idx);
+    }
+    const step = Math.ceil(maxTick / 4);
+    const ticks = Array.from({ length: Math.floor(maxTick / step) + 1 }, (_, idx) => idx * step);
+    if (ticks[ticks.length - 1] !== maxTick) ticks.push(maxTick);
+    return Array.from(new Set(ticks));
+  };
+
+  const buildSmoothPath = (points) => {
+    if (!points.length) return '';
+    if (points.length === 1) return `M${points[0].x},${points[0].y}`;
+    let path = `M${points[0].x},${points[0].y}`;
+    for (let i = 1; i < points.length; i += 1) {
+      const prev = points[i - 1];
+      const curr = points[i];
+      const controlX = (prev.x + curr.x) / 2;
+      path += ` C${controlX},${prev.y} ${controlX},${curr.y} ${curr.x},${curr.y}`;
+    }
+    return path;
+  };
+
+  const buildAreaPath = (points, chartHeight, marginTop) => {
+    if (!points.length) return '';
+    const last = points[points.length - 1];
+    const first = points[0];
+    const line = buildSmoothPath(points);
+    return `${line} L${last.x},${marginTop + chartHeight} L${first.x},${marginTop + chartHeight} Z`;
+  };
+
+  const renderLineChart = (title, labels, values, totalLabel) => {
+    const width = 380;
+    const height = 220;
+    const margin = { top: 28, right: 20, bottom: 36, left: 40 };
+    const chartWidth = width - margin.left - margin.right;
+    const chartHeight = height - margin.top - margin.bottom;
     const max = Math.max(...values, 1);
-    const step = values.length > 1 ? width / (values.length - 1) : width;
-    return values
-      .map((value, index) => {
-        const x = index * step;
-        const y = height - (value / max) * height;
-        return `${x},${y}`;
-      })
-      .join(' ');
+    const totalValue = values.reduce((sum, value) => sum + value, 0);
+    const xStep = values.length > 1 ? chartWidth / (values.length - 1) : chartWidth;
+    const displayLabel = title.toLowerCase().includes('month') ? monthNames[currentMonthIndex] : currentYear;
+    const points = values.map((value, index) => {
+      const x = margin.left + index * xStep;
+      const y = margin.top + chartHeight - (value / max) * chartHeight;
+      return {
+        x,
+        y,
+        label: labels[index],
+        value,
+        isCurrent: labels[index] === displayLabel,
+      };
+    });
+    const linePath = buildSmoothPath(points);
+    const areaPath = buildAreaPath(points, chartHeight, margin.top);
+    const ticks = getYAxisTicks(max);
+
+    return (
+      <div className="line-chart">
+        <div className="line-chart-header">
+          <div>
+            <h3>{title}</h3>
+            <p className="line-chart-sub">{totalLabel} total: {totalValue}</p>
+          </div>
+          <div className="line-chart-summary line-chart-badge">{totalValue}</div>
+        </div>
+        {totalValue === 0 ? (
+          <div className="line-chart-empty">
+            <div className="line-chart-empty-title">No bookings yet</div>
+            <div className="line-chart-empty-text">This chart will update once bookings are recorded.</div>
+          </div>
+        ) : (
+          <svg viewBox={`0 0 ${width} ${height}`} className="line-chart-svg">
+            <defs>
+              <linearGradient id={`goldGradient-${title.replace(/\s+/g, '')}`} x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#F7E7B4" stopOpacity="0.66" />
+                <stop offset="100%" stopColor="#C9A84C" stopOpacity="0.08" />
+              </linearGradient>
+            </defs>
+            <line x1={margin.left} y1={margin.top} x2={margin.left} y2={margin.top + chartHeight} className="line-chart-axis" />
+            <line x1={margin.left} y1={margin.top + chartHeight} x2={margin.left + chartWidth} y2={margin.top + chartHeight} className="line-chart-axis" />
+            {ticks.map((tick) => {
+              const y = margin.top + chartHeight - (tick / Math.max(max, 1)) * chartHeight;
+              return (
+                <g key={tick}>
+                  <line x1={margin.left} y1={y} x2={margin.left + chartWidth} y2={y} className="line-chart-grid" />
+                  <text x={margin.left - 10} y={y + 4} textAnchor="end" className="line-chart-axis-label">
+                    {tick}
+                  </text>
+                </g>
+              );
+            })}
+            <path d={areaPath} fill={`url(#goldGradient-${title.replace(/\s+/g, '')})`} />
+            <path d={linePath} className="line-chart-line" />
+            {points.map((point, idx) => (
+              <g key={idx} className="line-chart-point-group">
+                <circle
+                  cx={point.x}
+                  cy={point.y}
+                  r={point.isCurrent ? 6 : 5}
+                  className={point.isCurrent ? 'line-chart-point line-chart-point-current' : 'line-chart-point'}
+                />
+                <title>{`${point.label}: ${point.value} ${totalLabel.toLowerCase()}`}</title>
+              </g>
+            ))}
+            {labels.map((label, idx) => {
+              const x = margin.left + idx * xStep;
+              return (
+                <text key={label} x={x} y={margin.top + chartHeight + 26} textAnchor="middle" className="line-chart-x-label">
+                  {label}
+                </text>
+              );
+            })}
+          </svg>
+        )}
+      </div>
+    );
   };
 
   const renderLineChart = (title, labels, values, totalLabel) => {

@@ -364,34 +364,73 @@ body {
 }
 
 .line-chart-axis {
-  stroke: #cbd5e1;
+  stroke: #e7dfca;
   stroke-width: 1;
 }
 
 .line-chart-grid {
-  stroke: #e2e8f0;
+  stroke: rgba(201, 168, 76, 0.16);
   stroke-width: 1;
 }
 
 .line-chart-line {
   fill: none;
-  stroke: #2563eb;
+  stroke: #C9A84C;
   stroke-width: 3;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
 .line-chart-point-group:hover .line-chart-point {
-  stroke: #1d4ed8;
-  fill: #1d4ed8;
-  r: 6;
+  transform: scale(1.12);
 }
 
 .line-chart-point {
   fill: #ffffff;
-  stroke: #2563eb;
+  stroke: #C9A84C;
   stroke-width: 3;
   cursor: pointer;
+  transition: transform 0.2s ease, stroke-width 0.2s ease;
+}
+
+.line-chart-point-current {
+  fill: #C9A84C;
+  stroke: #C9A84C;
+}
+
+.line-chart-badge {
+  background: #C9A84C;
+  color: #ffffff;
+  padding: 0.75rem 1rem;
+  border-radius: 999px;
+  font-size: 1rem;
+  font-weight: 700;
+  text-align: center;
+  min-width: 3.5rem;
+}
+
+.line-chart-empty {
+  min-height: 160px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 32px 0;
+  color: #475569;
+}
+
+.line-chart-empty-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: #0f172a;
+}
+
+.line-chart-empty-text {
+  font-size: 0.92rem;
+  color: #64748b;
+  max-width: 240px;
 }
 
 .line-chart-point-label {
