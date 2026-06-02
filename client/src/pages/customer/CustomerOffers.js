@@ -7,10 +7,17 @@ import CustomerNavbar from '../../components/CustomerNavbar';
 const OffersAndRitualsPage = () => {
   const [offers, setOffers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [notifications, setNotifications] = useState([]);
+  const [lastChecked, setLastChecked] = useState(
+    localStorage.getItem("lastCheckedOffers") || new Date().toISOString()
+  );
 
   /* ── Fetch offers from API ──────────── */
   useEffect(() => {
     fetchOffers();
+    // Check for updates every 10 seconds
+    const interval = setInterval(fetchOffers, 10000);
+    return () => clearInterval(interval);
   }, []);
 
   const fetchOffers = async () => {
@@ -18,12 +25,41 @@ const OffersAndRitualsPage = () => {
       setLoading(true);
       const response = await fetch("http://localhost:5000/api/offers");
       const data = await response.json();
+      
+      // Check for new offers
+      const newOffers = data.filter(
+        (offer) => new Date(offer.created_at) > new Date(lastChecked)
+      );
+      
+      if (newOffers.length > 0) {
+        addNotification(
+          "success",
+          `New offer added: "${newOffers[0].title}"! 🎉`
+        );
+        localStorage.setItem("lastCheckedOffers", new Date().toISOString());
+        setLastChecked(new Date().toISOString());
+      }
+      
       setOffers(data);
     } catch (error) {
       console.error("Error fetching offers:", error);
     } finally {
       setLoading(false);
     }
+  };
+
+  // ── Add Notification ──
+  const addNotification = (type, message) => {
+    const id = Date.now();
+    const newNotification = { id, type, message, timestamp: new Date() };
+    setNotifications((prev) => [newNotification, ...prev]);
+
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+      setNotifications((prev) =>
+        prev.filter((notif) => notif.id !== id)
+      );
+    }, 5000);
   };
 
   /* ── Reveal on scroll ─────────────── */
@@ -106,6 +142,24 @@ const OffersAndRitualsPage = () => {
   return (
     <div className="bg-surface text-on-surface font-body-md overflow-x-hidden">
       <CustomerNavbar />
+
+      {/* ── Notification Toast ── */}
+      <div className="fixed top-20 right-8 z-50 space-y-2">
+        {notifications.map((notif) => (
+          <div
+            key={notif.id}
+            className={`px-6 py-3 rounded-lg text-white font-medium shadow-lg animate-slide-in ${
+              notif.type === "success"
+                ? "bg-green-500"
+                : notif.type === "error"
+                ? "bg-red-500"
+                : "bg-blue-500"
+            }`}
+          >
+            {notif.message}
+          </div>
+        ))}
+      </div>
 
       <main>
         {/* Hero */}
@@ -312,6 +366,23 @@ const OffersAndRitualsPage = () => {
         </p>
         <span className="font-label-sm text-label-sm text-outline">© 2024 L'Atelier Modern. All Rights Reserved.</span>
       </footer>
+
+      {/* ── Inject Styles ── */}
+      <style>{`
+        @keyframes slideIn {
+          from {
+            opacity: 0;
+            transform: translateX(100px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+        .animate-slide-in {
+          animation: slideIn 0.3s ease-out;
+        }
+      `}</style>
     </div>
   );
 };

@@ -10,6 +10,8 @@ const AdminOfferManagement = () => {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState(null);
+  const [notifications, setNotifications] = useState([]);
+  const [showNotifications, setShowNotifications] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -21,6 +23,10 @@ const AdminOfferManagement = () => {
   // ── Fetch offers from API ──
   useEffect(() => {
     fetchOffers();
+    fetchNotifications();
+    // Poll for notifications every 5 seconds
+    const notificationInterval = setInterval(fetchNotifications, 5000);
+    return () => clearInterval(notificationInterval);
   }, []);
 
   const fetchOffers = async () => {
@@ -34,6 +40,38 @@ const AdminOfferManagement = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // ── Fetch Notifications ──
+  const fetchNotifications = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/notifications/admin");
+      if (response.ok) {
+        const data = await response.json();
+        setNotifications(data);
+      }
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    }
+  };
+
+  // ── Add Notification ──
+  const addNotification = (type, message) => {
+    const id = Date.now();
+    const newNotification = { id, type, message, timestamp: new Date() };
+    setNotifications((prev) => [newNotification, ...prev]);
+
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+      setNotifications((prev) =>
+        prev.filter((notif) => notif.id !== id)
+      );
+    }, 5000);
+
+    // Save to localStorage for persistence
+    const saved = JSON.parse(localStorage.getItem("notifications") || "[]");
+    saved.unshift(newNotification);
+    localStorage.setItem("notifications", JSON.stringify(saved.slice(0, 20)));
   };
 
   // ── Calculate Stats ──
@@ -65,6 +103,39 @@ const AdminOfferManagement = () => {
 
   const stats = calculateStats();
 
+  // ── Filter Offers by Status ──
+  const getFilteredOffers = () => {
+    let filtered = offers;
+
+    // Search filter
+    if (searchTerm) {
+      filtered = filtered.filter((offer) =>
+        offer.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        offer.description.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Status filter
+    const now = new Date();
+    if (statusFilter === "active") {
+      filtered = filtered.filter(
+        (offer) => !offer.valid_until || new Date(offer.valid_until) > now
+      );
+    } else if (statusFilter === "scheduled") {
+      filtered = filtered.filter(
+        (offer) => offer.valid_until && new Date(offer.valid_until) > now
+      );
+    } else if (statusFilter === "expired") {
+      filtered = filtered.filter(
+        (offer) => offer.valid_until && new Date(offer.valid_until) <= now
+      );
+    }
+
+    return filtered;
+  };
+
+  const filteredOffers = getFilteredOffers();
+
   // ── Create or Update Offer ──
   const handleSaveOffer = async (e) => {
     e.preventDefault();
@@ -90,9 +161,15 @@ const AdminOfferManagement = () => {
           discount_percent: "",
           valid_until: "",
         });
+        // Trigger notification
+        addNotification(
+          "success",
+          editingId ? `Offer "${formData.title}" updated successfully!` : `New offer "${formData.title}" created!`
+        );
       }
     } catch (error) {
       console.error("Error saving offer:", error);
+      addNotification("error", "Failed to save offer");
     }
   };
 
@@ -106,9 +183,11 @@ const AdminOfferManagement = () => {
 
         if (response.ok) {
           fetchOffers();
+          addNotification("success", "Offer deleted successfully!");
         }
       } catch (error) {
         console.error("Error deleting offer:", error);
+        addNotification("error", "Failed to delete offer");
       }
     }
   };
@@ -213,24 +292,106 @@ const AdminOfferManagement = () => {
         .material-symbols-outlined {
           font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
         }
+        @keyframes slideIn {
+          from {
+            opacity: 0;
+            transform: translateX(100px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+        .animate-slide-in {
+          animation: slideIn 0.3s ease-out;
+        }
       `}</style>
 
       <AdminSidebar />
 
       <AdminHeader title="Offers & Promotions Management" />
 
+      {/* ── Notification Toast ── */}
+      <div className="fixed top-20 right-8 z-50 space-y-2">
+        {notifications.map((notif) => (
+          <div
+            key={notif.id}
+            className={`px-6 py-3 rounded-lg text-white font-medium shadow-lg animate-slide-in ${
+              notif.type === "success"
+                ? "bg-green-500"
+                : notif.type === "error"
+                ? "bg-red-500"
+                : "bg-blue-500"
+            }`}
+          >
+            {notif.message}
+          </div>
+        ))}
+      </div>
+
       {/* ── Main Content ── */}
       <main className="ml-64 pt-20 px-8 pb-12 max-w-6xl mx-auto">
-        {/* Sticky Action Bar */}
+        {/* Sticky Action Bar with Notification Bell */}
         <div className="sticky top-20 bg-background z-40 mb-8 -mx-8 px-8 py-4 flex justify-between items-center border-b border-gray-200">
           <h2 className="text-2xl font-bold text-gray-900">Offers</h2>
-          <button
-            onClick={() => setShowModal(true)}
-            className="px-6 py-2 bg-indigo-600 text-white font-semibold flex items-center gap-2 rounded-lg hover:bg-indigo-700 transition-colors duration-300 shadow-md hover:shadow-lg"
-          >
-            <span className="material-symbols-outlined text-xl">add</span>
-            Create New Offer
-          </button>
+          <div className="flex items-center gap-4">
+            {/* Notification Bell */}
+            <div className="relative">
+              <button
+                onClick={() => setShowNotifications(!showNotifications)}
+                className="p-2 rounded-lg hover:bg-gray-100 transition-colors relative"
+              >
+                <span className="material-symbols-outlined">notifications</span>
+                {notifications.length > 0 && (
+                  <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                )}
+              </button>
+              
+              {/* Notification Dropdown */}
+              {showNotifications && (
+                <div className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-lg border border-gray-200 z-50">
+                  <div className="p-4 border-b border-gray-200">
+                    <h3 className="font-semibold text-gray-900">Notifications</h3>
+                  </div>
+                  <div className="max-h-96 overflow-y-auto">
+                    {notifications.length === 0 ? (
+                      <div className="p-4 text-center text-gray-500">
+                        No new notifications
+                      </div>
+                    ) : (
+                      notifications.map((notif) => (
+                        <div
+                          key={notif.id}
+                          className={`p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors ${
+                            notif.type === "success"
+                              ? "bg-green-50"
+                              : notif.type === "error"
+                              ? "bg-red-50"
+                              : "bg-blue-50"
+                          }`}
+                        >
+                          <p className="text-sm font-medium text-gray-900">
+                            {notif.message}
+                          </p>
+                          <p className="text-xs text-gray-500 mt-1">
+                            {new Date(notif.timestamp).toLocaleTimeString()}
+                          </p>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <button
+              onClick={() => setShowModal(true)}
+              className="px-6 py-2 bg-indigo-600 text-white font-semibold flex items-center gap-2 rounded-lg hover:bg-indigo-700 transition-colors duration-300 shadow-md hover:shadow-lg"
+            >
+              <span className="material-symbols-outlined text-xl">add</span>
+              Create New Offer
+            </button>
+          </div>
         </div>
 
         {/* Summary Statistics */}
@@ -304,7 +465,7 @@ const AdminOfferManagement = () => {
             <div className="col-span-full text-center py-12">
               <p className="text-gray-600">Loading offers...</p>
             </div>
-          ) : offers.length === 0 ? (
+          ) : filteredOffers.length === 0 ? (
             <div className="col-span-full text-center py-12">
               <p className="text-gray-600 mb-4">No offers found</p>
               <button
@@ -315,7 +476,7 @@ const AdminOfferManagement = () => {
               </button>
             </div>
           ) : (
-            offers.map((offer, index) => {
+            filteredOffers.map((offer, index) => {
               const discountPercent = offer.discount_percent || 0;
               const isExpired =
                 offer.valid_until &&

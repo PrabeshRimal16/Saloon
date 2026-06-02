@@ -3,6 +3,7 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const session = require("express-session");
 const passport = require("./passport");
+const initializeDatabase = require("./db-init");
 
 dotenv.config();
 
@@ -53,6 +54,11 @@ app.use("/api/services", require("./routes/services"));
 app.use("/api/appointments", require("./routes/appointments"));
 app.use("/api/offers", require("./routes/offers"));
 app.use("/api/users", require("./routes/users"));
+app.use("/api/notifications", require("./routes/notifications"));
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+// Initialize database and start server
+initializeDatabase().then(() => {
+  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+});
