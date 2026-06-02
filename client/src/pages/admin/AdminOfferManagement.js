@@ -17,6 +17,7 @@ const AdminOfferManagement = () => {
     description: "",
     discount_percent: "",
     valid_until: "",
+    image_url: "",
   });
   const editIconRefs = useRef([]);
 
@@ -200,6 +201,7 @@ const AdminOfferManagement = () => {
       description: offer.description,
       discount_percent: offer.discount_percent || "",
       valid_until: offer.valid_until || "",
+      image_url: offer.image_url || "",
     });
     setShowModal(true);
   };
@@ -213,6 +215,7 @@ const AdminOfferManagement = () => {
       description: "",
       discount_percent: "",
       valid_until: "",
+      image_url: "",
     });
   };
 
@@ -495,12 +498,19 @@ const AdminOfferManagement = () => {
                   onMouseEnter={() => handleCardMouseEnter(index)}
                   onMouseLeave={() => handleCardMouseLeave(index)}
                 >
-                  {/* Image Container - Placeholder */}
                   <div className="relative h-48 overflow-hidden bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center">
-                    <span className="material-symbols-outlined text-6xl text-indigo-300">
-                      local_offer
-                    </span>
-                    {/* Status Badge - Pill Overlay */}
+                    {offer.image_url ? (
+                      <img
+                        src={offer.image_url}
+                        alt={offer.title}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span className="material-symbols-outlined text-6xl text-indigo-300">
+                        local_offer
+                      </span>
+                    )}
+                    <div className="absolute inset-0 bg-black/10" />
                     <div
                       className={`absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-semibold ${statusStyles}`}
                     >
@@ -688,6 +698,27 @@ const AdminOfferManagement = () => {
                   }
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Image URL
+                </label>
+                <input
+                  type="url"
+                  value={formData.image_url}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      image_url: e.target.value,
+                    })
+                  }
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="https://example.com/offer-image.jpg"
+                />
+                <p className="mt-2 text-xs text-gray-500">
+                  Add a link to the offer image so it appears on both admin and customer cards.
+                </p>
               </div>
 
               <div className="flex gap-3 pt-4 border-t border-gray-200">

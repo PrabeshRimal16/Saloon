@@ -210,10 +210,17 @@ const OffersAndRitualsPage = () => {
                     style={{ transitionDelay: `${index * 100}ms` }}
                   >
                     <div className="relative overflow-hidden card-img-zoom mb-6 shrink-0 bg-gradient-to-br from-indigo-100 to-purple-100 aspect-[3/4] flex items-center justify-center">
-                      {/* Placeholder Icon */}
-                      <span className="material-symbols-outlined text-6xl text-indigo-300">
-                        local_offer
-                      </span>
+                      {offer.image_url ? (
+                        <img
+                          src={offer.image_url}
+                          alt={offer.title}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <span className="material-symbols-outlined text-6xl text-indigo-300">
+                          local_offer
+                        </span>
+                      )}
                       {isExpired && (
                         <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
                           <span className="text-white font-bold text-lg">EXPIRED</span>
