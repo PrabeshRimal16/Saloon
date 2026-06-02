@@ -359,8 +359,18 @@ body {
 
 .line-chart-svg {
   width: 100%;
-  height: 160px;
+  height: 220px;
   overflow: visible;
+}
+
+.line-chart-axis {
+  stroke: #cbd5e1;
+  stroke-width: 1;
+}
+
+.line-chart-grid {
+  stroke: #e2e8f0;
+  stroke-width: 1;
 }
 
 .line-chart-line {
@@ -371,10 +381,33 @@ body {
   stroke-linejoin: round;
 }
 
+.line-chart-point-group:hover .line-chart-point {
+  stroke: #1d4ed8;
+  fill: #1d4ed8;
+  r: 6;
+}
+
 .line-chart-point {
   fill: #ffffff;
   stroke: #2563eb;
   stroke-width: 3;
+  cursor: pointer;
+}
+
+.line-chart-point-label {
+  font-size: 0.72rem;
+  fill: #334155;
+  font-weight: 600;
+}
+
+.line-chart-x-label {
+  font-size: 0.75rem;
+  fill: #64748b;
+}
+
+.line-chart-axis-label {
+  font-size: 0.72rem;
+  fill: #64748b;
 }
 
 .line-chart-point-label {

@@ -106,20 +106,18 @@ const AdminDashboard = () => {
   const currentYear = now.getFullYear();
   const yearLabels = Array.from({ length: 4 }, (_, idx) => currentYear - (3 - idx));
 
-  const monthlyRevenue = monthLabels.map((_, monthIndex) =>
-    appointments.reduce((sum, a) => {
+  const monthlyBookings = monthLabels.map((_, monthIndex) =>
+    appointments.filter((a) => {
       const d = getAppointmentDate(a);
-      if (!d || isCancelled(a) || d.getFullYear() !== currentYear || d.getMonth() !== monthIndex) return sum;
-      return sum + (Number(a.price ?? a.service_price ?? 0) || 0);
-    }, 0)
+      return d && !isCancelled(a) && d.getFullYear() === currentYear && d.getMonth() === monthIndex;
+    }).length
   );
 
-  const yearlyRevenue = yearLabels.map((year) =>
-    appointments.reduce((sum, a) => {
+  const yearlyBookings = yearLabels.map((year) =>
+    appointments.filter((a) => {
       const d = getAppointmentDate(a);
-      if (!d || isCancelled(a) || d.getFullYear() !== year) return sum;
-      return sum + (Number(a.price ?? a.service_price ?? 0) || 0);
-    }, 0)
+      return d && !isCancelled(a) && d.getFullYear() === year;
+    }).length
   );
 
   const buildLinePoints = (values, width, height) => {
@@ -135,43 +133,85 @@ const AdminDashboard = () => {
   };
 
   const renderLineChart = (title, labels, values, totalLabel) => {
-    const width = 360;
-    const height = 140;
-    const points = buildLinePoints(values, width, height);
+    const width = 380;
+    const height = 220;
+    const margin = { top: 24, right: 20, bottom: 34, left: 36 };
+    const chartWidth = width - margin.left - margin.right;
+    const chartHeight = height - margin.top - margin.bottom;
+    const max = Math.max(...values, 1);
     const totalValue = values.reduce((sum, value) => sum + value, 0);
+    const xStep = values.length > 1 ? chartWidth / (values.length - 1) : chartWidth;
+
+    const points = values
+      .map((value, index) => {
+        const x = margin.left + index * xStep;
+        const y = margin.top + chartHeight - (value / max) * chartHeight;
+        return `${x},${y}`;
+      })
+      .join(' ');
 
     return (
       <div className="line-chart">
         <div className="line-chart-header">
           <div>
             <h3>{title}</h3>
-            <p className="line-chart-sub">{totalLabel} total: {totalLabel === 'Revenue' ? `$${totalValue.toFixed(2)}` : totalValue}</p>
+            <p className="line-chart-sub">{totalLabel} total: {totalValue}</p>
           </div>
-          <div className="line-chart-summary">{totalLabel === 'Revenue' ? `$${totalValue.toFixed(2)}` : totalValue}</div>
+          <div className="line-chart-summary">{totalValue}</div>
         </div>
         <svg viewBox={`0 0 ${width} ${height}`} className="line-chart-svg">
-          <polyline points={points} className="line-chart-line" />
-          {values.map((value, idx) => {
-            const x = idx * (values.length > 1 ? width / (values.length - 1) : width);
-            const max = Math.max(...values, 1);
-            const y = height - (value / max) * height;
+          <line
+            x1={margin.left}
+            y1={margin.top}
+            x2={margin.left}
+            y2={margin.top + chartHeight}
+            className="line-chart-axis"
+          />
+          <line
+            x1={margin.left}
+            y1={margin.top + chartHeight}
+            x2={margin.left + chartWidth}
+            y2={margin.top + chartHeight}
+            className="line-chart-axis"
+          />
+          {[0, 1, 2, 3, 4].map((tick) => {
+            const y = margin.top + (chartHeight * tick) / 4;
+            const label = Math.round(max - (max * tick) / 4);
             return (
-              <g key={idx}>
-                <circle cx={x} cy={y} r="4" className="line-chart-point" />
-                {value > 0 && (
-                  <text x={x} y={Math.max(12, y - 10)} textAnchor="middle" className="line-chart-point-label">
-                    {totalLabel === 'Revenue' ? `$${value.toFixed(0)}` : value}
-                  </text>
-                )}
+              <g key={tick}>
+                <line
+                  x1={margin.left}
+                  y1={y}
+                  x2={margin.left + chartWidth}
+                  y2={y}
+                  className="line-chart-grid"
+                />
+                <text x={margin.left - 8} y={y + 4} textAnchor="end" className="line-chart-axis-label">
+                  {label}
+                </text>
               </g>
             );
           })}
+          <polyline points={points} className="line-chart-line" />
+          {values.map((value, idx) => {
+            const x = margin.left + idx * xStep;
+            const y = margin.top + chartHeight - (value / max) * chartHeight;
+            return (
+              <g key={idx} className="line-chart-point-group">
+                <circle cx={x} cy={y} r="5" className="line-chart-point" />
+                <title>{`${labels[idx]}: ${value} ${totalLabel.toLowerCase()}`}</title>
+              </g>
+            );
+          })}
+          {labels.map((label, idx) => {
+            const x = margin.left + idx * xStep;
+            return (
+              <text key={label} x={x} y={margin.top + chartHeight + 24} textAnchor="middle" className="line-chart-x-label">
+                {label}
+              </text>
+            );
+          })}
         </svg>
-        <div className="line-chart-labels">
-          {labels.map((label) => (
-            <div key={label} className="line-chart-label-item">{label}</div>
-          ))}
-        </div>
       </div>
     );
   };
@@ -224,8 +264,8 @@ const AdminDashboard = () => {
             </div>
 
             <div className="charts-grid">
-              {renderLineChart('Revenue by month', monthLabels, monthlyRevenue, 'Revenue')}
-              {renderLineChart('Revenue by year', yearLabels, yearlyRevenue, 'Revenue')}
+              {renderLineChart('Bookings by month', monthLabels, monthlyBookings, 'Bookings')}
+              {renderLineChart('Bookings by year', yearLabels, yearlyBookings, 'Bookings')}
             </div>
 
             <div className="action-cards">
