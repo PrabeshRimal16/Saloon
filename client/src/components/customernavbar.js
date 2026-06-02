@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 
@@ -7,11 +7,45 @@ export default function CustomerNavbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const currentPath = location.pathname || '/';
+  const [notifications, setNotifications] = useState([]);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const notifRef = useRef(null);
 
   const isActive = (path) => {
     if (path === '/') return currentPath === '/' || currentPath === '/customer';
     return currentPath === path || currentPath.startsWith(path);
   };
+
+  // Fetch customer notifications
+  useEffect(() => {
+    if (!user || !user.id) return;
+    const fetchNotifications = async () => {
+      try {
+        const API_BASE = process.env.REACT_APP_API_URL || '';
+        const res = await fetch(`${API_BASE}/api/notifications/customer/${user.id}`);
+        const data = await res.json();
+        setNotifications(data);
+      } catch (err) {
+        console.error('Failed to fetch notifications', err);
+      }
+    };
+    fetchNotifications();
+    const interval = setInterval(fetchNotifications, 10000); // Poll every 10 seconds
+    return () => clearInterval(interval);
+  }, [user]);
+
+  // Handle click outside notification dropdown
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (notifRef.current && !notifRef.current.contains(e.target)) {
+        setShowNotifications(false);
+      }
+    };
+    if (showNotifications) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [showNotifications]);
 
   return (
     <nav className="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-gutter py-3" style={{background: 'var(--primary)', color: 'var(--primary-contrast)', boxShadow: '0 6px 24px rgba(15,23,42,0.06)'}}>
@@ -60,7 +94,46 @@ export default function CustomerNavbar() {
         <div className="flex items-center gap-4">
         <div className="hidden lg:flex items-center gap-3 mr-4">
           <span className="font-label-md text-label-md user-name truncate" style={{color:'var(--primary-contrast)'}}>Welcome, {user?.name || 'Guest'}</span>
-          <button aria-label="notifications" className="header-button material-symbols-outlined">notifications</button>
+          <div className="relative" ref={notifRef}>
+            <button 
+              onClick={() => setShowNotifications(!showNotifications)}
+              aria-label="notifications" 
+              className="material-symbols-outlined relative hover:opacity-75 transition-opacity"
+              style={{color:'var(--primary-contrast)'}}
+            >
+              notifications
+              {notifications.length > 0 && (
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
+                  {notifications.length > 9 ? '9+' : notifications.length}
+                </span>
+              )}
+            </button>
+
+            {/* Notification Dropdown */}
+            {showNotifications && (
+              <div className="absolute right-0 mt-2 w-80 bg-white text-on-background border border-outline-variant rounded-lg shadow-lg z-50">
+                <div className="p-4 border-b border-outline-variant flex items-center justify-between">
+                  <h3 className="font-semibold">Notifications</h3>
+                  <span className="text-xs text-outline">{notifications.length} new</span>
+                </div>
+                <div className="max-h-96 overflow-y-auto">
+                  {notifications.length > 0 ? (
+                    notifications.map((notif, idx) => (
+                      <div key={idx} className="px-4 py-3 border-b border-outline-variant last:border-b-0 hover:bg-surface-container transition-colors">
+                        <div className="text-sm font-medium">{notif.type === 'offer' ? '🎁 New Offer' : '📅 Appointment Update'}</div>
+                        <div className="text-sm text-on-surface-variant mt-1">{notif.message}</div>
+                        <div className="text-xs text-outline mt-2">
+                          {new Date(notif.created_at || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="px-4 py-8 text-center text-on-surface-variant text-sm">No new notifications</div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="flex items-center gap-3 pl-4" style={{borderLeft: '1px solid rgba(255,255,255,0.06)'}}>
