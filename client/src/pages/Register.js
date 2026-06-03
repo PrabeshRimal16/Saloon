@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-// axios not needed when Create Account removed
+import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 
 export default function Register() {
@@ -8,11 +8,30 @@ export default function Register() {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const handleGoogle = () => {
     if (typeof loginWithGoogle === "function") return loginWithGoogle();
     window.location.assign(`${apiBaseUrl}/auth/google`);
+  };
+
+  const submit = async (e) => {
+    e?.preventDefault?.();
+    setError("");
+    if (!email || !email.includes("@")) {
+      setError("Please enter a valid email");
+      return;
+    }
+    setLoading(true);
+    try {
+      await axios.post(`${apiBaseUrl}/api/users/register`, { email }, { withCredentials: true });
+      navigate('/login');
+    } catch (err) {
+      setError(err.response?.data?.error || err.response?.data?.message || err.message || 'Failed to register');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
