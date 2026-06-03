@@ -35,10 +35,10 @@ const CSS = `
   /* Active card */
   .offer-card-lux { background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.08); display: flex; flex-direction: column; transition: box-shadow 0.3s, transform 0.3s; }
   .offer-card-lux:hover { box-shadow: 0 12px 40px rgba(0,0,0,0.14); transform: translateY(-5px); }
-  .offer-gold-top { background: linear-gradient(135deg, #8B7209 0%, #B8960C 40%, #D4AF37 70%, #B8960C 100%); height: 120px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; flex-shrink: 0; }
+  .offer-gold-top { background: linear-gradient(135deg, #8B7209 0%, #B8960C 40%, #D4AF37 70%, #B8960C 100%); aspect-ratio: 4/5; min-height: 400px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; flex-shrink: 0; }
   .offer-discount-num { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 60px; font-weight: 600; color: white; line-height: 1; }
   .offer-discount-off { font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: rgba(255,255,255,0.8); margin-top: -4px; }
-  .offer-card-img { width: 100%; height: 100%; object-fit: cover; }
+  .offer-card-img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; }
   .offer-card-body { padding: 24px; flex-grow: 1; display: flex; flex-direction: column; gap: 10px; }
   .offer-card-title { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 22px; font-weight: 600; color: #1C1C1E; margin: 0; }
   .offer-card-desc { font-size: 13px; color: #6B6B6B; line-height: 1.65; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; flex-grow: 1; }
@@ -146,8 +146,8 @@ const OffersAndRitualsPage = () => {
 
         {/* Gold top or image */}
         {imgUrl ? (
-          <div style={{ height: 140, overflow: 'hidden', position: 'relative', flexShrink: 0 }}>
-            <img src={imgUrl} alt={offer.title} className="offer-card-img" style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+          <div style={{ aspectRatio: '4/5', minHeight: 400, overflow: 'hidden', position: 'relative', flexShrink: 0 }}>
+            <img src={imgUrl} alt={offer.title} className="offer-card-img" />
             {discountPercent > 0 && (
               <div style={{ position:'absolute', top:12, left:12, background:'#B8960C', color:'white', fontFamily:'DM Sans,sans-serif', fontSize:13, fontWeight:700, padding:'3px 12px', borderRadius:50 }}>{discountPercent}% OFF</div>
             )}
