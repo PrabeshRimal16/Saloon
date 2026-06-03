@@ -81,6 +81,7 @@ export default function AdminUserManagement() {
   };
 
   return (
+    <>
     <div className="min-h-screen bg-[#F4F4F6]">
       <main className="p-8 animate-[fadeIn_0.3s_ease-in]">
 
@@ -285,6 +286,6 @@ export default function AdminUserManagement() {
           </div>
         )}
       </div>
-    </div>
+    </>
   );
 }

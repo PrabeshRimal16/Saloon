@@ -123,6 +123,7 @@ export default function AdminSetting() {
     "w-full bg-white border-[1.5px] border-[#EDE8DC] rounded-[8px] px-4 py-2.5 text-[14px] outline-none transition-all focus:border-[#C9A84C] focus:shadow-[0_0_0_3px_rgba(201,168,76,0.15)] placeholder:text-[#AAAAAA]";
 
   return (
+    <>
     <div className="min-h-screen bg-[#F4F4F6]">
       <main className="p-8 animate-[fadeIn_0.3s_ease-in]">
           {/* Toast */}
@@ -381,6 +382,6 @@ export default function AdminSetting() {
           </div>
         </main>
       </div>
-    </div>
+    </>
   );
 }

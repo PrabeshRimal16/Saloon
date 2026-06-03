@@ -118,6 +118,7 @@ export default function AdminAppointmentManagement() {
   const hasFilters = query || filterStatus !== "All" || dateRange;
 
   return (
+    <>
     <div className="min-h-screen bg-[#F4F4F6]">
       <main
         className={`p-8 transition-all duration-300 ${
@@ -604,6 +605,6 @@ export default function AdminAppointmentManagement() {
           onClick={() => setSelectedAppointment(null)}
         />
       )}
-    </div>
+    </>
   );
 }

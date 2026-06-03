@@ -201,6 +201,7 @@ export default function AdminDashboard() {
   const formattedDate = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
 
   return (
+    <>
     <div className="min-h-screen bg-[#F4F4F6]">
       <main className="p-8 animate-[fadeIn_0.3s_ease-in]">
 
@@ -397,6 +398,6 @@ export default function AdminDashboard() {
           <p className="text-right text-[12px] text-[#AAAAAA] mt-4">Last updated: {formattedDate}</p>
         </main>
       </div>
-    </div>
+    </>
   );
 }
