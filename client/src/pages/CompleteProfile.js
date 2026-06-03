@@ -198,7 +198,7 @@ export default function CompleteProfile() {
                 {loading ? 'Saving…' : 'Complete Registration'}
               </button>
 
-              <p className="text-center text-[10px] tracking-[0.4em] text-gray-300 uppercase mt-6">© 2025 The Salon at Reston</p>
+              <p className="text-center text-[10px] tracking-[0.4em] text-gray-300 uppercase mt-6">© 2026 The Salon at Reston</p>
             </form>
           </div>
         </div>

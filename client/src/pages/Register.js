@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+// axios not needed when Create Account removed
 import { useAuth } from "../context/AuthContext";
 
 export default function Register() {
@@ -8,23 +8,7 @@ export default function Register() {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
-  const submit = async (e) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
-    try {
-      if (!email || !email.includes("@")) throw new Error("Please enter a valid email");
-      await axios.post(`${apiBaseUrl}/api/users/register`, { email }, { withCredentials: true });
-      navigate("/login");
-    } catch (err) {
-      setError(err.response?.data?.message || err.response?.data?.error || err.message || "Failed to create account");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleGoogle = () => {
     if (typeof loginWithGoogle === "function") return loginWithGoogle();
@@ -63,7 +47,7 @@ export default function Register() {
                 <div className="bg-[#FDEDED] text-error p-3 rounded mb-4 text-center">{error}</div>
               )}
 
-              <form onSubmit={submit} className="flex flex-col gap-6">
+              <div className="flex flex-col gap-6">
                 <div>
                   <label className="block font-body text-xs text-gray-500 uppercase tracking-[0.35em] mb-2" htmlFor="email">EMAIL</label>
                   <input
@@ -75,18 +59,7 @@ export default function Register() {
                     onChange={(e) => setEmail(e.target.value)}
                     className="w-full bg-transparent border-0 border-b border-gray-200 focus:border-amber-600 focus:outline-none py-2 text-sm text-stone-800"
                     placeholder="Enter your email"
-                    required
                   />
-                </div>
-
-                <button type="submit" disabled={loading} className="w-full bg-amber-700 text-white py-3 font-semibold uppercase rounded-none">
-                  {loading ? "Creating…" : "CREATE ACCOUNT"}
-                </button>
-
-                <div className="flex items-center gap-3 my-2">
-                  <div className="flex-1 h-[1px] bg-gray-200"></div>
-                  <span className="text-[12px] text-gray-400 uppercase tracking-[0.5em]">or</span>
-                  <div className="flex-1 h-[1px] bg-gray-200"></div>
                 </div>
 
                 <button type="button" onClick={handleGoogle} className="w-full flex items-center justify-center gap-3 py-2 border border-gray-200 text-sm text-stone-800">
@@ -98,7 +71,7 @@ export default function Register() {
                   Already have an account?{' '}
                   <button onClick={() => navigate('/login')} className="text-amber-700 font-semibold hover:underline ml-1">Login</button>
                 </div>
-              </form>
+              </div>
             </div>
           </div>
         </div>

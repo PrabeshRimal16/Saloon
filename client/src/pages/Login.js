@@ -153,7 +153,7 @@ export default function Login() {
                 </div>
 
                 <div className="text-center mt-8">
-                  <div className="text-[10px] tracking-[0.4em] text-gray-300 uppercase">© 2025 The Salon at Reston</div>
+                  <div className="text-[10px] tracking-[0.4em] text-gray-300 uppercase">© 2026 The Salon at Reston</div>
                 </div>
               </form>
             </div>
