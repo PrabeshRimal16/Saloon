@@ -68,12 +68,12 @@ const CustomerSetting = () => {
         height: 0.65em;
         transform: scale(0);
         transition: 120ms transform ease-in-out;
-        box-shadow: inset 1em 1em var(--form-control-color, #735c00);
-        background-color: #735c00;
+        box-shadow: inset 1em 1em var(--form-control-color, #C9A84C);
+        background-color: #C9A84C;
         transform-origin: center;
         clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
       }
-      .custom-checkbox:checked { border-color: #735c00; }
+      .custom-checkbox:checked { border-color: #C9A84C; }
       .custom-checkbox:checked::before { transform: scale(1); }
     `;
     document.head.appendChild(style);
@@ -110,77 +110,79 @@ const CustomerSetting = () => {
   }, []);
 
   return (
-    <div className="bg-surface text-on-surface antialiased min-h-screen flex flex-col">
+    <div className="bg-[#FBF8F2] text-[#1A1A1A] antialiased min-h-screen flex flex-col font-sans">
       <CustomerNavbar />
 
       {/* ── Main Content ── */}
-      <main className="flex-grow pb-section-gap-desktop px-6 md:px-12 max-w-[1280px] mx-auto w-full">
-        <header className="mb-16">
-          <h1 className="font-headline-xl text-headline-xl text-primary md:font-headline-xl text-headline-lg-mobile md:text-headline-xl mb-4">
+      <main className="flex-grow pt-[120px] pb-24 px-8 max-w-7xl mx-auto w-full">
+        <header className="mb-12">
+          <h1 className="font-serif text-4xl md:text-5xl text-[#1A1A1A] mb-4">
             Account Profile
           </h1>
-          <p className="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
+          <p className="text-gray-600 max-w-2xl leading-relaxed">
             Manage your personal details, secure your account, and tailor your
             atelier experience.
           </p>
         </header>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
           {/* ── Left Column ── */}
-          <div className="lg:col-span-4 flex flex-col gap-gutter">
+          <div className="lg:col-span-4 flex flex-col gap-8">
             {/* Identity Card */}
-            <div className="bg-surface-container-lowest border border-outline-variant/50 p-8 flex flex-col items-center text-center rounded-xl shadow-sm">
-              <div className="w-32 h-32 rounded-full overflow-hidden mb-6 border-2 border-surface">
-                <img
-                  alt={profile.firstName || user?.name || 'User avatar'}
-                  className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500"
-                  src={profile.avatar || user?.avatar_url || user?.photo || 'https://via.placeholder.com/150'}
-                />
+            <div className="bg-white border border-gray-200 p-8 flex flex-col items-center text-center rounded-lg shadow-sm">
+              <div className="w-32 h-32 rounded-full overflow-hidden mb-6 border border-gray-200 p-1">
+                <div className="w-full h-full rounded-full overflow-hidden">
+                  <img
+                    alt={profile.firstName || user?.name || 'User avatar'}
+                    className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500"
+                    src={profile.avatar || user?.avatar_url || user?.photo || 'https://ui-avatars.com/api/?name=' + (profile.firstName || 'User')}
+                  />
+                </div>
               </div>
-              <h2 className="font-headline-md text-headline-md text-primary mb-1">
+              <h2 className="font-serif text-2xl text-[#1A1A1A] mb-1">
                 {`${profile.firstName || user?.name || ''} ${profile.lastName || ''}`.trim() || user?.email || 'User'}
               </h2>
-              <p className="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-6">
+              <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-6">
                 Client since 2021
               </p>
-              <button className="w-full py-3 px-6 border border-primary text-primary font-label-md text-label-md uppercase tracking-wider hover:bg-primary hover:text-on-primary transition-colors duration-300">
+              <button className="w-full py-3 px-6 border border-[#1A1A1A] text-[#1A1A1A] text-xs font-bold uppercase tracking-widest hover:bg-[#1A1A1A] hover:text-white transition-colors duration-300 rounded-sm">
                 Update Photo
               </button>
             </div>
 
             {/* Membership Card */}
-            <div className="bg-primary p-8 relative overflow-hidden group border border-primary rounded-xl shadow-sm">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-secondary/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none"></div>
+            <div className="bg-[#1A1A1A] p-8 relative overflow-hidden group border border-[#1A1A1A] rounded-lg shadow-sm">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-[#C9A84C]/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none"></div>
               <div className="flex justify-between items-start mb-12 relative z-10">
-                <h3 className="font-headline-md text-headline-md text-secondary-fixed">
+                <h3 className="font-serif text-3xl text-[#C9A84C] leading-tight">
                   Atelier
                   <br />
                   Privilege
                 </h3>
                 <span
-                  className="material-symbols-outlined text-secondary-fixed"
+                  className="material-symbols-outlined text-[#C9A84C]"
                   style={{ fontVariationSettings: "'FILL' 1", fontSize: "32px" }}
                 >
                   diamond
                 </span>
               </div>
               <div className="relative z-10">
-                <p className="font-label-sm text-label-sm text-surface-container-low uppercase tracking-[0.1em] mb-2 opacity-80">
+                <p className="text-xs text-white/60 uppercase tracking-widest mb-2">
                   Current Status
                 </p>
-                <p className="font-body-lg text-body-lg text-on-primary mb-6">
+                <p className="text-xl text-white font-medium mb-6">
                   Noir Membership
                 </p>
-                <div className="w-full bg-surface-tint/30 h-[1px] mb-6"></div>
+                <div className="w-full bg-white/20 h-[1px] mb-6"></div>
                 <ul className="space-y-4">
-                  <li className="flex items-center gap-3 text-surface-container-low font-body-md text-body-md">
-                    <span className="material-symbols-outlined text-secondary-fixed text-sm">
+                  <li className="flex items-center gap-3 text-white/80 text-sm">
+                    <span className="material-symbols-outlined text-[#C9A84C] text-[18px]">
                       check
                     </span>
                     Priority Booking Access
                   </li>
-                  <li className="flex items-center gap-3 text-surface-container-low font-body-md text-body-md">
-                    <span className="material-symbols-outlined text-secondary-fixed text-sm">
+                  <li className="flex items-center gap-3 text-white/80 text-sm">
+                    <span className="material-symbols-outlined text-[#C9A84C] text-[18px]">
                       check
                     </span>
                     Complimentary Styling Consult
@@ -191,16 +193,16 @@ const CustomerSetting = () => {
           </div>
 
           {/* ── Right Column ── */}
-          <div className="lg:col-span-8 flex flex-col gap-12">
+          <div className="lg:col-span-8 flex flex-col gap-10">
             {/* Personal Details Form */}
-            <section className="bg-surface-container-lowest border border-outline-variant/30 p-10 rounded-xl shadow-sm">
-              <h2 className="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-8 pb-4 border-b border-outline-variant/30">
+            <section className="bg-white border border-gray-200 p-10 rounded-lg shadow-sm">
+              <h2 className="font-serif text-3xl text-[#1A1A1A] mb-8 pb-4 border-b border-gray-100">
                 Personal Details
               </h2>
               <form className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10">
                   <div className="relative">
                     <input
-                      className="input-minimal w-full bg-transparent border-0 border-b border-outline-variant focus:border-primary focus:ring-0 py-2 font-body-lg text-body-lg text-primary transition-colors peer"
+                      className="input-minimal w-full bg-transparent border-0 border-b border-gray-300 focus:border-[#C9A84C] focus:ring-0 py-2 text-base text-[#1A1A1A] transition-colors peer outline-none"
                       id="firstName"
                       placeholder=" "
                       type="text"
@@ -208,7 +210,7 @@ const CustomerSetting = () => {
                       onChange={(e)=>setProfile(p=>({...p, firstName: e.target.value}))}
                     />
                     <label
-                      className="absolute left-0 top-2 font-label-sm text-label-sm uppercase tracking-[0.1em] text-on-surface-variant transition-all duration-300 origin-left pointer-events-none -translate-y-6 scale-85 text-primary"
+                      className="absolute left-0 top-2 text-xs font-bold uppercase tracking-widest text-gray-400 transition-all duration-300 origin-left pointer-events-none peer-focus:-translate-y-6 peer-focus:scale-85 peer-focus:text-[#C9A84C]"
                       htmlFor="firstName"
                     >
                       First Name
@@ -216,7 +218,7 @@ const CustomerSetting = () => {
                   </div>
                   <div className="relative">
                     <input
-                      className="input-minimal w-full bg-transparent border-0 border-b border-outline-variant focus:border-primary focus:ring-0 py-2 font-body-lg text-body-lg text-primary transition-colors peer"
+                      className="input-minimal w-full bg-transparent border-0 border-b border-gray-300 focus:border-[#C9A84C] focus:ring-0 py-2 text-base text-[#1A1A1A] transition-colors peer outline-none"
                       id="lastName"
                       placeholder=" "
                       type="text"
@@ -224,7 +226,7 @@ const CustomerSetting = () => {
                       onChange={(e)=>setProfile(p=>({...p, lastName: e.target.value}))}
                     />
                     <label
-                      className="absolute left-0 top-2 font-label-sm text-label-sm uppercase tracking-[0.1em] text-on-surface-variant transition-all duration-300 origin-left pointer-events-none -translate-y-6 scale-85 text-primary"
+                      className="absolute left-0 top-2 text-xs font-bold uppercase tracking-widest text-gray-400 transition-all duration-300 origin-left pointer-events-none peer-focus:-translate-y-6 peer-focus:scale-85 peer-focus:text-[#C9A84C]"
                       htmlFor="lastName"
                     >
                       Last Name
@@ -232,7 +234,7 @@ const CustomerSetting = () => {
                   </div>
                 <div className="relative md:col-span-2">
                   <input
-                    className="input-minimal w-full bg-transparent border-0 border-b border-outline-variant focus:border-primary focus:ring-0 py-2 font-body-lg text-body-lg text-primary transition-colors peer"
+                    className="input-minimal w-full bg-transparent border-0 border-b border-gray-300 focus:border-[#C9A84C] focus:ring-0 py-2 text-base text-[#1A1A1A] transition-colors peer outline-none"
                     id="email"
                     placeholder=" "
                     type="email"
@@ -240,7 +242,7 @@ const CustomerSetting = () => {
                     onChange={(e)=>setProfile(p=>({...p, email: e.target.value}))}
                   />
                   <label
-                    className="absolute left-0 top-2 font-label-sm text-label-sm uppercase tracking-[0.1em] text-on-surface-variant transition-all duration-300 origin-left pointer-events-none -translate-y-6 scale-85 text-primary"
+                    className="absolute left-0 top-2 text-xs font-bold uppercase tracking-widest text-gray-400 transition-all duration-300 origin-left pointer-events-none peer-focus:-translate-y-6 peer-focus:scale-85 peer-focus:text-[#C9A84C]"
                     htmlFor="email"
                   >
                     Email Address
@@ -248,7 +250,7 @@ const CustomerSetting = () => {
                 </div>
                 <div className="relative md:col-span-2">
                   <input
-                    className="input-minimal w-full bg-transparent border-0 border-b border-outline-variant focus:border-primary focus:ring-0 py-2 font-body-lg text-body-lg text-primary transition-colors peer"
+                    className="input-minimal w-full bg-transparent border-0 border-b border-gray-300 focus:border-[#C9A84C] focus:ring-0 py-2 text-base text-[#1A1A1A] transition-colors peer outline-none"
                     id="phone"
                     placeholder=" "
                     type="tel"
@@ -256,7 +258,7 @@ const CustomerSetting = () => {
                     onChange={(e)=>setProfile(p=>({...p, phone: e.target.value}))}
                   />
                   <label
-                    className="absolute left-0 top-2 font-label-sm text-label-sm uppercase tracking-[0.1em] text-on-surface-variant transition-all duration-300 origin-left pointer-events-none -translate-y-6 scale-85 text-primary"
+                    className="absolute left-0 top-2 text-xs font-bold uppercase tracking-widest text-gray-400 transition-all duration-300 origin-left pointer-events-none peer-focus:-translate-y-6 peer-focus:scale-85 peer-focus:text-[#C9A84C]"
                     htmlFor="phone"
                   >
                     Phone Number
@@ -264,7 +266,7 @@ const CustomerSetting = () => {
                 </div>
                 <div className="md:col-span-2 mt-4">
                   <button
-                    className="bg-primary text-on-primary border border-primary px-10 py-4 font-label-md text-label-md uppercase tracking-[0.1em] hover:bg-transparent hover:text-primary transition-colors duration-300 w-full md:w-auto"
+                    className="bg-[#1A1A1A] text-white border border-[#1A1A1A] px-10 py-4 text-xs font-bold uppercase tracking-widest hover:bg-transparent hover:text-[#1A1A1A] transition-colors duration-300 w-full md:w-auto rounded-sm"
                     type="button"
                   >
                     Save Changes
@@ -274,25 +276,25 @@ const CustomerSetting = () => {
             </section>
 
             {/* Security Section */}
-            <section className="bg-surface-container-lowest border border-outline-variant/30 p-10 rounded-xl shadow-sm">
-              <h2 className="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-8 pb-4 border-b border-outline-variant/30">
+            <section className="bg-white border border-gray-200 p-10 rounded-lg shadow-sm">
+              <h2 className="font-serif text-3xl text-[#1A1A1A] mb-8 pb-4 border-b border-gray-100">
                 Security
               </h2>
               <div className="space-y-10">
                 <div>
-                  <h3 className="font-label-md text-label-md text-primary uppercase tracking-[0.1em] mb-6">
+                  <h3 className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-6">
                     Password
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-8">
                     <div className="relative">
                       <input
-                        className="input-minimal w-full bg-transparent border-0 border-b border-outline-variant focus:border-primary focus:ring-0 py-2 font-body-lg text-body-lg text-primary transition-colors peer"
+                        className="input-minimal w-full bg-transparent border-0 border-b border-gray-300 focus:border-[#C9A84C] focus:ring-0 py-2 text-base text-[#1A1A1A] transition-colors peer outline-none"
                         id="currentPassword"
                         placeholder=" "
                         type="password"
                       />
                       <label
-                        className="absolute left-0 top-2 font-label-sm text-label-sm uppercase tracking-[0.1em] text-on-surface-variant transition-all duration-300 origin-left pointer-events-none"
+                        className="absolute left-0 top-2 text-xs font-bold uppercase tracking-widest text-gray-400 transition-all duration-300 origin-left pointer-events-none peer-focus:-translate-y-6 peer-focus:scale-85 peer-focus:text-[#C9A84C]"
                         htmlFor="currentPassword"
                       >
                         Current Password
@@ -300,30 +302,30 @@ const CustomerSetting = () => {
                     </div>
                     <div className="relative">
                       <input
-                        className="input-minimal w-full bg-transparent border-0 border-b border-outline-variant focus:border-primary focus:ring-0 py-2 font-body-lg text-body-lg text-primary transition-colors peer"
+                        className="input-minimal w-full bg-transparent border-0 border-b border-gray-300 focus:border-[#C9A84C] focus:ring-0 py-2 text-base text-[#1A1A1A] transition-colors peer outline-none"
                         id="newPassword"
                         placeholder=" "
                         type="password"
                       />
                       <label
-                        className="absolute left-0 top-2 font-label-sm text-label-sm uppercase tracking-[0.1em] text-on-surface-variant transition-all duration-300 origin-left pointer-events-none"
+                        className="absolute left-0 top-2 text-xs font-bold uppercase tracking-widest text-gray-400 transition-all duration-300 origin-left pointer-events-none peer-focus:-translate-y-6 peer-focus:scale-85 peer-focus:text-[#C9A84C]"
                         htmlFor="newPassword"
                       >
                         New Password
                       </label>
                     </div>
                   </div>
-                  <button className="mt-8 border border-primary text-primary px-8 py-3 font-label-sm text-label-sm uppercase tracking-[0.1em] hover:bg-primary hover:text-on-primary transition-colors duration-300">
+                  <button className="mt-8 border border-gray-300 text-gray-600 px-8 py-3 text-xs font-bold uppercase tracking-widest hover:border-[#1A1A1A] hover:text-[#1A1A1A] hover:bg-gray-50 transition-colors duration-300 rounded-sm">
                     Update Password
                   </button>
                 </div>
-                <div className="w-full bg-outline-variant/30 h-[1px]"></div>
+                <div className="w-full bg-gray-100 h-[1px]"></div>
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                   <div>
-                    <h3 className="font-label-md text-label-md text-primary uppercase tracking-[0.1em] mb-2">
+                    <h3 className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">
                       Two-Factor Authentication
                     </h3>
-                    <p className="font-body-md text-body-md text-on-surface-variant">
+                    <p className="text-sm text-gray-600">
                       Add an extra layer of security to your account.
                     </p>
                   </div>
@@ -333,19 +335,19 @@ const CustomerSetting = () => {
                       type="checkbox"
                       defaultChecked
                     />
-                    <div className="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#1A1A1A]"></div>
                   </label>
                 </div>
               </div>
             </section>
 
             {/* Preferences Section */}
-            <section className="bg-surface-container-lowest border border-outline-variant/30 p-10 rounded-xl shadow-sm">
-              <h2 className="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-8 pb-4 border-b border-outline-variant/30">
+            <section className="bg-white border border-gray-200 p-10 rounded-lg shadow-sm">
+              <h2 className="font-serif text-3xl text-[#1A1A1A] mb-8 pb-4 border-b border-gray-100">
                 Preferences
               </h2>
               <div className="space-y-6">
-                <h3 className="font-label-md text-label-md text-primary uppercase tracking-[0.1em] mb-4">
+                <h3 className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-4">
                   Communication
                 </h3>
                 <label className="flex items-center gap-4 cursor-pointer group">
@@ -356,7 +358,7 @@ const CustomerSetting = () => {
                     checked={prefs.emailReminders}
                     onChange={handlePrefChange}
                   />
-                  <span className="font-body-lg text-body-lg text-primary group-hover:text-secondary transition-colors">
+                  <span className="text-base text-gray-600 group-hover:text-[#1A1A1A] transition-colors">
                     Email Reminders for Appointments
                   </span>
                 </label>
@@ -368,7 +370,7 @@ const CustomerSetting = () => {
                     checked={prefs.smsReminders}
                     onChange={handlePrefChange}
                   />
-                  <span className="font-body-lg text-body-lg text-primary group-hover:text-secondary transition-colors">
+                  <span className="text-base text-gray-600 group-hover:text-[#1A1A1A] transition-colors">
                     SMS Reminders for Appointments
                   </span>
                 </label>
@@ -380,7 +382,7 @@ const CustomerSetting = () => {
                     checked={prefs.newsletterOffers}
                     onChange={handlePrefChange}
                   />
-                  <span className="font-body-lg text-body-lg text-primary group-hover:text-secondary transition-colors">
+                  <span className="text-base text-gray-600 group-hover:text-[#1A1A1A] transition-colors">
                     Exclusive Offers &amp; Atelier News (Email)
                   </span>
                 </label>
@@ -391,38 +393,38 @@ const CustomerSetting = () => {
       </main>
 
       {/* ── Footer ── */}
-      <footer className="w-full bg-surface dark:bg-inverse-surface border-t border-outline-variant/30">
-        <div className="flex flex-col md:flex-row justify-between items-center px-12 py-16 gap-8 max-w-[1280px] mx-auto">
-          <div className="font-headline-md text-headline-md text-primary dark:text-primary-fixed">
+      <footer className="w-full bg-[#FBF8F2] border-t border-gray-200 mt-auto">
+        <div className="flex flex-col md:flex-row justify-between items-center px-12 py-12 gap-8 max-w-7xl mx-auto">
+          <div className="font-serif text-2xl text-[#1A1A1A]">
             The Modern Atelier
           </div>
           <div className="flex gap-6 md:gap-8 flex-wrap justify-center">
             <a
-              className="font-label-sm text-label-sm uppercase tracking-[0.1em] text-on-surface-variant dark:text-surface-variant hover:text-secondary transition-colors duration-300 hover:underline underline-offset-4"
+              className="text-xs font-bold uppercase tracking-widest text-gray-500 hover:text-[#C9A84C] transition-colors duration-300"
               href="#"
             >
               Privacy Policy
             </a>
             <a
-              className="font-label-sm text-label-sm uppercase tracking-[0.1em] text-on-surface-variant dark:text-surface-variant hover:text-secondary transition-colors duration-300 hover:underline underline-offset-4"
+              className="text-xs font-bold uppercase tracking-widest text-gray-500 hover:text-[#C9A84C] transition-colors duration-300"
               href="#"
             >
               Terms of Service
             </a>
             <a
-              className="font-label-sm text-label-sm uppercase tracking-[0.1em] text-on-surface-variant dark:text-surface-variant hover:text-secondary transition-colors duration-300 hover:underline underline-offset-4"
+              className="text-xs font-bold uppercase tracking-widest text-gray-500 hover:text-[#C9A84C] transition-colors duration-300"
               href="#"
             >
               Careers
             </a>
             <a
-              className="font-label-sm text-label-sm uppercase tracking-[0.1em] text-on-surface-variant dark:text-surface-variant hover:text-secondary transition-colors duration-300 hover:underline underline-offset-4"
+              className="text-xs font-bold uppercase tracking-widest text-gray-500 hover:text-[#C9A84C] transition-colors duration-300"
               href="#"
             >
               Press
             </a>
           </div>
-          <div className="font-label-sm text-label-sm uppercase tracking-[0.1em] text-on-surface-variant dark:text-surface-variant text-center md:text-right">
+          <div className="text-xs font-bold uppercase tracking-widest text-gray-400 text-center md:text-right">
             © 2024 The Modern Atelier. All Rights Reserved.
           </div>
         </div>

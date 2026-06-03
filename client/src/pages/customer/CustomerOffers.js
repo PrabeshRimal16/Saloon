@@ -141,7 +141,7 @@ const OffersAndRitualsPage = () => {
 
   /* ── Main render ──────────────────── */
   return (
-    <div className="bg-surface text-on-surface font-body-md overflow-x-hidden">
+    <div className="bg-[#FBF8F2] text-[#1A1A1A] font-sans overflow-x-hidden min-h-screen">
       <CustomerNavbar />
 
       {/* ── Notification Toast ── */}
@@ -154,7 +154,7 @@ const OffersAndRitualsPage = () => {
                 ? "bg-green-500"
                 : notif.type === "error"
                 ? "bg-red-500"
-                : "bg-blue-500"
+                : "bg-[#1A1A1A]"
             }`}
           >
             {notif.message}
@@ -162,9 +162,9 @@ const OffersAndRitualsPage = () => {
         ))}
       </div>
 
-      <main>
+      <main className="pt-[80px]">
         {/* Hero */}
-        <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden bg-primary text-on-primary px-gutter">
+        <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden bg-[#1A1A1A] text-white px-8">
           <div className="absolute inset-0 opacity-40">
             <img
               alt="Luxury salon interior with marble floors and gold accents"
@@ -173,28 +173,28 @@ const OffersAndRitualsPage = () => {
             />
           </div>
           <div className="relative z-10 text-center max-w-3xl reveal-up active">
-            <span className="font-label-md text-label-md uppercase tracking-[0.3em] text-secondary-fixed mb-6 block">
+            <span className="text-sm uppercase tracking-[0.3em] text-[#C9A84C] mb-6 block font-medium">
               Curated Experiences
             </span>
-            <h1 className="font-headline-xl text-headline-xl md:text-[80px] mb-8">
+            <h1 className="font-serif text-5xl md:text-[80px] mb-8 leading-tight">
               Exclusive Rituals &amp; Seasonal Offers
             </h1>
-            <p className="font-body-lg text-body-lg text-on-primary/80 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg text-white/80 max-w-2xl mx-auto leading-relaxed">
               Step into a world of bespoke beauty. Our seasonal rituals are designed to harmonize your inner glow with the rhythms of the season, utilizing the finest products and artisanal techniques.
             </p>
           </div>
         </section>
 
         {/* Offers Grid */}
-        <section className="max-w-container-max-width mx-auto px-gutter py-section-gap-desktop">
+        <section className="max-w-7xl mx-auto px-8 py-20">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
             {loading ? (
               <div className="col-span-full text-center py-12">
-                <p className="text-on-surface-variant">Loading offers...</p>
+                <p className="text-gray-500">Loading offers...</p>
               </div>
             ) : offers.length === 0 ? (
               <div className="col-span-full text-center py-12">
-                <p className="text-on-surface-variant">No offers available at this time.</p>
+                <p className="text-gray-500">No offers available at this time.</p>
               </div>
             ) : (
               offers.map((offer, index) => {
@@ -207,47 +207,47 @@ const OffersAndRitualsPage = () => {
                 return (
                   <div
                     key={offer.id}
-                    className="group reveal-up active flex flex-col h-full"
+                    className="group reveal-up active flex flex-col h-full bg-white border border-gray-200 shadow-sm hover:shadow-xl transition-all duration-300 rounded-lg overflow-hidden"
                     style={{ transitionDelay: `${index * 100}ms` }}
                   >
-                    <div className="relative overflow-hidden card-img-zoom mb-6 shrink-0 bg-gradient-to-br from-indigo-100 to-purple-100 aspect-[3/4] flex items-center justify-center">
+                    <div className="relative overflow-hidden mb-6 shrink-0 bg-[#FBF8F2] aspect-[3/4] flex items-center justify-center">
                       {offer.image_url ? (
                         <img
                           src={offer.image_url.startsWith('/') ? `${API_BASE}${offer.image_url}` : offer.image_url}
                           alt={offer.title}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />
                       ) : (
-                        <span className="material-symbols-outlined text-6xl text-indigo-300">
+                        <span className="material-symbols-outlined text-6xl text-[#C9A84C]/50">
                           local_offer
                         </span>
                       )}
                       {isExpired && (
-                        <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-                          <span className="text-white font-bold text-lg">EXPIRED</span>
+                        <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                          <span className="text-white font-bold text-lg uppercase tracking-widest">EXPIRED</span>
                         </div>
                       )}
                     </div>
-                    <div className="flex flex-col flex-grow space-y-4">
+                    <div className="flex flex-col flex-grow space-y-4 px-6 pb-6">
                       <div className="flex justify-between items-start">
-                        <h3 className="font-headline-md text-headline-md flex-1">
+                        <h3 className="font-serif text-2xl flex-1 text-[#1A1A1A]">
                           {offer.title}
                         </h3>
                         {discountPercent > 0 && (
-                          <span className="bg-secondary-fixed text-on-secondary-fixed px-3 py-1 font-label-sm text-label-sm uppercase tracking-wider">
+                          <span className="bg-[#C9A84C] text-white px-3 py-1 text-xs uppercase tracking-wider font-bold rounded-sm ml-4">
                             {discountPercent}% OFF
                           </span>
                         )}
                       </div>
-                      <p className="font-body-md text-on-surface-variant flex-grow line-clamp-3">
+                      <p className="text-gray-600 flex-grow line-clamp-3">
                         {offer.description}
                       </p>
-                      <div className="pt-4 flex flex-col gap-2 border-t border-outline-variant/50 shrink-0">
-                        <div className="flex justify-between items-center font-label-sm text-label-sm">
-                          <span className="uppercase tracking-widest text-outline">
+                      <div className="pt-4 flex flex-col gap-2 border-t border-gray-200 shrink-0">
+                        <div className="flex justify-between items-center text-sm font-medium">
+                          <span className="uppercase tracking-widest text-gray-500">
                             Valid Until
                           </span>
-                          <span className="text-primary font-semibold">
+                          <span className="text-[#1A1A1A] font-semibold">
                             {offer.valid_until
                               ? new Date(
                                   offer.valid_until
@@ -259,17 +259,17 @@ const OffersAndRitualsPage = () => {
                               : "ONGOING"}
                           </span>
                         </div>
-                        <div className="flex justify-between items-center font-label-sm text-label-sm">
-                          <span className="uppercase tracking-widest text-outline">
+                        <div className="flex justify-between items-center text-sm font-medium">
+                          <span className="uppercase tracking-widest text-gray-500">
                             Promo Code
                           </span>
-                          <span className="text-secondary font-bold select-all cursor-pointer hover:underline">
+                          <span className="text-[#C9A84C] font-bold select-all cursor-pointer hover:underline">
                             {promoCode}
                           </span>
                         </div>
                       </div>
                       <button
-                        className="w-full py-4 mt-2 border border-primary font-label-md text-label-md uppercase tracking-widest hover:bg-primary hover:text-on-primary transition-all duration-300 shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full py-4 mt-4 border border-[#1A1A1A] text-sm font-medium uppercase tracking-widest hover:bg-[#1A1A1A] hover:text-white transition-all duration-300 shrink-0 disabled:opacity-50 disabled:cursor-not-allowed rounded-sm"
                         onClick={() =>
                           handleBookWithCode(promoCode)
                         }
@@ -286,71 +286,71 @@ const OffersAndRitualsPage = () => {
         </section>
 
         {/* Signature Section */}
-        <section className="bg-surface-container-low py-section-gap-desktop overflow-hidden">
-          <div className="max-w-container-max-width mx-auto px-gutter">
+        <section className="bg-white py-20 overflow-hidden">
+          <div className="max-w-7xl mx-auto px-8">
             <div className="flex flex-col md:flex-row items-center gap-16">
               <div className="md:w-1/2 reveal-up active">
-                <h2 className="font-headline-lg text-headline-lg mb-8">The L'Atelier Distinction</h2>
+                <h2 className="font-serif text-4xl mb-8 text-[#1A1A1A]">The L'Atelier Distinction</h2>
                 <div className="space-y-8">
                   <div className="flex items-start gap-6">
-                    <div className="w-12 h-12 flex-shrink-0 bg-primary flex items-center justify-center">
-                      <span className="material-symbols-outlined text-on-primary">content_cut</span>
+                    <div className="w-12 h-12 flex-shrink-0 bg-[#1A1A1A] flex items-center justify-center rounded-sm">
+                      <span className="material-symbols-outlined text-[#C9A84C]">content_cut</span>
                     </div>
                     <div>
-                      <h4 className="font-label-md text-label-md uppercase tracking-widest mb-2">Master Artistry</h4>
-                      <p className="text-on-surface-variant">
+                      <h4 className="text-sm font-bold uppercase tracking-widest mb-2 text-[#1A1A1A]">Master Artistry</h4>
+                      <p className="text-gray-600 leading-relaxed">
                         Every professional in our atelier is a certified master, trained in the latest global trends and classic techniques.
                       </p>
                     </div>
                   </div>
                   <div className="flex items-start gap-6">
-                    <div className="w-12 h-12 flex-shrink-0 bg-primary flex items-center justify-center">
-                      <span className="material-symbols-outlined text-on-primary">star</span>
+                    <div className="w-12 h-12 flex-shrink-0 bg-[#1A1A1A] flex items-center justify-center rounded-sm">
+                      <span className="material-symbols-outlined text-[#C9A84C]">star</span>
                     </div>
                     <div>
-                      <h4 className="font-label-md text-label-md uppercase tracking-widest mb-2">Premium Curations</h4>
-                      <p className="text-on-surface-variant">
+                      <h4 className="text-sm font-bold uppercase tracking-widest mb-2 text-[#1A1A1A]">Premium Curations</h4>
+                      <p className="text-gray-600 leading-relaxed">
                         We partner exclusively with luxury brands like Oribe and Valmont to ensure the highest standard of care.
                       </p>
                     </div>
                   </div>
                 </div>
-                <button className="mt-12 group flex items-center gap-4 font-label-md text-label-md uppercase tracking-[0.2em] hover:text-secondary transition-colors">
+                <button className="mt-12 group flex items-center gap-4 text-sm font-bold uppercase tracking-[0.2em] text-[#1A1A1A] hover:text-[#C9A84C] transition-colors">
                   Explore All Services
                   <span className="material-symbols-outlined group-hover:translate-x-2 transition-transform">arrow_forward</span>
                 </button>
               </div>
               <div className="md:w-1/2 relative reveal-up active" style={{ transitionDelay: "200ms" }}>
-                <div className="aspect-square bg-white p-8 border border-outline-variant/30 relative z-10">
+                <div className="aspect-square bg-white p-4 border border-gray-200 relative z-10 shadow-lg">
                   <img
                     alt="Stylist working on a client's hair in a luxurious salon"
                     className="w-full h-full object-cover"
                     src="https://lh3.googleusercontent.com/aida-public/AB6AXuDro275hAAxz423Kgd4GlH6M7jOMSK6GPC0Jg4Yz1aia0_u4_GUNSARLN7ZBC7v1Ezyt0-Kl84OfsfalA156aHJuM2LXdnOvx17Yr7SV6lixInrsEOWIQJIPsOIAgIgUNjU_NuZyE9h4R7eU5EA2jvImZ-pT_fTGu4CEIkjV3MAKcwjwAwqqPx95vmvzI8N8MB3C8iGCo_1uYSRjIAGAMcyqk5S4zUkoVFy9dH1ArsgMneOsScRnRtITQGe8jcpW7b09vjHUyIPDUY_"
                   />
                 </div>
-                <div className="absolute -top-12 -right-12 w-64 h-64 border-l border-b border-secondary/30 -z-0"></div>
+                <div className="absolute -top-12 -right-12 w-64 h-64 border-t border-r border-[#C9A84C]/40 -z-0"></div>
               </div>
             </div>
           </div>
         </section>
 
         {/* Newsletter CTA */}
-        <section className="py-section-gap-desktop bg-primary text-on-primary text-center px-gutter">
+        <section className="py-24 bg-[#1A1A1A] text-white text-center px-8">
           <div className="max-w-2xl mx-auto reveal-up active">
-            <h2 className="font-headline-lg text-headline-lg mb-6">Stay in the Circle</h2>
-            <p className="font-body-lg text-body-lg text-on-primary/70 mb-10">
+            <h2 className="font-serif text-4xl mb-6">Stay in the Circle</h2>
+            <p className="text-lg text-white/70 mb-10">
               Receive exclusive early access to our seasonal rituals and private salon events.
             </p>
             <form className="flex flex-col sm:flex-row gap-4" onSubmit={handleNewsletterSubmit}>
               <input
-                className="flex-grow bg-transparent border-b border-on-primary/30 focus:border-secondary-fixed py-4 outline-none font-label-md text-on-primary placeholder:text-on-primary/40 transition-colors"
+                className="flex-grow bg-transparent border-b border-white/30 focus:border-[#C9A84C] py-4 outline-none text-base text-white placeholder:text-white/40 transition-colors"
                 placeholder="Your Email Address"
                 type="email"
                 name="email"
                 required
               />
               <button
-                className="bg-secondary-fixed text-on-secondary-fixed px-12 py-4 font-label-md text-label-md uppercase tracking-widest hover:opacity-90 transition-opacity"
+                className="bg-[#C9A84C] text-white px-12 py-4 text-sm font-bold uppercase tracking-widest hover:bg-[#b59642] transition-colors rounded-sm"
                 type="submit"
               >
                 Join Now
@@ -361,22 +361,41 @@ const OffersAndRitualsPage = () => {
       </main>
 
       {/* Footer */}
-      <footer className="w-full py-section-gap-mobile md:py-section-gap-desktop px-gutter flex flex-col items-center justify-center gap-base text-center bg-surface border-t border-outline-variant/20">
-        <span className="font-headline-lg text-headline-lg text-primary uppercase mb-8">L'Atelier</span>
-        <div className="flex flex-wrap justify-center gap-8 mb-12">
-          <a className="text-outline hover:text-primary underline decoration-secondary font-label-md text-label-md" href="#">Privacy Policy</a>
-          <a className="text-outline hover:text-primary underline decoration-secondary font-label-md text-label-md" href="#">Terms of Service</a>
-          <a className="text-outline hover:text-primary underline decoration-secondary font-label-md text-label-md" href="#">Career</a>
-          <a className="text-outline hover:text-primary underline decoration-secondary font-label-md text-label-md" href="#">Contact Us</a>
+      <footer className="w-full py-16 px-8 flex flex-col items-center justify-center gap-8 text-center bg-[#FBF8F2] border-t border-gray-200">
+        <span className="font-serif text-3xl text-[#1A1A1A] uppercase tracking-widest">L'Atelier</span>
+        <div className="flex flex-wrap justify-center gap-8">
+          <a className="text-gray-500 hover:text-[#C9A84C] text-sm uppercase tracking-wider font-medium transition-colors" href="#">Privacy Policy</a>
+          <a className="text-gray-500 hover:text-[#C9A84C] text-sm uppercase tracking-wider font-medium transition-colors" href="#">Terms of Service</a>
+          <a className="text-gray-500 hover:text-[#C9A84C] text-sm uppercase tracking-wider font-medium transition-colors" href="#">Career</a>
+          <a className="text-gray-500 hover:text-[#C9A84C] text-sm uppercase tracking-wider font-medium transition-colors" href="#">Contact Us</a>
         </div>
-        <p className="font-body-md text-body-md text-on-surface-variant max-w-lg mb-8">
+        <p className="text-gray-500 max-w-lg leading-relaxed">
           Crafting excellence in beauty and grooming since 2012. Our atelier is a sanctuary for those who appreciate the finer things in life.
         </p>
-        <span className="font-label-sm text-label-sm text-outline">© 2024 L'Atelier Modern. All Rights Reserved.</span>
+        <span className="text-xs text-gray-400 tracking-widest uppercase mt-4">© 2024 L'Atelier Modern. All Rights Reserved.</span>
       </footer>
 
       {/* ── Inject Styles ── */}
       <style>{`
+        @keyframes slideIn {
+          from {
+            opacity: 0;
+            transform: translateX(100px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+        .animate-slide-in {
+          animation: slideIn 0.3s ease-out;
+        }
+      `}</style>
+    </div>
+  );
+};
+
+export default OffersAndRitualsPage;`
         @keyframes slideIn {
           from {
             opacity: 0;
