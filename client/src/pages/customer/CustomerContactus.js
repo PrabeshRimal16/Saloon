@@ -23,10 +23,12 @@ const CSS = `
 
   .info-card { background: white; border-radius: 14px; padding: 24px; box-shadow: 0 4px 24px rgba(0,0,0,0.07); border-left: 0px solid #B8960C; transition: box-shadow 0.3s, border-left-width 0.3s, transform 0.2s; cursor: default; }
   .info-card:hover { box-shadow: 0 10px 36px rgba(0,0,0,0.12); border-left: 3px solid #B8960C; transform: translateY(-3px); }
-  .info-icon-circle { width: 40px; height: 40px; border-radius: 50%; background: rgba(184,150,12,0.1); display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
-  .info-icon { font-size: 20px; color: #B8960C; }
-  .info-title { font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: #B8960C; margin-bottom: 8px; }
-  .info-text { font-size: 14px; color: #1C1C1E; line-height: 1.6; }
+  .info-row { display: flex; align-items: flex-start; gap: 12px; }
+  .info-icon-circle { width: 36px; height: 36px; border-radius: 50%; background: rgba(184,150,12,0.06); display: flex; align-items: flex-start; justify-content: center; padding-top: 6px; flex-shrink: 0; }
+  .info-icon { font-size: 18px; color: #B8960C; line-height: 1; }
+  .info-content { min-width: 0; }
+  .info-title { font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: #B8960C; margin: 0 0 6px; }
+  .info-text { font-size: 14px; color: #1C1C1E; line-height: 1.4; margin: 0; }
 
   /* Main body */
   .contact-main { max-width: 1200px; margin: 0 auto; padding: 56px 40px 80px; display: grid; grid-template-columns: 1fr; gap: 48px; }
@@ -128,33 +130,37 @@ const ContactUsPage = () => {
           <div className="contact-cards-row">
             {infoCards.map(card => (
               <div key={card.title} className="info-card">
-                <div className="info-icon-circle">
-                  <span className="material-symbols-outlined info-icon">{card.icon}</span>
+                <div className="info-row">
+                  <div className="info-icon-circle">
+                    <span className="material-symbols-outlined info-icon">{card.icon}</span>
+                  </div>
+                  <div className="info-content">
+                    <p className="info-title">{card.title}</p>
+                    {card.lines.map((l, i) => {
+                      if (card.title === 'Phone') {
+                        const tel = l.replace(/[^+\d]/g, '');
+                        return (
+                          <p key={i} className="info-text" style={{ marginTop: i === 0 ? 0 : 4 }}>{
+                            <a href={`tel:${tel}`} style={{ color: '#1C1C1E', textDecoration: 'none', fontWeight: 700 }}>{l}</a>
+                          }</p>
+                        );
+                      }
+                      if (card.title === 'Email') {
+                        return (
+                          <p key={i} className="info-text" style={{ marginTop: i === 0 ? 0 : 4 }}>
+                            <a href={`mailto:${l}`} style={{ color: '#1C1C1E', textDecoration: 'none', fontWeight: 700 }}>{l}</a>
+                          </p>
+                        );
+                      }
+                      if (card.title === 'Address' && i === 1) {
+                        return (
+                          <p key={i} className="info-text" style={{ marginTop: 4, color: '#777777', fontSize: 13 }}>{l}</p>
+                        );
+                      }
+                      return <p key={i} className="info-text" style={{ marginTop: i === 0 ? 0 : 4 }}>{l}</p>;
+                    })}
+                  </div>
                 </div>
-                <p className="info-title">{card.title}</p>
-                {card.lines.map((l, i) => {
-                  if (card.title === 'Phone') {
-                    const tel = l.replace(/[^+\d]/g, '');
-                    return (
-                      <p key={i} className="info-text" style={{ margin: i < card.lines.length - 1 ? '0 0 2px' : 0 }}>
-                        <a href={`tel:${tel}`} style={{ color: '#1C1C1E', textDecoration: 'none', fontWeight: 700 }}>{l}</a>
-                      </p>
-                    );
-                  }
-                  if (card.title === 'Email') {
-                    return (
-                      <p key={i} className="info-text" style={{ margin: i < card.lines.length - 1 ? '0 0 2px' : 0 }}>
-                        <a href={`mailto:${l}`} style={{ color: '#1C1C1E', textDecoration: 'none', fontWeight: 700 }}>{l}</a>
-                      </p>
-                    );
-                  }
-                  if (card.title === 'Address' && i === 1) {
-                    return (
-                      <p key={i} className="info-text" style={{ margin: 0, color: '#777777', fontSize: 13 }}>{l}</p>
-                    );
-                  }
-                  return <p key={i} className="info-text" style={{ margin: i < card.lines.length - 1 ? '0 0 2px' : 0 }}>{l}</p>;
-                })}
               </div>
             ))}
           </div>

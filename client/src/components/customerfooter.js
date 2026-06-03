@@ -110,10 +110,9 @@ const CustomerFooter = () => {
               <span className="lux-footer-contact-text"><a href="tel:+15715196741" style={{ color: '#AAAAAA', textDecoration: 'none' }}>+1 571-519-6741</a></span>
             </div>
             <div className="lux-footer-contact-item">
-              <span className="material-symbols-outlined lux-footer-contact-icon" style={{ color: '#FFFFFF' }}>mail</span>
+              <span className="material-symbols-outlined lux-footer-contact-icon">mail</span>
               <span className="lux-footer-contact-text">
-                <br />
-                <a href="mailto:thesalonatreston@gmail.com" style={{ color: '#FFFFFF', textDecoration: 'none' }}>thesalonatreston@gmail.com</a>
+                <a href="mailto:thesalonatreston@gmail.com" style={{ color: 'inherit', textDecoration: 'none' }}>thesalonatreston@gmail.com</a>
               </span>
             </div>
             <div className="lux-footer-contact-item">
