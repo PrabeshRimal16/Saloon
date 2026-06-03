@@ -23,6 +23,16 @@ function StatusBadge({ status }) {
   );
 }
 
+function formatTime(timeStr) {
+  if (!timeStr) return null;
+  const parts = timeStr.split(':');
+  if (parts.length < 2) return timeStr;
+  const h = parseInt(parts[0], 10);
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  const h12 = h % 12 || 12;
+  return `${h12}:${parts[1]} ${ampm}`;
+}
+
 export default function AdminAppointmentManagement() {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -360,9 +370,15 @@ export default function AdminAppointmentManagement() {
                                   })
                                 : "—"}
                             </div>
-                            <div className="text-[12px] text-[#6B6B6B]">
-                              {app.appointment_time || ""}
-                            </div>
+                            {app.appointment_time ? (
+                              <div className="text-[12px] text-[#6B6B6B]">
+                                {formatTime(app.appointment_time)}
+                              </div>
+                            ) : (
+                              <div className="text-[12px] text-[#AAAAAA] italic">
+                                Time not set
+                              </div>
+                            )}
                           </td>
                           <td className="px-6 py-4 text-[14px] text-[#6B6B6B]">
                             {app.phone || "—"}
@@ -530,9 +546,15 @@ export default function AdminAppointmentManagement() {
                       <span className="material-symbols-outlined text-[#C9A84C] text-[14px]">schedule</span>
                       Time
                     </div>
-                    <div className="text-[14px] font-bold text-[#1A1A1A]">
-                      {selectedAppointment.appointment_time || "—"}
-                    </div>
+                    {selectedAppointment.appointment_time ? (
+                      <div className="text-[14px] font-bold text-[#1A1A1A]">
+                        {formatTime(selectedAppointment.appointment_time)}
+                      </div>
+                    ) : (
+                      <div className="text-[14px] text-[#AAAAAA] italic">
+                        Not specified
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

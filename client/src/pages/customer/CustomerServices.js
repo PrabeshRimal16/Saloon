@@ -7,6 +7,7 @@ export default function CustomerServices() {
   const { user } = useAuth();
   const [bookingService, setBookingService] = useState(null);
   const [bookingDate, setBookingDate] = useState('');
+  const [bookingTime, setBookingTime] = useState('');
   const [bookingPhone, setBookingPhone] = useState('');
   const [bookingLoading, setBookingLoading] = useState(false);
 
@@ -62,20 +63,27 @@ export default function CustomerServices() {
   const handleBook = (service) => {
     setBookingService(service);
     setBookingDate('');
+    setBookingTime('');
     setBookingPhone('');
   };
 
   const submitBooking = async (e) => {
     e.preventDefault();
     if (!user || !user.id) return alert('You must be signed in to book.');
-    if (!bookingDate) return alert('Please choose a date/time.');
+    if (!bookingDate || !bookingTime) return alert('Please choose a date and time.');
     setBookingLoading(true);
     try {
       const API_BASE = process.env.REACT_APP_API_URL || '';
       const res = await fetch(`${API_BASE}/api/appointments`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_id: user.id, service_id: bookingService.id, appointment_date: bookingDate, phone: bookingPhone })
+        body: JSON.stringify({ 
+          user_id: user.id, 
+          service_id: bookingService.id, 
+          appointment_date: bookingDate, 
+          appointment_time: bookingTime, 
+          phone: bookingPhone 
+        })
       });
       if (!res.ok) {
         const text = await res.text();
@@ -186,9 +194,15 @@ export default function CustomerServices() {
             <div className="bg-white p-6 rounded max-w-md w-full">
               <h3 className="font-headline-md text-headline-md mb-4">Book: {bookingService.name}</h3>
               <form onSubmit={submitBooking} className="space-y-4">
-                <div>
-                  <label className="block text-sm text-outline mb-1">Date &amp; Time</label>
-                  <input value={bookingDate} onChange={e=>setBookingDate(e.target.value)} type="datetime-local" className="w-full border px-3 py-2" />
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm text-outline mb-1">Date</label>
+                    <input required value={bookingDate} onChange={e=>setBookingDate(e.target.value)} type="date" className="w-full border px-3 py-2" />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-outline mb-1">Appointment Time</label>
+                    <input required value={bookingTime} onChange={e=>setBookingTime(e.target.value)} type="time" className="w-full border px-3 py-2" />
+                  </div>
                 </div>
                 <div>
                   <label className="block text-sm text-outline mb-1">Phone</label>
