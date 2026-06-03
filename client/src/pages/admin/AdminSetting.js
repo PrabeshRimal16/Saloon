@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import AdminSidebar from "../../components/AdminSidebar";
-import AdminHeader from "../../components/AdminHeader";
 import { useAuth } from "../../context/AuthContext";
 
 function SectionCard({ icon, title, subtitle, children }) {
@@ -126,11 +124,7 @@ export default function AdminSetting() {
 
   return (
     <div className="min-h-screen bg-[#F4F4F6]">
-      <AdminSidebar />
-      <div className="admin-content pt-[80px]">
-        <AdminHeader title="Settings" />
-
-        <main className="p-8 animate-[fadeIn_0.3s_ease-in]">
+      <main className="p-8 animate-[fadeIn_0.3s_ease-in]">
           {/* Toast */}
           {saved && (
             <div className="fixed top-6 right-6 z-[9999] flex items-center gap-3 px-5 py-3 rounded-[8px] bg-[#2D7A4F] text-white text-[14px] font-medium shadow-[0_4px_12px_rgba(0,0,0,0.15)] animate-[fadeIn_0.2s_ease]">

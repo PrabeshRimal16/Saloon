@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import AdminSidebar from "../../components/AdminSidebar";
-import AdminHeader from "../../components/AdminHeader";
+
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -203,10 +202,7 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-[#F4F4F6]">
-      <AdminSidebar />
-      <div className="admin-content pt-[80px]">
-        <AdminHeader title="Overview" />
-        <main className="p-8 animate-[fadeIn_0.3s_ease-in]">
+      <main className="p-8 animate-[fadeIn_0.3s_ease-in]">
 
           {/* Greeting */}
           <div className="flex items-center justify-between mb-8">
