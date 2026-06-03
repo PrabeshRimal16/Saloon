@@ -40,16 +40,25 @@ export default function AdminSidebar() {
 
   return (
     <aside className={`fixed top-0 left-0 h-screen bg-[#1A1A1A] flex flex-col z-40 admin-sidebar ${collapsed ? 'w-[64px] is-collapsed' : 'w-[220px]'}`}>
-      <div className="pt-4 pb-4 px-3 flex items-center justify-between">
-        <div className={`pl-2 ${collapsed ? 'opacity-0' : ''}`}>
-          <h1 className="font-heading text-primary text-h4 uppercase tracking-widest">The Salon At Reston</h1>
-        </div>
-        <div className="pr-1">
-          <button onClick={toggleCollapse} aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'} className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${collapsed ? 'text-[#C9A84C]' : 'text-[#AAAAAA] hover:text-white'}`}>
-            <span className="material-symbols-outlined">{collapsed ? 'chevron_right' : 'chevron_left'}</span>
+      {/* Header / Toggle: centered when collapsed, title + button when expanded */}
+      {collapsed ? (
+        <div className="pt-3 pb-3 flex items-center justify-center">
+          <button onClick={toggleCollapse} aria-label="Expand sidebar" className="w-10 h-10 rounded-full flex items-center justify-center text-[#C9A84C] hover:bg-[rgba(201,168,76,0.06)] transition-colors">
+            <span className="material-symbols-outlined">menu</span>
           </button>
         </div>
-      </div>
+      ) : (
+        <div className="pt-4 pb-4 px-3 flex items-center justify-between">
+          <div className={`pl-2`}>
+            <h1 className="font-heading text-primary text-h4 uppercase tracking-widest">The Salon At Reston</h1>
+          </div>
+          <div className="pr-1">
+            <button onClick={toggleCollapse} aria-label="Collapse sidebar" className="w-8 h-8 rounded-full flex items-center justify-center transition-colors text-[#AAAAAA] hover:text-white">
+              <span className="material-symbols-outlined">chevron_left</span>
+            </button>
+          </div>
+        </div>
+      )}
 
       <nav className="flex-1 overflow-auto py-3">
         <ul className="flex flex-col gap-1">
@@ -68,7 +77,7 @@ export default function AdminSidebar() {
                 <div className="active-border" />
                 <div className="hover-bg" />
                 <span className="material-symbols-outlined text-[20px]">{item.icon}</span>
-                <span className={`font-body text-body font-medium transition-opacity ${collapsed ? 'hidden' : 'opacity-100'}`}>{item.label}</span>
+                <span className={`font-body text-body font-medium label-text ${collapsed ? 'label-hidden' : 'label-visible'}`}>{item.label}</span>
                 {collapsed && <div className="collapsed-tooltip">{item.label}</div>}
               </NavLink>
             </li>
@@ -90,7 +99,7 @@ export default function AdminSidebar() {
                 </div>
               )}
 
-              <div className={`flex flex-col ml-3 ${collapsed ? 'hidden' : ''}`}>
+              <div className={`flex flex-col ml-3 user-details ${collapsed ? 'hidden' : ''}`}>
                 <div className="text-white text-[14px] font-bold truncate">{user?.name || user?.displayName || user?.email || 'Administrator'}</div>
                 <div className="text-[#AAAAAA] text-[12px] truncate">Administrator</div>
               </div>
@@ -101,8 +110,9 @@ export default function AdminSidebar() {
 
       <div className="px-3 pb-4 mt-auto">
         <div className="w-full flex justify-center">
-          <button onClick={handleLogout} aria-label="Logout" className="w-10 h-10 rounded-full flex items-center justify-center text-[#C0392B] hover:bg-[rgba(192,57,43,0.06)] transition-colors">
+          <button onClick={handleLogout} aria-label="Logout" className="inline-flex items-center gap-2 px-3 py-2 rounded-full text-[#C0392B] hover:bg-[rgba(192,57,43,0.06)] transition-colors">
             <span className="material-symbols-outlined text-[18px]">logout</span>
+            <span className={`text-[#C0392B] text-[14px] font-medium logout-text ${collapsed ? 'hidden' : ''}`}>Logout</span>
           </button>
         </div>
       </div>
