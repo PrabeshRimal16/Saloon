@@ -40,7 +40,7 @@ const AppRoutes = () => {
   }
 
   return (
-    <div className="route-wrapper" key={location.pathname}>
+    <div className="route-wrapper">
       <Routes>
       <Route
         path="/login"
