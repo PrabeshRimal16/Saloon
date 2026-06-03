@@ -51,29 +51,32 @@ export default function AdminSidebar() {
         </ul>
       </nav>
 
-      <div className="p-6 border-t border-[rgba(255,255,255,0.05)]">
-        <div className="flex items-center gap-3 mb-6">
+      <div className="p-6 border-t border-[rgba(255,255,255,0.05)] flex flex-col gap-4">
+        <div className="flex items-center gap-3">
           {loading ? (
-            <div className="w-10 h-10 rounded-full bg-[#333] animate-pulse" />
+            <div className="w-12 h-12 rounded-full bg-[#333] animate-pulse shrink-0" />
           ) : (
             <>
               {(user && (user.avatar_url || user.photo || user.avatar || user.avatarUrl || user.picture)) ? (
-                <img src={user.avatar_url || user.photo || user.avatar || user.avatarUrl || user.picture} alt={user.name || user.email} className="w-10 h-10 rounded-full object-cover border border-primary" />
+                <img src={user.avatar_url || user.photo || user.avatar || user.avatarUrl || user.picture} alt={user.name || user.email} className="w-12 h-12 rounded-full object-cover border-2 border-[#C9A84C] shrink-0" />
               ) : (
-                <div className="w-10 h-10 rounded-full bg-[#333] flex items-center justify-center text-sm font-medium border border-primary text-primary">
+                <div className="w-12 h-12 rounded-full bg-[#333] flex items-center justify-center text-[16px] font-bold border-2 border-[#C9A84C] text-[#C9A84C] shrink-0">
                   {(user && (user.name || user.email)) ? (user.name ? user.name.split(' ').map(p=>p[0]).slice(0,2).join('').toUpperCase() : (user.email[0]||'U').toUpperCase()) : 'U'}
                 </div>
               )}
               <div className="flex-1 min-w-0">
-                <div className="text-white text-body font-medium truncate">{user?.name || user?.displayName || user?.email || 'Admin'}</div>
-                <div className="text-[#AAAAAA] text-label truncate">Administrator</div>
+                <div className="text-white text-[14px] font-bold truncate">{user?.name || user?.displayName || user?.email || 'Admin'}</div>
+                <div className="text-[#AAAAAA] text-[12px] truncate">Administrator</div>
               </div>
             </>
           )}
         </div>
-        <button onClick={handleLogout} className="flex items-center gap-2 w-full px-4 py-2 text-error hover:text-[#a93226] transition-colors duration-200">
+        
+        <div className="h-[1px] w-full bg-[rgba(255,255,255,0.1)]"></div>
+        
+        <button onClick={handleLogout} className="flex items-center gap-2 w-full px-4 py-2.5 rounded-[8px] text-[#C0392B] hover:bg-[rgba(192,57,43,0.1)] transition-colors duration-200">
           <span className="material-symbols-outlined text-[20px]">logout</span>
-          <span className="font-label font-bold">LOGOUT</span>
+          <span className="font-bold text-[13px] uppercase tracking-wider">Logout</span>
         </button>
       </div>
     </aside>
