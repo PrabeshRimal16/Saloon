@@ -35,6 +35,11 @@ router.post("/", upload.single('image'), async (req, res) => {
       "INSERT INTO offers (title, description, discount_percent, valid_until, image_url) VALUES ($1, $2, $3, $4, $5) RETURNING *",
       [title, description, discount_percent, valid_until, imageUrl]
     );
+    // Notify users about new offer
+    try {
+      const notificationsRouter = require('./notifications');
+      notificationsRouter.createNotification({ type: 'offer', message: `New offer: ${title}`, userId: null });
+    } catch (e) { console.error('Notify users error', e.message); }
     res.json(result.rows[0]);
   } catch (err) {
     res.status(500).json({ error: err.message });

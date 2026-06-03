@@ -49,4 +49,23 @@ router.post("/", (req, res) => {
   }
 });
 
+// Helper to create a notification programmatically from other server modules
+router.createNotification = ({ type, message, userId }) => {
+  try {
+    const notification = {
+      id: Date.now(),
+      type,
+      message,
+      userId: userId || null,
+      timestamp: new Date(),
+    };
+    notifications.unshift(notification);
+    if (notifications.length > 100) notifications.pop();
+    return notification;
+  } catch (err) {
+    console.error('Failed to create notification', err);
+    return null;
+  }
+};
+
 module.exports = router;

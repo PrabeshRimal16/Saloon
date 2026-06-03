@@ -19,6 +19,11 @@ router.post("/", async (req, res) => {
       "INSERT INTO appointments (user_id, service_id, appointment_date, appointment_time, phone) VALUES ($1, $2, $3, $4, $5) RETURNING *",
       [user_id, service_id, appointment_date, appointment_time, phone]
     );
+    // Notify admins of new booking
+    try {
+      const notificationsRouter = require('./notifications');
+      notificationsRouter.createNotification({ type: 'appointment', message: `New booking (ID ${result.rows[0].id}) by user ${user_id}`, userId: null });
+    } catch (e) { console.error('Notify admins error', e.message); }
     res.json(result.rows[0]);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -68,7 +73,18 @@ router.put("/:id", async (req, res) => {
         [status, req.params.id]
       );
     }
-    res.json(result.rows[0]);
+
+    const updated = result.rows[0];
+
+    // If approved, notify the user
+    try {
+      if (updated && String(updated.status).toLowerCase() === 'approved') {
+        const notificationsRouter = require('./notifications');
+        notificationsRouter.createNotification({ type: 'appointment_update', message: `Your booking (ID ${updated.id}) has been approved.`, userId: String(updated.user_id) });
+      }
+    } catch (e) { console.error('Notify user error', e.message); }
+
+    res.json(updated);
   } catch (err) {
     console.error(`PUT /api/appointments/${req.params.id} error`, err);
     res.status(500).json({ error: err.message });
