@@ -62,8 +62,8 @@ const CSS = `
 
   .svc-card { background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.08); transition: box-shadow 0.3s, transform 0.3s; cursor: pointer; }
   .svc-card:hover { box-shadow: 0 16px 40px rgba(0,0,0,0.14); transform: translateY(-8px); }
-  .svc-img-wrap { height: 320px; position: relative; overflow: hidden; background: linear-gradient(135deg, #1C1C1E 0%, #2C2416 100%); display: flex; align-items: center; justify-content: center; }
-  .svc-img-wrap img { width: 100%; height: 100%; object-fit: cover; object-position: center top; transition: transform 0.4s ease; }
+  .svc-img-wrap { aspect-ratio: 4/5; min-height: 400px; height: auto; position: relative; overflow: hidden; background: linear-gradient(135deg, #1C1C1E 0%, #2C2416 100%); display: flex; align-items: center; justify-content: center; }
+  .svc-img-wrap img { width: 100%; height: 100%; object-fit: cover; object-position: top center; transition: transform 0.4s ease; display: block; }
   .svc-card:hover .svc-img-wrap img { transform: scale(1.03); }
   .svc-placeholder-icon { font-size: 48px; color: #B8960C; text-shadow: 0 0 16px rgba(184,150,12,0.5); z-index: 2; }
   .svc-placeholder-text { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 700; color: white; opacity: 0.05; text-transform: uppercase; text-align: center; line-height: 1.1; pointer-events: none; z-index: 1; padding: 20px; }

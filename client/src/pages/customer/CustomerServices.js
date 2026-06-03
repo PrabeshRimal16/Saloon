@@ -38,8 +38,8 @@ const CSS = `
 
   .svc-card { background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.08); transition: box-shadow 0.3s, transform 0.3s; display: flex; flex-direction: column; }
   .svc-card:hover { box-shadow: 0 16px 40px rgba(0,0,0,0.14); transform: translateY(-8px); }
-  .svc-img-area { height: 320px; position: relative; overflow: hidden; background: linear-gradient(135deg, #1C1C1E 0%, #2C2416 100%); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .svc-img-area img { width: 100%; height: 100%; object-fit: cover; object-position: center top; transition: transform 0.4s ease; }
+  .svc-img-area { aspect-ratio: 4/5; min-height: 400px; height: auto; position: relative; overflow: hidden; background: linear-gradient(135deg, #1C1C1E 0%, #2C2416 100%); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .svc-img-area img { width: 100%; height: 100%; object-fit: cover; object-position: top center; transition: transform 0.4s ease; display: block; }
   .svc-card:hover .svc-img-area img { transform: scale(1.03); }
   .svc-img-placeholder { display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 2; }
   .svc-img-placeholder .mat-icon { font-size: 48px; color: #B8960C; text-shadow: 0 0 16px rgba(184,150,12,0.5); }
