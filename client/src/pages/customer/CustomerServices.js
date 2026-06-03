@@ -37,21 +37,22 @@ const CSS = `
   @media (max-width: 580px) { .svc-grid { grid-template-columns: 1fr; } }
 
   .svc-card { background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.08); transition: box-shadow 0.3s, transform 0.3s; display: flex; flex-direction: column; }
-  .svc-card:hover { box-shadow: 0 12px 40px rgba(0,0,0,0.14); transform: translateY(-6px); }
-  .svc-img-area { height: 260px; position: relative; overflow: hidden; background: linear-gradient(145deg, #2A2A2A 0%, #1C1C1E 100%); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .svc-img-area img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
-  .svc-card:hover .svc-img-area img { transform: scale(1.07); }
-  .svc-img-placeholder { display: flex; flex-direction: column; align-items: center; gap: 10px; }
-  .svc-img-placeholder .mat-icon { font-size: 52px; color: rgba(184,150,12,0.7); }
-  .svc-cat-pill { position: absolute; top: 14px; left: 14px; background: #B8960C; color: white; font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; padding: 4px 12px; border-radius: 50px; }
-  .svc-body { padding: 24px 24px 28px; flex-grow: 1; display: flex; flex-direction: column; }
-  .svc-name { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 22px; font-weight: 600; color: #1C1C1E; margin: 0 0 10px; }
-  .svc-desc { font-family: 'DM Sans', sans-serif; font-size: 13px; color: #6B6B6B; line-height: 1.65; margin: 0 0 6px; flex-grow: 1; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-  .svc-dur { font-family: 'DM Sans', sans-serif; font-size: 12px; color: #AAAAAA; margin: 0 0 20px; display: flex; align-items: center; gap: 4px; }
+  .svc-card:hover { box-shadow: 0 16px 40px rgba(0,0,0,0.14); transform: translateY(-8px); }
+  .svc-img-area { height: 320px; position: relative; overflow: hidden; background: linear-gradient(135deg, #1C1C1E 0%, #2C2416 100%); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .svc-img-area img { width: 100%; height: 100%; object-fit: cover; object-position: center top; transition: transform 0.4s ease; }
+  .svc-card:hover .svc-img-area img { transform: scale(1.03); }
+  .svc-img-placeholder { display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 2; }
+  .svc-img-placeholder .mat-icon { font-size: 48px; color: #B8960C; text-shadow: 0 0 16px rgba(184,150,12,0.5); }
+  .svc-placeholder-text { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 700; color: white; opacity: 0.05; text-transform: uppercase; text-align: center; line-height: 1.1; pointer-events: none; z-index: 1; padding: 20px; }
+  .svc-cat-pill { position: absolute; top: 14px; left: 14px; background: #B8960C; color: white; font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; padding: 4px 12px; border-radius: 50px; z-index: 3; }
+  .svc-body { padding: 24px; flex-grow: 1; display: flex; flex-direction: column; }
+  .svc-name { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 22px; font-weight: 600; color: #1C1C1E; margin: 0 0 8px; }
+  .svc-desc { font-family: 'DM Sans', sans-serif; font-size: 13px; color: #6B6B6B; line-height: 1.65; margin: 0 0 16px; flex-grow: 1; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .svc-dur { font-family: 'DM Sans', sans-serif; font-size: 12px; color: #AAAAAA; margin: 0 0 16px; display: flex; align-items: center; gap: 4px; }
   .svc-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-  .svc-price { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 22px; font-weight: 700; color: #B8960C; }
-  .btn-book { flex: 1; padding: 12px 0; border-radius: 50px; background: #B8960C; color: white; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; transition: background 0.2s, transform 0.15s; }
-  .btn-book:hover { background: #8B7209; transform: scale(1.02); }
+  .svc-price { font-family: 'DM Sans', sans-serif; font-size: 18px; font-weight: 700; color: #1C1C1E; }
+  .btn-book { padding: 12px 24px; border-radius: 8px; background: linear-gradient(90deg, #B8960C 0%, #D4AF37 100%); color: white; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; transition: opacity 0.2s, transform 0.15s; margin-left: auto; }
+  .btn-book:hover { opacity: 0.9; transform: scale(1.02); }
 
   /* Empty */
   .svc-empty { text-align: center; padding: 80px 24px; color: #AAAAAA; }
@@ -171,7 +172,12 @@ export default function CustomerServices() {
                       <div className="svc-img-area">
                         {imgSrc
                           ? <img src={imgSrc} alt={s.name} />
-                          : <div className="svc-img-placeholder"><span className="material-symbols-outlined mat-icon">content_cut</span></div>
+                          : (
+                            <>
+                              <span className="svc-placeholder-text">{s.name}</span>
+                              <div className="svc-img-placeholder"><span className="material-symbols-outlined mat-icon">content_cut</span></div>
+                            </>
+                          )
                         }
                         {s.category && <span className="svc-cat-pill">{s.category}</span>}
                       </div>
@@ -180,7 +186,7 @@ export default function CustomerServices() {
                         <p className="svc-desc">{s.description}</p>
                         {s.duration && <p className="svc-dur"><span className="material-symbols-outlined" style={{ fontSize: 14 }}>schedule</span>{s.duration} min</p>}
                         <div className="svc-footer">
-                          <span className="svc-price">${Number(s.price || 0).toLocaleString()}</span>
+                          <span className="svc-price">NPR {Number(s.price || 0).toLocaleString()}</span>
                           <button className="btn-book" onClick={() => setBookingService(s)}>Book Now</button>
                         </div>
                       </div>

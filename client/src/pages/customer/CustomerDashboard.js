@@ -61,19 +61,20 @@ const CSS = `
   @media (max-width: 600px) { .services-grid { grid-template-columns: 1fr; } }
 
   .svc-card { background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.08); transition: box-shadow 0.3s, transform 0.3s; cursor: pointer; }
-  .svc-card:hover { box-shadow: 0 12px 40px rgba(0,0,0,0.14); transform: translateY(-6px); }
-  .svc-img-wrap { height: 260px; position: relative; overflow: hidden; background: linear-gradient(145deg, #2A2A2A 0%, #1C1C1E 100%); display: flex; align-items: center; justify-content: center; }
-  .svc-img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
-  .svc-card:hover .svc-img-wrap img { transform: scale(1.06); }
-  .svc-placeholder-icon { font-size: 56px; color: rgba(184,150,12,0.7); }
-  .svc-category-badge { position: absolute; top: 14px; left: 14px; background: #B8960C; color: white; font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; padding: 4px 12px; border-radius: 50px; }
+  .svc-card:hover { box-shadow: 0 16px 40px rgba(0,0,0,0.14); transform: translateY(-8px); }
+  .svc-img-wrap { height: 320px; position: relative; overflow: hidden; background: linear-gradient(135deg, #1C1C1E 0%, #2C2416 100%); display: flex; align-items: center; justify-content: center; }
+  .svc-img-wrap img { width: 100%; height: 100%; object-fit: cover; object-position: center top; transition: transform 0.4s ease; }
+  .svc-card:hover .svc-img-wrap img { transform: scale(1.03); }
+  .svc-placeholder-icon { font-size: 48px; color: #B8960C; text-shadow: 0 0 16px rgba(184,150,12,0.5); z-index: 2; }
+  .svc-placeholder-text { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 700; color: white; opacity: 0.05; text-transform: uppercase; text-align: center; line-height: 1.1; pointer-events: none; z-index: 1; padding: 20px; }
+  .svc-category-badge { position: absolute; top: 14px; left: 14px; background: #B8960C; color: white; font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; padding: 4px 12px; border-radius: 50px; z-index: 3; }
   .svc-body { padding: 24px; }
   .svc-name { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 22px; font-weight: 600; color: #1C1C1E; margin: 0 0 8px; }
-  .svc-desc { font-family: 'DM Sans', sans-serif; font-size: 13px; color: #6B6B6B; line-height: 1.65; margin: 0 0 20px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .svc-desc { font-family: 'DM Sans', sans-serif; font-size: 13px; color: #6B6B6B; line-height: 1.65; margin: 0 0 16px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   .svc-footer { display: flex; align-items: center; justify-content: space-between; }
-  .svc-price { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 20px; font-weight: 700; color: #B8960C; }
-  .btn-svc-book { padding: 10px 24px; border-radius: 50px; background: #B8960C; color: white; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; transition: background 0.2s, transform 0.2s; }
-  .btn-svc-book:hover { background: #8B7209; transform: scale(1.02); }
+  .svc-price { font-family: 'DM Sans', sans-serif; font-size: 18px; font-weight: 700; color: #1C1C1E; }
+  .btn-svc-book { padding: 12px 24px; border-radius: 8px; background: linear-gradient(90deg, #B8960C 0%, #D4AF37 100%); color: white; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; transition: opacity 0.2s, transform 0.2s; }
+  .btn-svc-book:hover { opacity: 0.9; transform: scale(1.02); }
 
   .offers-row { display: flex; gap: 20px; overflow-x: auto; padding-bottom: 12px; scrollbar-width: thin; }
   .offer-card { background: white; border-radius: 16px; min-width: 260px; max-width: 260px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.08); border-top: 3px solid #B8960C; transition: box-shadow 0.3s, transform 0.3s; }
@@ -173,7 +174,12 @@ export default function CustomerDashboard() {
                     <div className="svc-img-wrap">
                       {fullImg
                         ? <img src={fullImg} alt={s.name || s.title} />
-                        : <span className="material-symbols-outlined svc-placeholder-icon">{s.icon || 'content_cut'}</span>
+                        : (
+                          <>
+                            <span className="svc-placeholder-text">{s.name || s.title}</span>
+                            <span className="material-symbols-outlined svc-placeholder-icon">{s.icon || 'content_cut'}</span>
+                          </>
+                        )
                       }
                       {(s.category || s.cat) && <span className="svc-category-badge">{s.category || s.cat}</span>}
                     </div>
@@ -181,7 +187,7 @@ export default function CustomerDashboard() {
                       <h3 className="svc-name">{s.name || s.title}</h3>
                       <p className="svc-desc">{s.description || s.desc}</p>
                       <div className="svc-footer">
-                        <span className="svc-price">${Number(s.price || 0).toLocaleString()}</span>
+                        <span className="svc-price">NPR {Number(s.price || 0).toLocaleString()}</span>
                         <button className="btn-svc-book" onClick={() => navigate('/appointments')}>Book Now</button>
                       </div>
                     </div>
