@@ -110,7 +110,7 @@ const ContactUsPage = () => {
   const infoCards = [
     { icon: 'location_on', title: 'Address', lines: ['1613 Washington Plaza N, Reston, VA 20190, United States', 'Located in Lake Anne Plaza - Main Parking lot'] },
     { icon: 'call', title: 'Phone', lines: ['+1 571-519-6741'] },
-    { icon: 'mail', title: 'Email', lines: ['info@thesalonatreston.com'] },
+    { icon: 'mail', title: 'Email', lines: ['info@thesalonatreston.com', 'thesalonatreston@gmail.com'] },
     { icon: 'schedule', title: 'Hours', lines: ['Mon–Sat: 10AM – 8PM', 'Sunday: Closed'] },
   ];
 
@@ -147,6 +147,13 @@ const ContactUsPage = () => {
                     return (
                       <p key={i} className="info-text" style={{ margin: i < card.lines.length - 1 ? '0 0 2px' : 0 }}>
                         <a href={`tel:${tel}`} style={{ color: '#1C1C1E', textDecoration: 'none', fontWeight: 700 }}>{l}</a>
+                      </p>
+                    );
+                  }
+                  if (card.title === 'Email') {
+                    return (
+                      <p key={i} className="info-text" style={{ margin: i < card.lines.length - 1 ? '0 0 2px' : 0 }}>
+                        <a href={`mailto:${l}`} style={{ color: '#1C1C1E', textDecoration: 'none', fontWeight: 700 }}>{l}</a>
                       </p>
                     );
                   }
