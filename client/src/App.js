@@ -20,6 +20,8 @@ import CustomerSetting from "./pages/customer/CustomerSetting";
 import CustomerContactus from "./pages/customer/CustomerContactus";
 import Register from "./pages/Register";
 import CompleteProfile from "./pages/CompleteProfile";
+import CustomerNavbar from './components/CustomerNavbar';
+import CustomerFooter from './components/CustomerFooter';
 
 const AppRoutes = () => {
   const { user, loading } = useAuth();
@@ -38,7 +40,9 @@ const AppRoutes = () => {
 
   return (
     <div className="route-wrapper">
-      <div key={location.pathname} className="page-fade">
+      {/* Nav and footer are mounted outside the route switch so they don't unmount on navigation */}
+      {!location.pathname.startsWith('/admin') && <CustomerNavbar />}
+      <div className="page-fade">
       <Routes>
       <Route
         path="/login"
@@ -91,6 +95,8 @@ const AppRoutes = () => {
       <Route path="/complete-profile" element={<CompleteProfile />} />
       </Routes>
       </div>
+
+      {!location.pathname.startsWith('/admin') && <CustomerFooter />}
 
       {loading && (
         <div className="loading-overlay" aria-hidden>

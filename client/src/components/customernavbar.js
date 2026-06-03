@@ -1,24 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, NavLink } from 'react-router-dom';
 
-export default function CustomerNavbar() {
+function CustomerNavbar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
-  const currentPath = location.pathname || '/';
   const [notifications, setNotifications] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showAvatar, setShowAvatar] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const notifRef = useRef(null);
   const avatarRef = useRef(null);
+}
 
-  const isActive = (path) => {
-    if (path === '/') return currentPath === '/' || currentPath === '/customer';
-    return currentPath === path || currentPath.startsWith(path);
-  };
-
+export default React.memo(CustomerNavbar);
   // Scroll shadow
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -214,13 +209,13 @@ export default function CustomerNavbar() {
 
           <div className="lux-links">
             {navLinks.map(link => (
-              <button
+              <NavLink
                 key={link.name}
-                className={`lux-link${isActive(link.path) ? ' active' : ''}`}
-                onClick={() => navigate(link.path)}
+                to={link.path}
+                className={({ isActive }) => `lux-link${isActive ? ' active' : ''}`}
               >
                 {link.name}
-              </button>
+              </NavLink>
             ))}
           </div>
         </div>
