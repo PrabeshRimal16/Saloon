@@ -8,7 +8,14 @@ const initializeDatabase = require("./db-init");
 dotenv.config();
 
 const app = express();
-const compression = require('compression');
+let compressionMiddleware = null;
+try {
+  // compression is optional at runtime; if not installed, warn and continue
+  const compression = require('compression');
+  compressionMiddleware = compression();
+} catch (err) {
+  console.warn('Optional dependency `compression` not installed. Skipping response compression.');
+}
 const path = require('path');
 const fs = require('fs');
 
@@ -34,8 +41,8 @@ app.use(
   })
 );
 
-// compress responses to reduce payload sizes
-app.use(compression());
+// compress responses to reduce payload sizes (if available)
+if (compressionMiddleware) app.use(compressionMiddleware);
 
 app.use(session({
   secret: sessionSecret,
