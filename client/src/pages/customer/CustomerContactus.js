@@ -101,7 +101,7 @@ const ContactUsPage = () => {
   const infoCards = [
     { icon: 'location_on', title: 'Address', lines: ['1613 Washington Plaza N, Reston, VA 20190, United States', 'Located in Lake Anne Plaza - Main Parking lot'] },
     { icon: 'call', title: 'Phone', lines: ['+1 571-519-6741'] },
-    { icon: 'mail', title: 'Email', lines: ['info@thesalonatreston.com', 'thesalonatreston@gmail.com'] },
+    { icon: 'mail', title: 'Email', lines: ['thesalonatreston@gmail.com'] },
     { icon: 'schedule', title: 'Hours', lines: ['Mon–Sat: 10AM – 8PM', 'Sunday: Closed'] },
   ];
 
