@@ -1,0 +1,59 @@
+.cm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 24px;
+}
+.cm-card {
+  width: 400px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+  text-align: center;
+  position: relative;
+  transform: scale(0.95);
+  opacity: 0;
+  animation: cm-pop 200ms ease forwards;
+}
+.cm-topbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg,#D4AF37,#B8960C);
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+}
+.cm-icon {
+  font-size: 40px;
+  color: #D4AF37;
+  margin-top: 8px;
+}
+.cm-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: #1A1A1A;
+  margin: 14px 0 8px;
+}
+.cm-message {
+  color: #6B6B6B;
+  font-size: 15px;
+  margin-bottom: 22px;
+}
+.cm-actions { display:flex; gap:12px; justify-content:center; }
+.cm-btn { padding: 12px 28px; border-radius: 8px; font-weight:700; cursor:pointer; border: none; }
+.cm-cancel { background: #fff; color: #B8960C; border: 2px solid #D4AF37; }
+.cm-confirm { background: #C0392B; color: #fff; border: none; }
+.cm-confirm:hover { filter: brightness(0.9); }
+
+@keyframes cm-pop {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
