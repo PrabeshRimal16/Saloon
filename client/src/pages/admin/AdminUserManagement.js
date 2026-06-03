@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import AdminSidebar from "../../components/AdminSidebar";
-import AdminHeader from "../../components/AdminHeader";
+
 
 export default function AdminUserManagement() {
   const [users, setUsers] = useState([]);
@@ -83,11 +82,7 @@ export default function AdminUserManagement() {
 
   return (
     <div className="min-h-screen bg-[#F4F4F6]">
-      <AdminSidebar />
-      <div className="admin-content pt-[80px]">
-        <AdminHeader title="Manage Users" />
-
-        <main className="p-8 animate-[fadeIn_0.3s_ease-in]">
+      <main className="p-8 animate-[fadeIn_0.3s_ease-in]">
 
           {/* Stats Row */}
           <div className="flex items-center justify-between mb-8">

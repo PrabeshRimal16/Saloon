@@ -73,7 +73,7 @@ export default function AdminHeader({ title }) {
   }, []);
 
   return (
-    <header style={{ left: sidebarCollapsed ? 64 : 220 }} className="fixed top-0 right-0 z-40 bg-white border-b border-[#EDE8DC] h-[80px] flex items-center px-8 transition-all duration-300 admin-fade-up">
+    <header style={{ left: 'var(--admin-left,220px)' }} className="fixed top-0 right-0 z-40 bg-white border-b border-[#EDE8DC] h-[80px] flex items-center px-8 transition-all duration-300">
       <div className="flex items-center justify-between w-full">
         <div>
           <h1 className="font-heading text-[20px] font-bold text-dark">{title || 'Admin'}</h1>

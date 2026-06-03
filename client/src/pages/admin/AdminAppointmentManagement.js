@@ -75,9 +75,8 @@ export default function AdminAppointmentManagement() {
       });
       if (!res.ok) throw new Error("Failed to update");
       const updated = await res.json();
-      setAppointments((prev) =>
-        prev.map((a) => (a.id === id ? { ...a, status: updated.status } : a))
-      );
+      // refresh context cache
+      try { await fetchAppointments({ force: true }); } catch (_) {}
       if (selectedAppointment?.id === id) {
         setSelectedAppointment((prev) => ({ ...prev, status: updated.status }));
       }
@@ -88,7 +87,7 @@ export default function AdminAppointmentManagement() {
     }
   };
 
-  const filtered = appointments.filter((a) => {
+  const filtered = (localAppointments || []).filter((a) => {
     if (
       filterStatus !== "All" &&
       String(a.status).toLowerCase() !== filterStatus.toLowerCase()
@@ -109,40 +108,30 @@ export default function AdminAppointmentManagement() {
     );
   });
 
-  const stats = {
-    total: appointments.length,
-    pending: appointments.filter(
-      (a) => String(a.status).toLowerCase() === "pending"
-    ).length,
-    approved: appointments.filter(
-      (a) => String(a.status).toLowerCase() === "approved"
-    ).length,
-    cancelled: appointments.filter(
-      (a) => String(a.status).toLowerCase() === "cancelled"
-    ).length,
-  };
+  const stats = React.useMemo(() => ({
+    total: (localAppointments || []).length,
+    pending: (localAppointments || []).filter((a) => String(a.status).toLowerCase() === 'pending').length,
+    approved: (localAppointments || []).filter((a) => String(a.status).toLowerCase() === 'approved').length,
+    cancelled: (localAppointments || []).filter((a) => String(a.status).toLowerCase() === 'cancelled').length,
+  }), [localAppointments]);
 
   const hasFilters = query || filterStatus !== "All" || dateRange;
 
   return (
     <div className="min-h-screen bg-[#F4F4F6]">
-      <AdminSidebar />
-      <div className="admin-content pt-[80px]">
-        <AdminHeader title="Appointments" />
-
-        <main
-          className={`p-8 transition-all duration-300 ${
-            selectedAppointment ? "mr-[420px]" : ""
-          }`}
-        >
+      <main
+        className={`p-8 transition-all duration-300 ${
+          selectedAppointment ? 'mr-[420px]' : ''
+        }`}
+      >
           {/* Page intro */}
           <div className="flex items-center justify-between mb-8">
             <div>
               <div className="text-[11px] font-bold text-[#C9A84C] uppercase tracking-[0.35em] mb-1">
                 Management
               </div>
-              <p className="text-[#6B6B6B] text-[14px]">
-                {appointments.length} total · {stats.pending} pending action
+                <p className="text-[#6B6B6B] text-[14px]">
+                {localAppointments.length} total · {stats.pending} pending action
               </p>
             </div>
           </div>
@@ -446,11 +435,11 @@ export default function AdminAppointmentManagement() {
               <div className="px-6 py-4 border-t border-[#EDE8DC] bg-[#FAFAF8] flex justify-between items-center">
                 <p className="text-[13px] text-[#6B6B6B]">
                   Showing{" "}
-                  <strong className="text-[#1A1A1A]">{filtered.length}</strong>{" "}
-                  of{" "}
+                  <strong className="text-[#1A1A1A]">{filtered.length}</strong>{' '}
+                  of {' '}
                   <strong className="text-[#1A1A1A]">
-                    {appointments.length}
-                  </strong>{" "}
+                    {localAppointments.length}
+                  </strong>{' '}
                   appointments
                 </p>
               </div>

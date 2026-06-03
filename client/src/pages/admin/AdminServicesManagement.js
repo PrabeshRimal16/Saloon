@@ -1,6 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import AdminSidebar from '../../components/AdminSidebar';
-import AdminHeader from '../../components/AdminHeader';
+
 
 const INPUT_CLS = "w-full bg-white border-[1.5px] border-[#EDE8DC] rounded-[8px] px-4 py-2.5 text-[14px] font-body outline-none transition-all focus:border-[#C9A84C] focus:shadow-[0_0_0_3px_rgba(201,168,76,0.15)] placeholder:text-[#AAAAAA]";
 
@@ -119,13 +118,9 @@ export default function AdminServicesManagement() {
     if (sortOption === 'price_asc') f = [...f].sort((a, b) => (Number(a.price) || 0) - (Number(b.price) || 0));
     else if (sortOption === 'price_desc') f = [...f].sort((a, b) => (Number(b.price) || 0) - (Number(a.price) || 0));
     else if (sortOption === 'newest') f = [...f].sort((a, b) => (b.id || 0) - (a.id || 0));
-    return f;
-  }, [services, searchTerm, selectedCategory, sortOption]);
-
-  const API_BASE = process.env.REACT_APP_API_URL || '';
-
-  return (
-    <div className="min-h-screen bg-[#F4F4F6]">
+    return (
+      <div className="min-h-screen bg-[#F4F4F6]">
+        <main className="p-8">
       <AdminSidebar />
       <div className="admin-content pt-[80px]">
         <AdminHeader title="Service Catalog" />

@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import AdminSidebar from "../../components/AdminSidebar";
-import AdminHeader from "../../components/AdminHeader";
 import ConfirmModal from '../../components/ConfirmModal';
 
 export default function AdminOfferManagement() {
@@ -124,9 +122,7 @@ export default function AdminOfferManagement() {
 
   return (
     <div className="min-h-screen bg-[#F4F4F6]">
-      <AdminSidebar />
-      <div className="admin-content pt-[80px]">
-        <AdminHeader title="Offers & Promotions" />
+      <main className="p-8 animate-fade-in">
 
         {/* Toast */}
         {toast && (
