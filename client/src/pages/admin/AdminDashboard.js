@@ -263,18 +263,18 @@ export default function AdminDashboard() {
             </div>
 
             {/* Revenue & Stats Panel */}
-            <div className="flex flex-col gap-4">
-              <div className="bg-[#1C1C1E] rounded-[12px] shadow-[0_2px_16px_rgba(0,0,0,0.1)] p-6 flex-1">
+            <div className="flex flex-col gap-4 h-fit self-start">
+              <div className="bg-[#1C1C1E] rounded-[12px] shadow-[0_2px_16px_rgba(0,0,0,0.1)] p-6 h-fit">
                 <div className="text-[11px] font-bold text-[#C9A84C] uppercase tracking-[0.3em] mb-4">Revenue · This Month</div>
                 <div className="text-[38px] font-bold font-['Playfair_Display'] text-white leading-none mb-1">
-                  ${revenueThisMonth.toLocaleString()}
+                  NPR {revenueThisMonth.toLocaleString()}
                 </div>
                 <div className="flex items-center gap-1.5 text-[#2D7A4F] text-[13px] font-medium mt-3">
                   <span className="material-symbols-outlined text-[16px]">trending_up</span>
                   12% from last month
                 </div>
               </div>
-              <div className="bg-white rounded-[12px] shadow-[0_2px_16px_rgba(0,0,0,0.07)] p-5 grid grid-cols-2 gap-4">
+              <div className="bg-white rounded-[12px] shadow-[0_2px_16px_rgba(0,0,0,0.07)] p-6 grid grid-cols-2 gap-4 h-fit">
                 <div className="text-center">
                   <div className="text-[28px] font-bold font-['Playfair_Display'] text-[#2D7A4F]">{approvedCount}</div>
                   <div className="text-[11px] text-[#6B6B6B] uppercase tracking-wider font-bold mt-1">Approved</div>
