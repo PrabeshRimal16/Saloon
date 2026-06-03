@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import CustomerNavbar from '../../components/CustomerNavbar';
 import CustomerFooter from '../../components/CustomerFooter';
+import ConfirmModal from '../../components/ConfirmModal';
 
 const CSS = `
   .svc-page { background: #FFFFFF; min-height: 100vh; font-family: 'DM Sans', sans-serif; }
@@ -109,8 +110,16 @@ export default function CustomerServices() {
 
   const submitBooking = async (e) => {
     e.preventDefault();
-    if (!user?.id) return alert('You must be signed in to book.');
-    if (!bookingDate || !bookingTime) return alert('Please choose a date and time.');
+    if (!user?.id) {
+      setConfirmProps({ title: 'Sign in required', message: 'You must be signed in to book.', confirmText: 'OK', confirmColor: '#B8960C', onConfirm: () => setConfirmOpen(false) });
+      setConfirmOpen(true);
+      return;
+    }
+    if (!bookingDate || !bookingTime) {
+      setConfirmProps({ title: 'Missing info', message: 'Please choose a date and time.', confirmText: 'OK', confirmColor: '#B8960C', onConfirm: () => setConfirmOpen(false) });
+      setConfirmOpen(true);
+      return;
+    }
     setBookingLoading(true);
     try {
       const API_BASE = process.env.REACT_APP_API_URL || '';
@@ -118,11 +127,22 @@ export default function CustomerServices() {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ user_id: user.id, service_id: bookingService.id, appointment_date: bookingDate, appointment_time: bookingTime, phone: bookingPhone })
       });
-      if (!res.ok) { alert('Booking failed: ' + await res.text()); }
-      else { alert('Booking confirmed!'); setBookingService(null); }
-    } catch { alert('Booking failed'); }
+      if (!res.ok) {
+        setConfirmProps({ title: 'Booking failed', message: 'Booking failed: ' + await res.text(), confirmText: 'OK', confirmColor: '#C0392B', onConfirm: () => setConfirmOpen(false) });
+        setConfirmOpen(true);
+      } else {
+        setConfirmProps({ title: 'Booked', message: 'Booking confirmed!', confirmText: 'OK', confirmColor: '#2D7A4F', onConfirm: () => { setConfirmOpen(false); setBookingService(null); } });
+        setConfirmOpen(true);
+      }
+    } catch {
+      setConfirmProps({ title: 'Booking failed', message: 'Booking failed', confirmText: 'OK', confirmColor: '#C0392B', onConfirm: () => setConfirmOpen(false) });
+      setConfirmOpen(true);
+    }
     finally { setBookingLoading(false); }
   };
+
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmProps, setConfirmProps] = useState({});
 
   return (
     <>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import CustomerNavbar from '../../components/CustomerNavbar';
 import CustomerFooter from '../../components/CustomerFooter';
 import { useAuth } from '../../context/AuthContext';
+import ConfirmModal from '../../components/ConfirmModal';
 
 const CSS = `
   .appt-page { background: #FFFFFF; min-height: 100vh; font-family: 'DM Sans', sans-serif; }
@@ -118,15 +119,33 @@ const AppointmentsPage = () => {
   }, [user]);
 
   const handleCancel = async (id) => {
-    if (!window.confirm('Are you sure you want to cancel this appointment?')) return;
-    try {
-      const API_BASE = process.env.REACT_APP_API_URL || '';
-      const res = await fetch(`${API_BASE}/api/appointments/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: 'cancelled' }) });
-      if (!res.ok) throw new Error();
-      const updated = await res.json();
-      setAppointments(prev => prev.map(a => a.id === id ? { ...a, status: updated.status } : a));
-    } catch { alert('Failed to cancel appointment.'); }
+    setPendingCancel(id);
+    setConfirmProps({
+      title: 'Cancel your appointment?',
+      message: 'This action cannot be undone.',
+      confirmText: 'Cancel Appointment',
+      confirmColor: '#C0392B',
+      onConfirm: async () => {
+        try {
+          const API_BASE = process.env.REACT_APP_API_URL || '';
+          const res = await fetch(`${API_BASE}/api/appointments/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: 'cancelled' }) });
+          if (!res.ok) throw new Error();
+          const updated = await res.json();
+          setAppointments(prev => prev.map(a => a.id === id ? { ...a, status: updated.status } : a));
+        } catch {
+          setConfirmProps({ title: 'Error', message: 'Failed to cancel appointment.', confirmText: 'OK', confirmColor: '#C0392B', onConfirm: () => setConfirmOpen(false) });
+        } finally {
+          setConfirmOpen(false);
+          setPendingCancel(null);
+        }
+      }
+    });
+    setConfirmOpen(true);
   };
+
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmProps, setConfirmProps] = useState({});
+  const [pendingCancel, setPendingCancel] = useState(null);
 
   const total = appointments.length;
   const approved = appointments.filter(a => a.status?.toLowerCase() === 'approved').length;
@@ -154,7 +173,10 @@ const AppointmentsPage = () => {
               <h1 className="appt-h1">My Appointments</h1>
               <p className="appt-sub">Manage your upcoming beauty sessions</p>
             </div>
-            <button className="btn-book-new" onClick={() => alert('Book new service coming soon!')}>
+            <button className="btn-book-new" onClick={() => {
+              setConfirmProps({ title: 'Coming soon', message: 'Book new service coming soon!', confirmText: 'OK', confirmColor: '#B8960C', onConfirm: () => setConfirmOpen(false) });
+              setConfirmOpen(true);
+            }}>
               <span className="material-symbols-outlined" style={{ fontSize: 18 }}>add</span>
               Book New Service
             </button>
@@ -255,6 +277,16 @@ const AppointmentsPage = () => {
 
         <CustomerFooter />
       </div>
+      <ConfirmModal
+        isOpen={confirmOpen}
+        title={confirmProps.title}
+        message={confirmProps.message}
+        confirmText={confirmProps.confirmText}
+        confirmColor={confirmProps.confirmColor}
+        onConfirm={() => confirmProps.onConfirm && confirmProps.onConfirm()}
+        onCancel={() => setConfirmOpen(false)}
+      />
+
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </>
   );
