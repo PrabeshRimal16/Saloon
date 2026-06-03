@@ -259,20 +259,21 @@ export default function AdminAppointmentManagement() {
                 <thead className="bg-[#FAFAF8] border-b border-[#EDE8DC]">
                   <tr>
                     {[
-                      "Customer",
-                      "Service",
-                      "Date & Time",
-                      "Phone",
-                      "Status",
-                      "Actions",
-                    ].map((h, i) => (
+                      { h: 'Customer', w: '25%' },
+                      { h: 'Service', w: '15%' },
+                      { h: 'Date & Time', w: '15%' },
+                      { h: 'Phone', w: '15%' },
+                      { h: 'Status', w: '12%' },
+                      { h: 'Actions', w: '18%' },
+                    ].map((col, i) => (
                       <th
-                        key={h}
+                        key={col.h}
+                        style={{ width: col.w }}
                         className={`px-6 py-4 text-[11px] font-bold text-[#6B6B6B] uppercase tracking-widest ${
-                          i === 5 ? "text-right" : ""
-                        }`}
+                          i === 5 ? 'text-right' : ''
+                        } align-middle whitespace-nowrap`}
                       >
-                        {h}
+                        {col.h}
                       </th>
                     ))}
                   </tr>
@@ -333,7 +334,7 @@ export default function AdminAppointmentManagement() {
                               : rowBg + " border-l-transparent"
                           }`}
                         >
-                          <td className="px-6 py-4">
+                          <td className="px-6 py-4 align-middle whitespace-nowrap">
                             <div className="flex items-center gap-3">
                               <div className="w-10 h-10 rounded-full bg-[#FEF9ED] border-[2px] border-[#C9A84C] flex items-center justify-center text-[#C9A84C] font-bold text-[13px] shrink-0">
                                 {initials}
@@ -348,7 +349,7 @@ export default function AdminAppointmentManagement() {
                               </div>
                             </div>
                           </td>
-                          <td className="px-6 py-4">
+                          <td className="px-6 py-4 align-middle whitespace-nowrap">
                             <div className="font-medium text-[14px] text-[#1A1A1A]">
                               {app.service_name || "General"}
                             </div>
@@ -358,7 +359,7 @@ export default function AdminAppointmentManagement() {
                               </div>
                             )}
                           </td>
-                          <td className="px-6 py-4">
+                          <td className="px-6 py-4 align-middle whitespace-nowrap">
                             <div className="font-medium text-[14px] text-[#1A1A1A]">
                               {app.appointment_date
                                 ? new Date(
@@ -380,52 +381,42 @@ export default function AdminAppointmentManagement() {
                               </div>
                             )}
                           </td>
-                          <td className="px-6 py-4 text-[14px] text-[#6B6B6B]">
+                          <td className="px-6 py-4 text-[14px] text-[#6B6B6B] align-middle whitespace-nowrap">
                             {app.phone || "—"}
                           </td>
-                          <td className="px-6 py-4">
+                          <td className="px-6 py-4 align-middle whitespace-nowrap">
                             <StatusBadge status={app.status} />
                           </td>
                           <td
-                            className="px-6 py-4 text-right"
+                            className="px-6 py-4 text-right align-middle whitespace-nowrap"
                             onClick={(e) => e.stopPropagation()}
                           >
                             <div className="flex justify-end gap-2">
-                              {String(app.status).toLowerCase() !==
-                                "approved" && (
+                              {String(app.status).toLowerCase() !== 'approved' && (
                                 <button
                                   disabled={isUpdating}
-                                  onClick={() => updateStatus(app.id, "approved")}
-                                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-[6px] text-[12px] font-bold bg-[#EAF5EF] text-[#2D7A4F] border border-[#A8D8BC] hover:bg-[#2D7A4F] hover:text-white transition-all disabled:opacity-50"
+                                  onClick={() => updateStatus(app.id, 'approved')}
+                                  className="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-[6px] text-[12px] font-bold whitespace-nowrap border border-[#2D7A4F] text-[#2D7A4F] bg-white hover:bg-[#2D7A4F] hover:text-white transition-all disabled:opacity-50"
                                 >
-                                  <span className="material-symbols-outlined text-[14px]">
-                                    check
-                                  </span>
+                                  <span className="material-symbols-outlined text-[14px]">check</span>
                                   Approve
                                 </button>
                               )}
-                              {String(app.status).toLowerCase() !==
-                                "cancelled" && (
+                              {String(app.status).toLowerCase() !== 'cancelled' && (
                                 <button
                                   disabled={isUpdating}
-                                  onClick={() =>
-                                    updateStatus(app.id, "cancelled")
-                                  }
-                                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-[6px] text-[12px] font-bold bg-[#FDEDED] text-[#C0392B] border border-[#FBBAB7] hover:bg-[#C0392B] hover:text-white transition-all disabled:opacity-50"
+                                  onClick={() => updateStatus(app.id, 'cancelled')}
+                                  className="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-[6px] text-[12px] font-bold whitespace-nowrap border border-[#C0392B] text-[#C0392B] bg-white hover:bg-[#C0392B] hover:text-white transition-all disabled:opacity-50"
                                 >
-                                  <span className="material-symbols-outlined text-[14px]">
-                                    close
-                                  </span>
+                                  <span className="material-symbols-outlined text-[14px]">close</span>
                                   Cancel
                                 </button>
                               )}
                               <button
                                 onClick={() => setSelectedAppointment(app)}
-                                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-[6px] text-[12px] font-bold border border-[#EDE8DC] text-[#6B6B6B] hover:border-[#C9A84C] hover:text-[#C9A84C] transition-all"
+                                className="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-[6px] text-[12px] font-bold whitespace-nowrap border border-[#EDE8DC] text-[#6B6B6B] hover:border-[#C9A84C] hover:text-[#C9A84C] transition-all"
                               >
-                                <span className="material-symbols-outlined text-[14px]">
-                                  open_in_new
-                                </span>
+                                <span className="material-symbols-outlined text-[14px]">open_in_new</span>
                                 View
                               </button>
                             </div>
