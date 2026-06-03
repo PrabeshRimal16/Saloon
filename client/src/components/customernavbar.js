@@ -54,10 +54,10 @@ export default function CustomerNavbar() {
 
   const navLinks = [
     { name: 'Home', path: '/' },
-    { name: 'Services', path: '/services' },
-    { name: 'Appointments', path: '/appointments' },
+    { name: 'Our Services', path: '/services' },
+    { name: 'My Appointments', path: '/appointments' },
     { name: 'Offers', path: '/offers' },
-    { name: 'Contact', path: '/contact' },
+    { name: 'About Us', path: '/contact' },
   ];
 
   const initials = (user?.name || user?.email || 'U').charAt(0).toUpperCase();
