@@ -279,7 +279,6 @@ function CustomerNavbar() {
               </div>
             )}
           </div>
-        </div>
       </nav>
     </>
   );
