@@ -46,7 +46,7 @@ export default function CustomerDashboard() {
             <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent flex flex-col justify-center px-12 md:px-24">
               <h1 className="font-headline-xl text-headline-xl text-white mb-4 max-w-2xl">Redefine Your<br/>Signature Aesthetic</h1>
               <p className="font-body-lg text-body-lg text-white/80 mb-8 max-w-lg">Experience the pinnacle of professional grooming where precision meets artisanal flair in our modern atelier.</p>
-              <button onClick={() => navigate('/services')} className="w-fit px-10 py-4 bg-secondary text-on-secondary font-label-md text-label-md uppercase tracking-widest border border-secondary hover:bg-black hover:border-black transition-all duration-300">Explore Collection</button>
+              <button onClick={() => navigate('/services')} className="btn-interactive w-fit px-10 py-4 bg-secondary text-on-secondary font-label-md text-label-md uppercase tracking-widest border border-secondary hover:bg-black hover:border-black transition-all duration-300">Explore Collection</button>
             </div>
           </div>
         </section>
@@ -57,7 +57,7 @@ export default function CustomerDashboard() {
               <h2 className="font-headline-lg text-headline-lg text-primary mb-2">Featured Services</h2>
               <p className="font-body-md text-body-md text-on-surface-variant">Meticulously crafted experiences for the modern individual.</p>
             </div>
-            <button className="flex items-center gap-2 px-8 py-3 bg-primary text-white font-label-md text-label-md uppercase tracking-widest hover:bg-secondary transition-all duration-300" onClick={() => navigate('/services')}>View All Services <span className="material-symbols-outlined text-[18px]">arrow_forward</span></button>
+            <button className="btn-interactive flex items-center gap-2 px-8 py-3 bg-primary text-white font-label-md text-label-md uppercase tracking-widest hover:bg-secondary transition-all duration-300" onClick={() => navigate('/services')}>View All Services <span className="material-symbols-outlined text-[18px]">arrow_forward</span></button>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-12 gap-gutter">
@@ -75,7 +75,7 @@ export default function CustomerDashboard() {
                     </div>
                     <p className="font-body-md text-body-md text-on-surface-variant mb-6 leading-relaxed">A bespoke cutting experience tailored to your facial structure and personal style, including a signature scalp massage and finish.</p>
                   </div>
-                  <button className="w-full py-4 border border-primary text-primary font-label-md text-label-md uppercase tracking-widest hover:bg-primary hover:text-white transition-all duration-300">Book Now</button>
+                  <button className="btn-interactive w-full py-4 border border-primary text-primary font-label-md text-label-md uppercase tracking-widest hover:bg-primary hover:text-white transition-all duration-300">Book Now</button>
                 </div>
               </div>
             </div>
@@ -91,7 +91,7 @@ export default function CustomerDashboard() {
                 </div>
                 <p className="font-body-md text-body-md text-on-surface-variant mb-6">Advanced oxygen-infused hydration therapy for a luminous, rested complexion.</p>
               </div>
-              <button className="w-full py-3 border border-outline text-on-surface-variant font-label-sm text-label-sm uppercase tracking-widest hover:border-primary hover:text-primary transition-all duration-300">Book Appointment</button>
+              <button className="btn-interactive w-full py-3 border border-outline text-on-surface-variant font-label-sm text-label-sm uppercase tracking-widest hover:border-primary hover:text-primary transition-all duration-300">Book Appointment</button>
             </div>
 
             <div className="md:col-span-8 group card-hover relative overflow-hidden rounded-lg border border-outline-variant/30 bg-surface">
@@ -104,7 +104,7 @@ export default function CustomerDashboard() {
                     </div>
                     <p className="font-body-md text-body-md text-on-surface-variant mb-6 leading-relaxed">The ultimate ritual featuring hot towel service, straight razor detailing, and artisanal oil treatment for a perfectly defined silhouette.</p>
                   </div>
-                  <button className="w-full py-4 border border-primary text-primary font-label-md text-label-md uppercase tracking-widest hover:bg-primary hover:text-white transition-all duration-300">Book Now</button>
+                  <button className="btn-interactive w-full py-4 border border-primary text-primary font-label-md text-label-md uppercase tracking-widest hover:bg-primary hover:text-white transition-all duration-300">Book Now</button>
                 </div>
                 <div className="w-full md:w-1/2 h-64 md:h-auto overflow-hidden order-1 md:order-2">
                   <img className="w-full h-full object-cover transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD2e616FJijDcxoBx-YToM77AsnVa9sEG1WizVrwJl3oY-tePbnPgUPyMPudzTFlw3YEjsVht7JTGNlg9oL3LeXxipzqQAIK29MmNVseXgHfua5zOxgpSevFIU2Nf1_Xv7iVjxJRgJzevS7oPNFWrTyNexx51T-GDj0jFe0q3iHDx8Vld0sRkI2U8fwjjpn5d4pFhLfFFH3obLm4Gi_s9lu_XOmuJl6UCrbgwL2LQQeiLPSQpXwEkWl-B2kNgh6qT-f3rkdQBUEy9IT" alt="Noir Beard" />

@@ -184,6 +184,26 @@ main{padding-top:calc(var(--app-header-height) + 16px)}
 .text-muted{color:var(--muted)}
 .hint{font-size:.85rem;color:var(--muted)}
 
+/* Interactive Utilities */
+.card-hover {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.card-hover:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.btn-interactive {
+  transition: all 0.2s ease-in-out;
+}
+.btn-interactive:hover {
+  transform: scale(1.02);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+.btn-interactive:active {
+  transform: scale(0.98);
+}
+
 @media (max-width: 768px){
   .btn{padding:.5rem .75rem}
 }
