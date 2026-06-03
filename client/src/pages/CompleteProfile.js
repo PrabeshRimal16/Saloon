@@ -198,6 +198,13 @@ export default function CompleteProfile() {
                 {loading ? 'Saving…' : 'Complete Registration'}
               </button>
 
+              <div className="mt-4 text-center text-sm text-gray-500">
+                Already have an account?{' '}
+                <button onClick={() => navigate('/login')} className="text-amber-700 font-semibold hover:underline ml-1">Login</button>
+                <span className="mx-2 text-gray-300">|</span>
+                <button onClick={() => navigate('/register')} className="text-amber-700 font-semibold hover:underline">Register</button>
+              </div>
+
               <p className="text-center text-[10px] tracking-[0.4em] text-gray-300 uppercase mt-6">© 2026 The Salon at Reston</p>
             </form>
           </div>
