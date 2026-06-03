@@ -1,4 +1,6 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import './styles/animations.css';
+import initScrollAnimations from './utils/scrollAnimations';
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Login from "./pages/Login";
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -18,6 +20,13 @@ import CompleteProfile from "./pages/CompleteProfile";
 
 const AppRoutes = () => {
   const { user, loading } = useAuth();
+  const location = useLocation();
+
+  // Initialize scroll animations once when routes are rendered
+  // and re-run to pick up new elements after navigation
+  React.useEffect(() => {
+    initScrollAnimations();
+  }, [location.pathname]);
 
   const isLoggedIn = Boolean(user);
   const isAdmin = user?.role === "admin";
@@ -28,7 +37,8 @@ const AppRoutes = () => {
   }
 
   return (
-    <Routes>
+    <div className="route-wrapper" key={location.pathname}>
+      <Routes>
       <Route
         path="/login"
         element={!isLoggedIn ? <Login /> : <Navigate to={defaultAuthedPath} />}
@@ -104,7 +114,8 @@ const AppRoutes = () => {
       element={<Register />} 
       />
       <Route path="/complete-profile" element={<CompleteProfile />} />
-    </Routes>
+      </Routes>
+    </div>
   );
 };
 

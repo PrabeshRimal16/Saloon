@@ -1,0 +1,84 @@
+/* Global animations and micro-interactions */
+:root{
+  --gold: #B8960C;
+  --gold-strong: rgba(185,144,12,0.9);
+  --muted: #6B6B6B;
+}
+
+/* Page load */
+@keyframes pageLoad {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.route-wrapper { animation: pageLoad 0.4s ease both; }
+
+/* Navbar slide */
+@keyframes navSlide { from { transform: translateY(-60px); opacity: 0 } to { transform: translateY(0); opacity: 1 } }
+.route-wrapper .lux-nav { animation: navSlide 0.35s ease both; }
+
+/* Fade up for section titles and generic elements */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(12px);} to { opacity: 1; transform: translateY(0);} }
+.animate-fade-up { opacity: 0; transform: translateY(12px); transition: all 0.35s ease; }
+.animate-fade-up.in-view { animation: fadeUp 0.45s ease both; }
+
+/* Slide in from left */
+@keyframes slideInLeft { from { opacity: 0; transform: translateX(-18px);} to { opacity: 1; transform: translateX(0);} }
+.animate-slide-left { opacity: 0; transform: translateX(-12px); }
+.animate-slide-left.in-view { animation: slideInLeft 0.45s ease both; }
+
+/* Stagger children helper */
+.stagger { opacity: 0; }
+.stagger.in-view { opacity: 1; }
+.stagger.in-view > * { opacity: 0; transform: translateY(12px); }
+.stagger.in-view > * { animation: fadeUp 0.42s ease both; animation-fill-mode: both; }
+.stagger.in-view > *:nth-child(1){ animation-delay: 0.06s }
+.stagger.in-view > *:nth-child(2){ animation-delay: 0.16s }
+.stagger.in-view > *:nth-child(3){ animation-delay: 0.26s }
+.stagger.in-view > *:nth-child(4){ animation-delay: 0.36s }
+.stagger.in-view > *:nth-child(5){ animation-delay: 0.46s }
+
+/* Nav link underline slide */
+.lux-link { position: relative; overflow: visible; }
+.lux-link::after{
+  content: '';
+  position: absolute; left: 0; bottom: 14px; height: 2px; width: 0; background: var(--gold);
+  transition: width 0.28s ease;
+}
+.lux-link.active::after { width: 100%; }
+.lux-link:hover { transform: translateY(-2px); transition: transform 0.18s ease; }
+
+/* Buttons */
+.gold-btn, button.gold, .btn-gold { background: var(--gold); color: white; border: none; cursor: pointer; transition: transform 0.18s ease, box-shadow 0.18s ease; }
+.gold-btn:hover, button.gold:hover, .btn-gold:hover { transform: scale(1.03); box-shadow: 0 8px 30px rgba(185,144,12,0.18); }
+.gold-btn:active, button.gold:active, .btn-gold:active { transform: scale(0.97); transition-duration: 0.08s; }
+
+/* Book now shimmer */
+@keyframes shimmer { 0% { background-position: -200% 0 } 100% { background-position: 200% 0 } }
+.shimmer {
+  background-image: linear-gradient(90deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.35) 50%, rgba(255,255,255,0.05) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 3s linear infinite;
+}
+
+/* Card hover lift */
+.card { transition: transform 0.28s ease, box-shadow 0.28s ease; }
+.card:hover { transform: translateY(-8px); box-shadow: 0 18px 40px rgba(0,0,0,0.12); }
+.card img { transition: transform 0.3s ease; }
+.card:hover img { transform: scale(1.05); }
+
+/* Toasts */
+.toast { position: fixed; right: 18px; top: 18px; min-width: 260px; padding: 12px 14px; border-radius: 10px; color: white; box-shadow: 0 12px 36px rgba(0,0,0,0.12); transform: translateX(110%); opacity: 0; transition: transform 0.36s ease, opacity 0.2s; z-index: 9999; }
+.toast.show { transform: translateX(0); opacity: 1; }
+.toast.success { background: #27AE60; }
+.toast.error { background: #C0392B; }
+
+/* Skeleton */
+.skeleton { background: linear-gradient(90deg, #ECECEC 0%, #F6F6F6 50%, #ECECEC 100%); background-size: 200% 100%; animation: shimmer 1.2s linear infinite; border-radius: 8px; }
+
+/* Thin gold scrollbar */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--gold), var(--gold-strong)); border-radius: 999px; }
+
+/* Small utility */
+.pointer { cursor: pointer; }
