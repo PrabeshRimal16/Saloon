@@ -179,7 +179,7 @@ export default function AdminDashboard() {
               <div className="bg-[#1C1C1E] rounded-[12px] shadow-[0_2px_16px_rgba(0,0,0,0.1)] p-6 flex-1">
                 <div className="text-[11px] font-bold text-[#C9A84C] uppercase tracking-[0.3em] mb-4">Revenue · This Month</div>
                 <div className="text-[38px] font-bold font-['Playfair_Display'] text-white leading-none mb-1">
-                  NPR {revenueThisMonth.toLocaleString()}
+                  ${revenueThisMonth.toLocaleString()}
                 </div>
                 <div className="flex items-center gap-1.5 text-[#2D7A4F] text-[13px] font-medium mt-3">
                   <span className="material-symbols-outlined text-[16px]">trending_up</span>
@@ -226,30 +226,78 @@ export default function AdminDashboard() {
                 <table className="w-full text-left">
                   <thead className="bg-[#FAFAF8] border-b border-[#EDE8DC]">
                     <tr>
-                      {['Customer', 'Service', 'Date & Time', 'Status'].map(h => (
+                      {['Customer', 'Service', 'Date & Time', 'Price', 'Status'].map(h => (
                         <th key={h} className="px-6 py-3.5 text-[11px] font-bold text-[#6B6B6B] uppercase tracking-widest">{h}</th>
                       ))}
                     </tr>
                   </thead>
                   <tbody>
-                    {recentAppointments.map((app, i) => (
-                      <tr key={app.id} className={`border-b border-[#EDE8DC] hover:bg-[#FEF9ED] transition-colors ${i % 2 === 1 ? 'bg-[#FAFAF8]' : 'bg-white'}`}>
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-[#FEF9ED] border border-[#E8D9A0] flex items-center justify-center text-[#C9A84C] font-bold text-[12px] shrink-0">
-                              {(app.user_name || 'W').charAt(0).toUpperCase()}
+                    {recentAppointments.map((app, i) => {
+                      // Resolve name from all possible API field names
+                      const displayName =
+                        app.customer_name ||
+                        app.user_name ||
+                        app.name ||
+                        app.client_name ||
+                        'Walk-in Customer';
+                      // Resolve email from all possible API field names
+                      const displayEmail =
+                        app.email ||
+                        app.user_email ||
+                        app.customer_email ||
+                        app.client_email ||
+                        null;
+                      // Avatar initials
+                      const initials = displayName
+                        .split(' ')
+                        .filter(Boolean)
+                        .map(p => p[0])
+                        .slice(0, 2)
+                        .join('')
+                        .toUpperCase();
+                      // Price
+                      const price = Number(app.price ?? app.service_price ?? 0) || 0;
+
+                      return (
+                        <tr key={app.id} className={`border-b border-[#EDE8DC] hover:bg-[#FEF9ED] transition-colors ${i % 2 === 1 ? 'bg-[#FAFAF8]' : 'bg-white'}`}>
+                          <td className="px-6 py-4">
+                            <div className="flex items-center gap-3">
+                              <div className="w-9 h-9 rounded-full bg-[#FEF9ED] border-[2px] border-[#C9A84C] flex items-center justify-center text-[#C9A84C] font-bold text-[12px] shrink-0">
+                                {initials || 'W'}
+                              </div>
+                              <div>
+                                <div className="font-bold text-[14px] text-[#1A1A1A] leading-tight">{displayName}</div>
+                                {displayEmail && (
+                                  <div className="text-[12px] text-[#6B6B6B] mt-0.5">{displayEmail}</div>
+                                )}
+                              </div>
                             </div>
-                            <span className="font-medium text-[14px] text-[#1A1A1A]">{app.user_name || 'Walk-in'}</span>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 text-[14px] text-[#6B6B6B]">{app.service_name || 'General'}</td>
-                        <td className="px-6 py-4 text-[14px] text-[#6B6B6B]">
-                          {new Date(app.appointment_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                          {app.appointment_time && <span className="text-[#AAAAAA] ml-1">· {app.appointment_time}</span>}
-                        </td>
-                        <td className="px-6 py-4"><StatusBadge status={app.status} /></td>
-                      </tr>
-                    ))}
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="font-medium text-[14px] text-[#1A1A1A]">{app.service_name || 'General'}</div>
+                            {app.service_duration && (
+                              <div className="text-[12px] text-[#6B6B6B]">{app.service_duration} min</div>
+                            )}
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="text-[14px] text-[#1A1A1A] font-medium">
+                              {app.appointment_date
+                                ? new Date(app.appointment_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                                : '—'}
+                            </div>
+                            {app.appointment_time && (
+                              <div className="text-[12px] text-[#6B6B6B]">{app.appointment_time}</div>
+                            )}
+                          </td>
+                          <td className="px-6 py-4">
+                            <span className="font-bold text-[14px] text-[#C9A84C]">
+                              {price > 0 ? `$${price.toLocaleString()}` : '—'}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4"><StatusBadge status={app.status} /></td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
