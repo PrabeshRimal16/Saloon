@@ -135,4 +135,4 @@ const CustomerFooter = () => {
   );
 };
 
-export default CustomerFooter;
+export default React.memo(CustomerFooter);

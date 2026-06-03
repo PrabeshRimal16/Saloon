@@ -50,6 +50,8 @@ router.post("/", upload.single('image'), async (req, res) => {
       const notificationsRouter = require('./notifications');
       notificationsRouter.createNotification({ type: 'offer', message: `New offer: ${title}`, userId: null });
     } catch (e) { console.error('Notify users error', e.message); }
+    // invalidate cache
+    try { offersCache.ts = 0; offersCache.data = null; } catch (e) {}
     res.json(result.rows[0]);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -66,12 +68,14 @@ router.put("/:id", upload.single('image'), async (req, res) => {
         "UPDATE offers SET title=$1, description=$2, discount_percent=$3, valid_until=$4, image_url=$5 WHERE id=$6 RETURNING *",
         [title, description, discount_percent, valid_until, imageUrl, req.params.id]
       );
+      try { offersCache.ts = 0; offersCache.data = null; } catch (e) {}
       res.json(result.rows[0]);
     } else {
       const result = await pool.query(
         "UPDATE offers SET title=$1, description=$2, discount_percent=$3, valid_until=$4 WHERE id=$5 RETURNING *",
         [title, description, discount_percent, valid_until, req.params.id]
       );
+      try { offersCache.ts = 0; offersCache.data = null; } catch (e) {}
       res.json(result.rows[0]);
     }
   } catch (err) {
@@ -83,6 +87,7 @@ router.put("/:id", upload.single('image'), async (req, res) => {
 router.delete("/:id", async (req, res) => {
   try {
     await pool.query("DELETE FROM offers WHERE id=$1", [req.params.id]);
+    try { offersCache.ts = 0; offersCache.data = null; } catch (e) {}
     res.json({ message: "Offer deleted" });
   } catch (err) {
     res.status(500).json({ error: err.message });

@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import '../styles/admin-animations.css';
 
-export default function AdminSidebar() {
+function AdminSidebar() {
   const { logout, user, loading } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
 
@@ -119,3 +119,5 @@ export default function AdminSidebar() {
     </aside>
   );
 }
+
+export default React.memo(AdminSidebar);

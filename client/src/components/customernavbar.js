@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, NavLink } from 'react-router-dom';
 
@@ -20,21 +20,22 @@ function CustomerNavbar() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Fetch notifications
-  useEffect(() => {
+  // Fetch notifications (memoized)
+  const fetchNotifications = useCallback(async () => {
     if (!user?.id) return;
     const API_BASE = process.env.REACT_APP_API_URL || '';
-    const fetch_ = async () => {
-      try {
-        const res = await fetch(`${API_BASE}/api/notifications/customer/${user.id}`);
-        const data = await res.json();
-        setNotifications(data);
-      } catch (_) {}
-    };
-    fetch_();
-    const iv = setInterval(fetch_, 10000);
-    return () => clearInterval(iv);
+    try {
+      const res = await fetch(`${API_BASE}/api/notifications/customer/${user.id}`);
+      const data = await res.json();
+      setNotifications(data);
+    } catch (_) {}
   }, [user]);
+
+  useEffect(() => {
+    fetchNotifications();
+    const iv = setInterval(fetchNotifications, 10000);
+    return () => clearInterval(iv);
+  }, [fetchNotifications]);
 
   // Close dropdowns on outside click
   useEffect(() => {
@@ -46,13 +47,13 @@ function CustomerNavbar() {
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  const navLinks = [
+  const navLinks = useMemo(() => ([
     { name: 'Home', path: '/' },
     { name: 'Our Services', path: '/services' },
     { name: 'My Appointments', path: '/appointments' },
     { name: 'Offers', path: '/offers' },
     { name: 'About Us', path: '/contact' },
-  ];
+  ]), []);
 
   const initials = (user?.name || user?.email || 'U').charAt(0).toUpperCase();
   const avatar = user?.avatar_url || user?.photo || user?.avatar;

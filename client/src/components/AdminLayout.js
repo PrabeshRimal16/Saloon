@@ -4,7 +4,7 @@ import AdminSidebar from './AdminSidebar';
 import AdminHeader from './AdminHeader';
 import { AdminProvider } from '../context/AdminContext';
 
-export default function AdminLayout() {
+function AdminLayout() {
   useEffect(() => {
     const collapsed = localStorage.getItem('admin_sidebar_collapsed') === '1';
     document.documentElement.style.setProperty('--admin-left', collapsed ? '64px' : '220px');
@@ -28,3 +28,5 @@ export default function AdminLayout() {
     </AdminProvider>
   );
 }
+
+export default React.memo(AdminLayout);

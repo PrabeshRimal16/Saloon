@@ -5,20 +5,21 @@ import './styles/admin-animations.css';
 import './styles/responsive.css';
 import initScrollAnimations from './utils/scrollAnimations';
 import { AuthProvider, useAuth } from "./context/AuthContext";
-import Login from "./pages/Login";
-import AdminLayout from './components/AdminLayout';
-import CustomerDashboard from "./pages/customer/CustomerDashboard";
-import CustomerServices from "./pages/customer/CustomerServices";
-import CustomerOffers from "./pages/customer/CustomerOffers";
-import CustomerAppointment from "./pages/customer/CustomerAppointment";
-import CustomerSetting from "./pages/customer/CustomerSetting";
-import CustomerContactus from "./pages/customer/CustomerContactus";
-import Register from "./pages/Register";
-import CompleteProfile from "./pages/CompleteProfile";
+const Login = lazy(() => import("./pages/Login"));
+const AdminLayout = lazy(() => import('./components/AdminLayout'));
+const CustomerDashboard = lazy(() => import("./pages/customer/CustomerDashboard"));
+const CustomerServices = lazy(() => import("./pages/customer/CustomerServices"));
+const CustomerOffers = lazy(() => import("./pages/customer/CustomerOffers"));
+const CustomerAppointment = lazy(() => import("./pages/customer/CustomerAppointment"));
+const CustomerSetting = lazy(() => import("./pages/customer/CustomerSetting"));
+const CustomerContactus = lazy(() => import("./pages/customer/CustomerContactus"));
+const Register = lazy(() => import("./pages/Register"));
+const CompleteProfile = lazy(() => import("./pages/CompleteProfile"));
 import CustomerNavbar from './components/CustomerNavbar';
 import CustomerFooter from './components/CustomerFooter';
-import NotFound from './pages/NotFound';
+const NotFound = lazy(() => import('./pages/NotFound'));
 import ProtectedRoute from './components/ProtectedRoute';
+import Skeleton from './components/Skeleton';
 
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
 const AdminServicesManagement = lazy(() => import("./pages/admin/AdminServicesManagement"));
@@ -48,7 +49,7 @@ const AppRoutes = () => {
       {/* Nav and footer are mounted outside the route switch so they don't unmount on navigation */}
       {!hideLayout && !location.pathname.startsWith('/admin') && <CustomerNavbar />}
       <div className="page-fade">
-      <Suspense fallback={<div className="flex items-center justify-center h-screen"><div className="animate-spin w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full" /></div>}>
+      <Suspense fallback={<Skeleton /> }>
       <Routes>
       <Route
         path="/login"

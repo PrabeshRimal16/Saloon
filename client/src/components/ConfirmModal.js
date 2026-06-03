@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import './ConfirmModal.css';
 
-export default function ConfirmModal({ isOpen, title = 'Are you sure?', message = '', confirmText = 'Confirm', confirmColor = '#C0392B', onConfirm = () => {}, onCancel = () => {} }) {
+function ConfirmModal({ isOpen, title = 'Are you sure?', message = '', confirmText = 'Confirm', confirmColor = '#C0392B', onConfirm = () => {}, onCancel = () => {} }) {
   useEffect(() => {
     if (!isOpen) return;
     const onKey = (e) => { if (e.key === 'Escape') onCancel(); };
@@ -33,3 +33,5 @@ export default function ConfirmModal({ isOpen, title = 'Are you sure?', message 
     </div>
   );
 }
+
+export default React.memo(ConfirmModal);

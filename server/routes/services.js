@@ -46,6 +46,8 @@ router.post("/", upload.single('image'), async (req, res) => {
       "INSERT INTO services (name, description, image_url, category, duration, price) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
       [name, description, imageUrl, category, duration, price]
     );
+    // invalidate cache
+    try { cache.services = { ts: 0, data: null }; } catch (e) {}
     res.json(result.rows[0]);
   } catch (err) {
     console.error('POST /api/services error', err);
@@ -83,6 +85,8 @@ router.put("/:id", upload.single('image'), async (req, res) => {
 router.delete("/:id", async (req, res) => {
   try {
     await pool.query("DELETE FROM services WHERE id=$1", [req.params.id]);
+    // invalidate cache
+    try { cache.services = { ts: 0, data: null }; } catch (e) {}
     res.json({ message: "Service deleted" });
   } catch (err) {
     console.error(`DELETE /api/services/${req.params.id} error`, err);

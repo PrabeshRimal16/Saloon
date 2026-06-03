@@ -11,7 +11,7 @@ function avatarInitials(name, email) {
   return (parts[0][0] + parts[1][0]).toUpperCase();
 }
 
-export default function AdminHeader({ title }) {
+function AdminHeader({ title }) {
   const { user, loading } = useAuth();
   const [notifications, setNotifications] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -153,3 +153,5 @@ export default function AdminHeader({ title }) {
     </header>
   );
 }
+
+export default React.memo(AdminHeader);
