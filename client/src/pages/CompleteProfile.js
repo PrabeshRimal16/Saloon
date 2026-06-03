@@ -10,8 +10,6 @@ export default function CompleteProfile() {
   const email = searchParams.get("email") || "";
   const avatar_url = searchParams.get("avatar_url") || "";
     const nameParam = searchParams.get("name") || "";
-    const email = searchParams.get("email") || "";
-    const avatar_url = searchParams.get("avatar_url") || "";
     const google_id = searchParams.get("google_id") || "";
 
     const [form, setForm] = useState({ name: nameParam, password: "", confirmPassword: "", phone: "" });
