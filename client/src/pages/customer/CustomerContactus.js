@@ -84,12 +84,15 @@ const CSS = `
   .hours-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
   .hours-line { width: 40px; height: 2px; background: #B8960C; }
   .hours-title { font-size: 12px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: #1C1C1E; }
-  .hours-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid #F0EBE0; }
+  .hours-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #F0EBE0; }
   .hours-row:last-of-type { border-bottom: none; }
   .hours-day { font-size: 14px; color: #6B6B6B; }
   .hours-time { font-size: 14px; font-weight: 700; color: #1C1C1E; }
-  .hours-closed { font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #B8960C; }
-  .hours-note { font-size: 12px; color: #AAAAAA; font-style: italic; margin-top: 16px; line-height: 1.6; }
+  .hours-closed { font-size: 14px; font-weight: 700; color: #C0392B; }
+  .hours-note { font-size: 12px; color: #AAAAAA; font-style: italic; margin-top: 12px; line-height: 1.6; }
+  .hours-dot { width: 10px; height: 10px; border-radius: 50%; background: #B8960C; display: inline-block; margin-right: 10px; }
+  .hours-today .hours-day { font-weight: 700; color: #B8960C; display: inline-flex; align-items: center; }
+  .hours-sunday-note { display: block; font-size: 12px; color: #AAAAAA; font-style: italic; margin-top: 4px; }
 `;
 
 const ContactUsPage = () => {
@@ -248,19 +251,40 @@ const ContactUsPage = () => {
                   <span className="hours-line" />
                   <h3 className="hours-title">Opening Hours</h3>
                 </div>
-                <div className="hours-row">
-                  <span className="hours-day">Monday — Friday</span>
-                  <span className="hours-time">10:00 AM – 8:00 PM</span>
-                </div>
-                <div className="hours-row">
-                  <span className="hours-day">Saturday</span>
-                  <span className="hours-time">9:00 AM – 6:00 PM</span>
-                </div>
-                <div className="hours-row">
-                  <span className="hours-day">Sunday</span>
-                  <span className="hours-closed">Closed</span>
-                </div>
-                <p className="hours-note">* Private appointments outside standard hours are available upon special request.</p>
+                {(() => {
+                  const dayNames = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+                  const hoursData = [
+                    { day: 'Monday', time: 'CLOSED', closed: true },
+                    { day: 'Tuesday', time: '11:00 AM – 6:00 PM' },
+                    { day: 'Wednesday', time: '11:00 AM – 6:00 PM' },
+                    { day: 'Thursday', time: '11:00 AM – 6:00 PM' },
+                    { day: 'Friday', time: '11:00 AM – 6:00 PM' },
+                    { day: 'Saturday', time: '11:00 AM – 6:00 PM' },
+                    { day: 'Sunday', time: '11:00 AM – 5:00 PM', note: 'Shorter hours on Sundays' },
+                  ];
+                  const jsDayIndex = new Date().getDay(); // 0 = Sunday
+                  const todayName = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][jsDayIndex];
+                  return (
+                    <>
+                      {hoursData.map(h => {
+                        const isToday = h.day === todayName;
+                        return (
+                          <div key={h.day} className={`hours-row ${isToday ? 'hours-today' : ''}`}>
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                              {isToday && <span className="hours-dot" aria-hidden="true" />}
+                              <span className="hours-day">{h.day}</span>
+                            </div>
+                            <div style={{ textAlign: 'right' }}>
+                              {h.closed ? <span className="hours-closed">CLOSED</span> : <span className="hours-time">{h.time}</span>}
+                              {h.note && <span className="hours-sunday-note">{h.note}</span>}
+                            </div>
+                          </div>
+                        );
+                      })}
+                      <p className="hours-note">* Hours may vary on holidays</p>
+                    </>
+                  );
+                })()}
               </div>
             </div>
 
