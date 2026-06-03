@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import '../styles/admin-animations.css';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
@@ -32,6 +33,17 @@ export default function AdminHeader({ title }) {
     return () => clearInterval(interval);
   }, []);
 
+  // notification shake when new notification arrives
+  const [shake, setShake] = useState(false);
+  const prevCount = useRef(0);
+  useEffect(() => {
+    if (notifications.length > prevCount.current) {
+      setShake(true);
+      setTimeout(() => setShake(false), 700);
+    }
+    prevCount.current = notifications.length;
+  }, [notifications.length]);
+
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (notifRef.current && !notifRef.current.contains(e.target)) {
@@ -48,7 +60,7 @@ export default function AdminHeader({ title }) {
   const avatarSrc = user?.avatar_url || user?.photo || user?.avatar || user?.avatarUrl || user?.picture || null;
 
   return (
-    <header className="fixed top-0 left-[240px] right-0 z-40 bg-white border-b border-[#EDE8DC] h-[80px] flex items-center px-8 transition-all duration-300">
+    <header className="fixed top-0 left-[220px] right-0 z-40 bg-white border-b border-[#EDE8DC] h-[80px] flex items-center px-8 transition-all duration-300 admin-fade-up">
       <div className="flex items-center justify-between w-full">
         <div>
           <h1 className="font-heading text-[20px] font-bold text-dark">{title || 'Admin'}</h1>
@@ -67,7 +79,7 @@ export default function AdminHeader({ title }) {
           <div className="relative" ref={notifRef}>
             <button 
               onClick={() => setShowNotifications(!showNotifications)}
-              className="btn-interactive w-10 h-10 rounded-full flex items-center justify-center relative hover:bg-[#FEF9ED] transition-colors"
+              className={`btn-interactive w-10 h-10 rounded-full flex items-center justify-center relative hover:bg-[#FEF9ED] transition-colors ${shake ? 'notif-shake' : ''}`}
               title="Notifications"
             >
               <span className="material-symbols-outlined text-primary text-[24px]">notifications</span>
