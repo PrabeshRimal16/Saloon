@@ -230,13 +230,15 @@ const ContactUsPage = () => {
                   title="The Salon At Reston - Map"
                   src="https://maps.google.com/maps?q=The+Salon+At+Reston,+1613+Washington+Plaza+N,+Reston,+VA+20190&t=&z=16&ie=UTF8&iwloc=&output=embed"
                   width="100%"
-                  height="260"
-                  style={{ border: 0 }}
+                  height="500"
+                  style={{ border: 0, display: 'block' }}
                   allowFullScreen=""
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
                 />
-                <div className="map-overlay-card">
+              </div>
+              <div style={{ marginTop: 12 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
                   <span className="material-symbols-outlined" style={{ fontSize: 22, color: '#B8960C' }}>explore</span>
                   <div>
                     <p style={{ fontFamily:'DM Sans,sans-serif', fontSize:13, fontWeight:600, color:'#1C1C1E', margin:0 }}>1613 Washington Plaza N, Reston, VA 20190</p>
@@ -244,15 +246,10 @@ const ContactUsPage = () => {
                       Located in Lake Anne Plaza - Main Parking lot
                     </p>
                   </div>
-                  <div style={{ marginLeft: 'auto', display: 'flex', gap: 8, flexDirection: 'column' }}>
-                    <a href="https://www.google.com/maps/place/The+Salon+At+Reston/@38.9688042,-77.3408522,17z" target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
-                      <button className="btn-send" style={{ padding: '8px 14px', borderRadius: 12 }}>Click to open in Maps</button>
-                    </a>
-                    <a href="https://the-salon-at-reston.square.site" target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
-                      <button className="btn-send" style={{ padding: '8px 14px', borderRadius: 12, background: 'transparent', color: '#B8960C', border: '1px solid #B8960C' }}>OUR WEBSITE</button>
-                    </a>
-                  </div>
                 </div>
+                <a href="https://www.google.com/maps/place/The+Salon+At+Reston/@38.9688042,-77.3408522,17z" target="_blank" rel="noreferrer" style={{ textDecoration: 'none', display: 'block' }}>
+                  <button style={{ width: '100%', background: '#B8960C', color: '#ffffff', border: 'none', padding: '12px 16px', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}>CLICK TO OPEN IN MAPS</button>
+                </a>
               </div>
 
               {/* Hours */}
