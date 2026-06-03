@@ -84,18 +84,21 @@ const bcrypt = require("bcrypt");
 router.post("/register", async (req, res) => {
   const { name, email, google_id, avatar_url, password, phone } = req.body;
   try {
-    if (!email || !password) {
-      return res.status(400).json({ error: "Email and password are required" });
+    if (!email) {
+      return res.status(400).json({ error: "Email is required" });
     }
     const existing = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
     if (existing.rows.length > 0) {
       return res.status(400).json({ error: "Email already exists" });
     }
+    let hashedPassword = null;
+    if (password) {
+      hashedPassword = await bcrypt.hash(password, 10);
+    }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
     const result = await pool.query(
       "INSERT INTO users (name, email, google_id, avatar_url, password, phone) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
-      [name, email, google_id, avatar_url, hashedPassword, phone]
+      [name || null, email, google_id || null, avatar_url || null, hashedPassword, phone || null]
     );
     res.json(result.rows[0]);
   } catch (err) {
