@@ -6,13 +6,13 @@ import { useAuth } from "../../context/AuthContext";
 
 function StatCard({ icon, label, value }) {
   return (
-    <div className="bg-white rounded-card shadow-card p-6 border-l-[4px] border-primary flex items-center justify-between transition-transform hover:-translate-y-1 hover:shadow-modal">
+    <div className="bg-white rounded-card shadow-card p-6 border-l-[4px] border-primary flex items-start justify-between relative">
       <div>
-        <div className="text-[36px] font-bold font-heading text-dark leading-none mb-2">{value}</div>
+        <div className="text-[40px] font-bold font-heading text-dark leading-none mb-2">{value}</div>
         <div className="text-[12px] font-body font-bold text-grey uppercase tracking-widest">{label}</div>
       </div>
-      <div className="text-primary opacity-80">
-        <span className="material-symbols-outlined text-[40px]">{icon}</span>
+      <div className="text-primary">
+        <span className="material-symbols-outlined text-[24px]">{icon}</span>
       </div>
     </div>
   );
@@ -53,69 +53,34 @@ export default function AdminDashboard() {
   const pendingAppointments = appointments.filter(a => String(a.status).toLowerCase() === 'pending').length;
   const totalAppointments = appointments.length;
 
-  // Chart data
+  const revenueThisMonth = appointments.reduce((sum, a) => {
+    const d = new Date(a.appointment_date || a.created_at);
+    const now = new Date();
+    if (String(a.status).toLowerCase() !== 'cancelled' && d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) {
+      return sum + (Number(a.price ?? a.service_price ?? 0) || 0);
+    }
+    return sum;
+  }, 0);
+
+  // Weekly Bookings Chart Data
+  const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const weeklyCounts = daysOfWeek.map(() => 0);
   const now = new Date();
-  const currentYear = now.getFullYear();
-  const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   
-  const monthlyBookings = monthNames.map((_, i) => 
-    appointments.filter(a => {
-      const d = new Date(a.appointment_date || a.created_at);
-      return d.getFullYear() === currentYear && d.getMonth() === i;
-    }).length
-  );
+  appointments.forEach(a => {
+    const d = new Date(a.appointment_date || a.created_at);
+    // Simple check for current week
+    const diff = Math.floor((now - d) / (1000 * 60 * 60 * 24));
+    if (diff >= 0 && diff < 7 && String(a.status).toLowerCase() !== 'cancelled') {
+      const dayIdx = (d.getDay() + 6) % 7; // Mon=0, Sun=6
+      weeklyCounts[dayIdx] += 1;
+    }
+  });
 
-  const activeYears = Array.from(new Set(appointments.map(a => new Date(a.appointment_date || a.created_at).getFullYear()))).sort();
-  if (!activeYears.includes(currentYear)) activeYears.push(currentYear);
-  
-  const yearlyBookings = activeYears.map(year => 
-    appointments.filter(a => new Date(a.appointment_date || a.created_at).getFullYear() === year).length
-  );
-
-  const renderChart = (title, labels, data) => {
-    const maxVal = Math.max(...data, 5);
-    const chartHeight = 200;
-    
-    return (
-      <div className="bg-white p-card rounded-card shadow-card flex-1">
-        <h3 className="font-heading text-h3 text-dark mb-6">{title}</h3>
-        {data.reduce((a, b) => a + b, 0) === 0 ? (
-          <div className="empty-state py-8">
-            <span className="material-symbols-outlined empty-state-icon">bar_chart</span>
-            <p className="font-body text-body text-grey">No data yet</p>
-          </div>
-        ) : (
-          <div className="relative h-[200px] flex items-end gap-2 mt-4">
-            {data.map((val, idx) => {
-              const heightPct = (val / maxVal) * 100;
-              return (
-                <div key={idx} className="flex-1 flex flex-col justify-end group relative h-full">
-                  {/* Tooltip */}
-                  <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-dark text-white text-[12px] py-1 px-3 rounded-[4px] opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 pointer-events-none">
-                    {val} {title.includes('Month') ? 'bookings' : 'bookings'}
-                  </div>
-                  
-                  {/* Bar/Line Area representation (using styled bars for simplicity in custom react w/o chart.js) */}
-                  <div 
-                    className="w-full bg-primary rounded-t-[4px] transition-all duration-500 ease-out group-hover:brightness-110"
-                    style={{ 
-                      height: `${heightPct}%`, 
-                      minHeight: val > 0 ? '4px' : '0',
-                      background: `linear-gradient(to top, rgba(201,168,76,0.2), #C9A84C)`
-                    }}
-                  ></div>
-                  
-                  <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-bold text-grey uppercase tracking-widest">
-                    {labels[idx]}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
-    );
-  };
+  const maxVal = Math.max(...weeklyCounts, 5);
+  // Y-axis ticks (whole numbers)
+  const ticks = Array.from({ length: 6 }, (_, i) => Math.ceil((maxVal / 5) * i));
+  const maxTick = ticks[ticks.length - 1];
 
   const getStatusBadge = (status) => {
     const s = String(status).toLowerCase();
@@ -128,6 +93,8 @@ export default function AdminDashboard() {
     .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
     .slice(0, 5);
 
+  const formattedDate = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
   return (
     <div className="min-h-screen bg-cream">
       <AdminSidebar />
@@ -136,21 +103,75 @@ export default function AdminDashboard() {
         
         <main className="p-page animate-fade-in">
           {/* Stats Row */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-element-gap mb-section-gap">
-            <StatCard icon="content_cut" label="Total Services" value={servicesCount} />
-            <StatCard icon="calendar_month" label="Total Appointments" value={totalAppointments} />
-            <StatCard icon="pending_actions" label="Pending Appointments" value={pendingAppointments} />
-            <StatCard icon="group" label="Total Users" value={usersCount} />
-          </div>
+          <section className="mb-section-gap">
+            <div className="font-body text-label text-primary uppercase tracking-widest mb-4">At a Glance</div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-element-gap">
+              <StatCard icon="content_cut" label="Total Services" value={servicesCount} />
+              <StatCard icon="calendar_month" label="Total Appointments" value={totalAppointments} />
+              <StatCard icon="pending_actions" label="Pending Appointments" value={pendingAppointments} />
+              <StatCard icon="group" label="Total Users" value={usersCount} />
+            </div>
+          </section>
 
-          {/* Charts Row */}
           <div className="flex flex-col lg:flex-row gap-element-gap mb-section-gap">
-            {renderChart('Bookings by Month', monthNames, monthlyBookings)}
-            {renderChart('Bookings by Year', activeYears, yearlyBookings)}
+            {/* Weekly Bookings Chart */}
+            <section className="bg-white rounded-card shadow-card p-6 flex-1">
+              <div className="flex justify-between items-center mb-8">
+                <h2 className="font-heading text-h2 text-dark font-bold">Weekly Bookings Overview</h2>
+                <div className="font-body text-[14px] text-grey">Last 7 Days</div>
+              </div>
+              
+              <div className="relative h-[240px] flex items-end pl-8 pb-6">
+                {/* Y-axis grid */}
+                <div className="absolute inset-0 flex flex-col-reverse justify-between pb-6 pl-8">
+                  {ticks.map((tick, i) => (
+                    <div key={i} className="w-full border-t border-light-border relative">
+                      <span className="absolute -left-8 -top-3 text-[12px] font-body text-grey w-6 text-right">{tick}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Bars */}
+                <div className="relative w-full h-full flex justify-between items-end px-4 z-10">
+                  {weeklyCounts.map((val, idx) => {
+                    const heightPct = (val / maxTick) * 100;
+                    return (
+                      <div key={idx} className="flex flex-col items-center justify-end h-full w-[40px] group">
+                        {val > 0 && (
+                          <span className="text-[12px] font-bold text-dark mb-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            {val}
+                          </span>
+                        )}
+                        <div 
+                          className={`w-full rounded-t-[6px] transition-all duration-300 ${val > 0 ? 'bg-primary hover:bg-[#b5943b]' : 'bg-[#F5F5F5]'}`}
+                          style={{ height: `${heightPct}%`, minHeight: val > 0 ? '4px' : '4px' }}
+                        ></div>
+                        <div className="absolute -bottom-6 text-[12px] font-bold text-grey uppercase tracking-widest">
+                          {daysOfWeek[idx]}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </section>
+
+            {/* Extra Stats (Revenue) */}
+            <section className="bg-white rounded-card shadow-card p-6 w-full lg:w-[320px] flex flex-col justify-center">
+              <h2 className="font-heading text-[18px] text-dark font-bold mb-6">Financial Snapshot</h2>
+              <div className="mb-6">
+                <div className="text-[36px] font-bold font-heading text-primary leading-none mb-2">NPR {revenueThisMonth}</div>
+                <div className="text-[12px] font-body font-bold text-grey uppercase tracking-widest">Revenue This Month</div>
+              </div>
+              <div className="text-[13px] text-success font-medium flex items-center gap-1">
+                <span className="material-symbols-outlined text-[16px]">trending_up</span>
+                12% from last month
+              </div>
+            </section>
           </div>
 
           {/* Recent Appointments */}
-          <div className="bg-white rounded-card shadow-card overflow-hidden">
+          <div className="bg-white rounded-card shadow-card overflow-hidden mb-4">
             <div className="p-6 border-b border-light-border bg-[#FEF9ED]">
               <h2 className="font-heading text-[20px] font-bold text-dark">Recent Appointments</h2>
             </div>
@@ -188,6 +209,10 @@ export default function AdminDashboard() {
                 </table>
               </div>
             )}
+          </div>
+          
+          <div className="text-right">
+            <span className="font-body text-[12px] text-grey">Last updated: {formattedDate}</span>
           </div>
         </main>
       </div>
