@@ -3,6 +3,7 @@ import CustomerNavbar from '../../components/CustomerNavbar';
 import CustomerFooter from '../../components/CustomerFooter';
 import { useAuth } from '../../context/AuthContext';
 import ConfirmModal from '../../components/ConfirmModal';
+import { useNavigate } from 'react-router-dom';
 
 const CSS = `
   .appt-page { background: #FFFFFF; min-height: 100vh; font-family: 'DM Sans', sans-serif; }
@@ -93,6 +94,7 @@ const getStatusConfig = (status) => {
 
 const AppointmentsPage = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -173,10 +175,7 @@ const AppointmentsPage = () => {
               <h1 className="appt-h1">My Appointments</h1>
               <p className="appt-sub">Manage your upcoming beauty sessions</p>
             </div>
-            <button className="btn-book-new" onClick={() => {
-              setConfirmProps({ title: 'Coming soon', message: 'Book new service coming soon!', confirmText: 'OK', confirmColor: '#B8960C', onConfirm: () => setConfirmOpen(false) });
-              setConfirmOpen(true);
-            }}>
+            <button className="btn-book-new" onClick={() => navigate('/services')}>
               <span className="material-symbols-outlined" style={{ fontSize: 18 }}>add</span>
               Book New Service
             </button>
