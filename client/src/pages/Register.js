@@ -58,124 +58,158 @@ export default function Register() {
   };
 
   const strength = getPasswordStrength();
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-cream px-page py-10 animate-fade-in">
-      <div className="w-full max-w-[400px] bg-white p-card rounded-card shadow-card">
-        <div className="text-center mb-section-gap">
-          <h1 className="font-heading text-h2 text-primary tracking-widest uppercase mb-2">The Salon At Reston</h1>
-          <p className="font-body text-body text-grey">Create your luxury account.</p>
+    <div className="min-h-screen relative">
+      <div className="flex min-h-screen flex-col md:flex-row">
+        {/* Left - image + overlay (desktop) */}
+        <div className="hidden md:block md:w-1/2 relative">
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{
+              backgroundImage: `url('https://images.unsplash.com/photo-1520975915530-5e1f7a8e9d6a?auto=format&fit=crop&w=1600&q=80')`
+            }}
+          />
+          <div className="absolute inset-0 bg-black/45" />
+          <div className="relative z-10 h-full flex items-center justify-center p-12 text-center text-white">
+            <div>
+              <h2 className="font-serif text-4xl leading-tight font-semibold">Begin Your Journey.</h2>
+              <p className="mt-4 text-lg text-white/90">Join our exclusive circle of beauty.</p>
+            </div>
+          </div>
         </div>
 
-        {error && (
-          <div className="bg-[#FDEDED] text-error p-3 rounded-input font-body text-body mb-4 text-center">
-            {error}
-          </div>
-        )}
+        {/* Right - form area */}
+        <div className="w-full md:w-1/2 flex items-center justify-center p-8">
+          {/* Mobile blurred background behind the form */}
+          <div
+            className="absolute inset-0 md:hidden bg-cover bg-center filter blur-sm"
+            style={{
+              backgroundImage: `url('https://images.unsplash.com/photo-1520975915530-5e1f7a8e9d6a?auto=format&fit=crop&w=1200&q=60')`,
+              zIndex: 0
+            }}
+          />
+          <div className="absolute inset-0 md:hidden bg-white/60" />
 
-        <form onSubmit={submit} className="flex flex-col gap-element-gap">
-          <div>
-            <label className="block font-body text-label text-grey uppercase tracking-[0.5px] mb-1" htmlFor="name">Full Name</label>
-            <input
-              id="name"
-              name="name"
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="input-field"
-              placeholder="Enter your full name"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block font-body text-label text-grey uppercase tracking-[0.5px] mb-1" htmlFor="email">Email</label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              autoComplete="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="input-field"
-              placeholder="Enter your email"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block font-body text-label text-grey uppercase tracking-[0.5px] mb-1" htmlFor="phone">Phone Number</label>
-            <div className="flex gap-2">
-              <div className="bg-[#F5F5F5] border border-light-border rounded-input px-3 py-[10px] flex items-center justify-center font-body text-[14px] text-grey">
-                +977
+          <div className="relative z-10 max-w-md w-full mx-auto">
+            <div className="bg-white p-8 rounded-2xl shadow-2xl md:rounded-none md:shadow-none md:bg-white/100">
+              <div className="text-center mb-6">
+                <h1 className="font-serif text-2xl tracking-[0.3em] text-stone-800">The Salon at Reston</h1>
+                <div className="h-[2px] bg-amber-400 w-12 mx-auto mt-4 mb-2" />
+                <p className="text-gray-400 text-sm mt-2 mb-6">Create your luxury account.</p>
               </div>
-              <input
-                id="phone"
-                name="phone"
-                type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                className="input-field flex-1"
-                placeholder="Mobile number"
-                required
-              />
-            </div>
-          </div>
 
-          <div>
-            <label className="block font-body text-label text-grey uppercase tracking-[0.5px] mb-1" htmlFor="password">Password</label>
-            <div className="relative">
-              <input
-                id="password"
-                name="password"
-                type={showPassword ? "text" : "password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="input-field pr-10"
-                placeholder="Create a password"
-                required
-              />
-              <button
-                type="button"
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#AAAAAA] hover:text-primary transition-colors focus:outline-none"
-                onClick={() => setShowPassword((s) => !s)}
-              >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
-            </div>
-            {password.length > 0 && (
-              <div className="mt-2 flex items-center gap-2">
-                <div className="flex-1 h-1 bg-[#EEEEEE] rounded-full overflow-hidden">
-                  <div className={`h-full ${strength.color} transition-all duration-300`} style={{ width: strength.width }}></div>
+              {error && (
+                <div className="bg-[#FDEDED] text-error p-3 rounded-input font-body text-body mb-4 text-center">
+                  {error}
                 </div>
-                <span className="font-body text-[10px] text-grey uppercase font-bold w-12 text-right">{strength.label}</span>
-              </div>
-            )}
-          </div>
+              )}
 
-          <button type="submit" disabled={loading} className="btn btn-primary w-full mt-2">
-            {loading ? "Registering…" : "Register"}
-          </button>
+              <form onSubmit={submit} className="flex flex-col gap-6">
+                <div>
+                  <label className="block font-body text-xs text-gray-500 uppercase tracking-[0.35em] mb-2" htmlFor="name">Full Name</label>
+                  <input
+                    id="name"
+                    name="name"
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="w-full bg-transparent border-0 border-b border-gray-200 focus:border-amber-600 focus:outline-none py-2 text-sm text-stone-800"
+                    placeholder="Enter your full name"
+                    required
+                  />
+                </div>
 
-          <div className="flex items-center gap-3 my-4">
-            <div className="flex-1 h-[1px] bg-light-border"></div>
-            <span className="font-body text-[12px] text-grey uppercase tracking-[0.5px]">OR</span>
-            <div className="flex-1 h-[1px] bg-light-border"></div>
-          </div>
+                <div>
+                  <label className="block font-body text-xs text-gray-500 uppercase tracking-[0.35em] mb-2" htmlFor="email">Email</label>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full bg-transparent border-0 border-b border-gray-200 focus:border-amber-600 focus:outline-none py-2 text-sm text-stone-800"
+                    placeholder="you@domain.com"
+                    required
+                  />
+                </div>
 
-          <button type="button" onClick={handleGoogle} className="btn bg-primary text-white hover:bg-[#b5943b] shadow-[0_4px_16px_rgba(201,168,76,0.3)] w-full transition-all duration-200">
-            <div className="bg-white rounded-full p-1 mr-2">
-              <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-4 h-4" />
+                <div>
+                  <label className="block font-body text-xs text-gray-500 uppercase tracking-[0.35em] mb-2" htmlFor="phone">Phone Number</label>
+                  <div className="flex items-center gap-3">
+                    <div className="flex-shrink-0 text-sm text-stone-800 py-2 px-3 border-0 border-b border-gray-200">+977</div>
+                    <input
+                      id="phone"
+                      name="phone"
+                      type="tel"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      className="w-full bg-transparent border-0 border-b border-gray-200 focus:border-amber-600 focus:outline-none py-2 text-sm text-stone-800"
+                      placeholder="Mobile number"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block font-body text-xs text-gray-500 uppercase tracking-[0.35em] mb-2" htmlFor="password">Password</label>
+                  <div className="relative">
+                    <input
+                      id="password"
+                      name="password"
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="w-full bg-transparent border-0 border-b border-gray-200 focus:border-amber-600 focus:outline-none py-2 pr-10 text-sm text-stone-800"
+                      placeholder="Create a password"
+                      required
+                    />
+                    <button
+                      type="button"
+                      className="absolute right-0 top-1/2 -translate-y-1/2 text-[#777] hover:text-amber-600 transition-colors focus:outline-none"
+                      onClick={() => setShowPassword((s) => !s)}
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+                  {password.length > 0 && (
+                    <div className="mt-2 flex items-center gap-2">
+                      <div className="flex-1 h-1 bg-[#EEEEEE] rounded-full overflow-hidden">
+                        <div className={`${strength.color} h-full transition-all duration-300`} style={{ width: strength.width }} />
+                      </div>
+                      <span className="font-body text-[10px] text-gray-500 uppercase font-bold w-12 text-right">{strength.label}</span>
+                    </div>
+                  )}
+                </div>
+
+                <button type="submit" disabled={loading} className="w-full bg-amber-700 text-white py-3 font-semibold uppercase rounded-none">
+                  {loading ? "Registering…" : "Create Account"}
+                </button>
+
+                <div className="flex items-center gap-3 my-2">
+                  <div className="flex-1 h-[1px] bg-gray-200"></div>
+                  <span className="text-[12px] text-gray-400 uppercase tracking-[0.5em]">or</span>
+                  <div className="flex-1 h-[1px] bg-gray-200"></div>
+                </div>
+
+                <button type="button" onClick={handleGoogle} className="w-full flex items-center justify-center gap-3 py-2 border border-gray-200 text-sm text-stone-800">
+                  <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-5 h-5" />
+                  <span>Continue with Google</span>
+                </button>
+
+                <div className="mt-4 text-center text-sm text-gray-500">
+                  Already have an account?{' '}
+                  <button onClick={() => navigate('/login')} className="text-amber-700 font-semibold hover:underline ml-1">
+                    Login
+                  </button>
+                </div>
+
+                <div className="text-center mt-8">
+                  <div className="text-[10px] tracking-[0.4em] text-gray-300 uppercase">© 2025 The Salon at Reston</div>
+                </div>
+              </form>
             </div>
-            Register with Google
-          </button>
-        </form>
-
-        <div className="mt-6 text-center font-body text-body text-grey">
-          Already have an account?{' '}
-          <button onClick={() => navigate('/login')} className="text-primary font-bold hover:text-light-gold transition-colors focus:outline-none">
-            Login
-          </button>
+          </div>
         </div>
       </div>
     </div>
