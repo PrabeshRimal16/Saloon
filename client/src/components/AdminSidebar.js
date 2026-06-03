@@ -3,50 +3,79 @@ import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 export default function AdminSidebar() {
- 	const { logout, user, loading } = useAuth();
+  const { logout, user, loading } = useAuth();
 
-	const linkClass = ({ isActive }) =>
-		`block px-4 py-2 rounded-md transition-colors ${isActive ? 'bg-gradient-to-r from-indigo-600 via-violet-600 to-cyan-500 text-white font-semibold shadow-md' : 'text-gray-200 hover:bg-gray-800 hover:text-white'}`;
+  const navItems = [
+    { to: "/admin", label: "Overview", icon: "dashboard", end: true },
+    { to: "/admin/services", label: "Services", icon: "content_cut" },
+    { to: "/admin/appointments", label: "Appointments", icon: "calendar_month" },
+    { to: "/admin/offers", label: "Offers", icon: "local_offer" },
+    { to: "/admin/users", label: "Users", icon: "group" },
+    { to: "/admin/settings", label: "Settings", icon: "settings" },
+  ];
 
-	const handleLogout = (e) => {
-		e.preventDefault();
-		try { logout && logout(); } catch (err) { /* ignore */ }
-	};
+  const handleLogout = (e) => {
+    e.preventDefault();
+    try { logout && logout(); } catch (err) { /* ignore */ }
+  };
 
-	return (
-		    <aside className="fixed top-0 left-0 h-screen w-64 bg-[#1a2035] flex flex-col z-40 text-[#e2e8f0]">
-			    <div className="pt-16 p-6 border-b border-gray-800">
-				<NavLink to="/admin" className="text-2xl font-serif text-white">Admin</NavLink>
-				{/* user preview */}
-				<div className="mt-4 flex items-center gap-3">
-					{loading ? (
-						<div className="w-10 h-10 rounded-full bg-gray-700 animate-pulse" />
-					) : (
-						<>
-								{(user && (user.avatar_url || user.photo || user.avatar || user.avatarUrl || user.picture)) ? (
-									<img src={user.avatar_url || user.photo || user.avatar || user.avatarUrl || user.picture} alt={user.name || user.email} className="w-10 h-10 rounded-full object-cover" />
-							) : (
-								<div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center text-sm font-medium">{(user && (user.name || user.email)) ? (user.name ? user.name.split(' ').map(p=>p[0]).slice(0,2).join('').toUpperCase() : (user.email[0]||'U').toUpperCase()) : 'U'}</div>
-							)}
-							<div>
-								<div className="text-sm font-medium">{user?.name || user?.displayName || user?.email || 'Account'}</div>
-								<div className="text-xs text-gray-400">Profile</div>
-							</div>
-						</>
-					)}
-				</div>
-			</div>
-			<nav className="p-4 flex-1 overflow-auto space-y-1">
-				<NavLink to="/admin" className={linkClass}>Dashboard</NavLink>
-				<NavLink to="/admin/services" className={linkClass}>Services</NavLink>
-				<NavLink to="/admin/appointments" className={linkClass}>Appointments</NavLink>
-				<NavLink to="/admin/offers" className={linkClass}>Offers</NavLink>
-				<NavLink to="/admin/users" className={linkClass}>Users</NavLink>
-				<NavLink to="/admin/settings" className={linkClass}>Settings</NavLink>
-			</nav>
-			<div className="p-4 border-t border-gray-800">
-				<button onClick={handleLogout} className="w-full text-left px-4 py-2 rounded-md bg-red-600 hover:bg-red-700 text-white">Logout</button>
-			</div>
-		</aside>
-	);
+  return (
+    <aside className="fixed top-0 left-0 h-screen w-[240px] bg-sidebar flex flex-col z-40">
+      <div className="pt-8 pb-8 px-6 text-center">
+        <h1 className="font-heading text-primary text-h2 uppercase tracking-widest">L'Atelier</h1>
+      </div>
+
+      <nav className="flex-1 overflow-auto py-4">
+        <ul className="flex flex-col gap-1">
+          {navItems.map((item) => (
+            <li key={item.to}>
+              <NavLink 
+                to={item.to}
+                end={item.end}
+                className={({ isActive }) => 
+                  `flex items-center gap-3 px-6 py-3 transition-all duration-200 border-l-[3px] ` + 
+                  (isActive 
+                    ? 'border-primary bg-[rgba(201,168,76,0.1)] text-white' 
+                    : 'border-transparent text-[#AAAAAA] hover:text-white hover:bg-[rgba(255,255,255,0.02)]')
+                }
+              >
+                {({ isActive }) => (
+                  <>
+                    <span className="material-symbols-outlined text-primary text-[20px]">{item.icon}</span>
+                    <span className="font-body text-body font-medium">{item.label}</span>
+                  </>
+                )}
+              </NavLink>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <div className="p-6 border-t border-[rgba(255,255,255,0.05)]">
+        <div className="flex items-center gap-3 mb-6">
+          {loading ? (
+            <div className="w-10 h-10 rounded-full bg-[#333] animate-pulse" />
+          ) : (
+            <>
+              {(user && (user.avatar_url || user.photo || user.avatar || user.avatarUrl || user.picture)) ? (
+                <img src={user.avatar_url || user.photo || user.avatar || user.avatarUrl || user.picture} alt={user.name || user.email} className="w-10 h-10 rounded-full object-cover border border-primary" />
+              ) : (
+                <div className="w-10 h-10 rounded-full bg-[#333] flex items-center justify-center text-sm font-medium border border-primary text-primary">
+                  {(user && (user.name || user.email)) ? (user.name ? user.name.split(' ').map(p=>p[0]).slice(0,2).join('').toUpperCase() : (user.email[0]||'U').toUpperCase()) : 'U'}
+                </div>
+              )}
+              <div className="flex-1 min-w-0">
+                <div className="text-white text-body font-medium truncate">{user?.name || user?.displayName || user?.email || 'Admin'}</div>
+                <div className="text-[#AAAAAA] text-label truncate">Administrator</div>
+              </div>
+            </>
+          )}
+        </div>
+        <button onClick={handleLogout} className="flex items-center gap-2 w-full px-4 py-2 text-[#AAAAAA] hover:text-white transition-colors duration-200">
+          <span className="material-symbols-outlined text-[20px]">logout</span>
+          <span className="font-label">LOGOUT</span>
+        </button>
+      </div>
+    </aside>
+  );
 }

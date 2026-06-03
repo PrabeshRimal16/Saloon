@@ -12,24 +12,9 @@ function avatarInitials(name, email) {
 
 export default function AdminHeader({ title }) {
   const { user, loading } = useAuth();
-  const headerRef = useRef(null);
   const [notifications, setNotifications] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
   const notifRef = useRef(null);
-
-  useEffect(() => {
-    const setHeaderHeight = () => {
-      try {
-        const h = headerRef.current ? headerRef.current.offsetHeight : 96;
-        document.documentElement.style.setProperty('--app-header-height', `${h}px`);
-      } catch (e) {
-        document.documentElement.style.setProperty('--app-header-height', `96px`);
-      }
-    };
-    setHeaderHeight();
-    window.addEventListener('resize', setHeaderHeight);
-    return () => window.removeEventListener('resize', setHeaderHeight);
-  }, []);
 
   // Fetch admin notifications
   useEffect(() => {
@@ -44,7 +29,7 @@ export default function AdminHeader({ title }) {
       }
     };
     fetchNotifications();
-    const interval = setInterval(fetchNotifications, 10000); // Poll every 10 seconds
+    const interval = setInterval(fetchNotifications, 10000);
     return () => clearInterval(interval);
   }, []);
 
@@ -65,74 +50,82 @@ export default function AdminHeader({ title }) {
   const avatarSrc = user?.avatar_url || user?.photo || user?.avatar || user?.avatarUrl || user?.picture || null;
 
   return (
-    <header ref={headerRef} className="app-header fixed top-0 left-0 right-0 z-50 h-16 border-b border-transparent">
-      <div className="max-w-screen-xl mx-auto flex items-center justify-between pl-64 px-4 lg:px-10 h-full">
+    <header className="fixed top-0 left-[240px] right-0 z-40 bg-white border-b border-light-border h-[80px] flex items-center px-8 transition-all duration-300">
+      <div className="flex items-center justify-between w-full">
         <div>
-          <h1 className="text-2xl font-serif">{title || 'Admin'}</h1>
-          <p className="text-sm" style={{color:'rgba(255,255,255,0.85)'}}>Manage site settings and content</p>
+          <h1 className="font-heading text-[20px] font-bold text-dark">{title || 'Admin'}</h1>
         </div>
 
-          <div className="flex items-center gap-4">
-          <div className="hidden md:block">
+        <div className="flex items-center gap-6">
+          <div className="hidden md:flex items-center relative">
+            <span className="material-symbols-outlined absolute left-3 text-primary text-[20px] pointer-events-none">search</span>
             <input
-              aria-label="Search"
-                placeholder="Search admin..."
-                className="px-3 py-2 border rounded-md text-sm w-64 search-input"
+              type="text"
+              placeholder="Search admin..."
+              className="w-64 bg-[#F5F5F5] border border-transparent rounded-[8px] py-[10px] pl-10 pr-4 text-body font-body outline-none transition-all duration-200 focus:border-primary focus:bg-white focus:shadow-[0_0_0_3px_rgba(201,168,76,0.15)]"
             />
           </div>
-          <div className="flex items-center gap-3">
-            <div className="relative" ref={notifRef}>
-              <button 
-                onClick={() => setShowNotifications(!showNotifications)}
-                className="hidden md:flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-200 relative transition-colors"
-                title="Notifications"
-              >
-                <span className="material-symbols-outlined">notifications</span>
-                {notifications.length > 0 && (
-                  <span className="absolute top-0 right-0 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
-                    {notifications.length > 9 ? '9+' : notifications.length}
-                  </span>
-                )}
-              </button>
 
-              {/* Notification Dropdown */}
-              {showNotifications && (
-                <div className="absolute right-0 mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
-                  <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-                    <h3 className="font-semibold text-gray-800">Notifications</h3>
-                    <span className="text-xs text-gray-500">{notifications.length} new</span>
-                  </div>
-                  <div className="max-h-96 overflow-y-auto">
-                    {notifications.length > 0 ? (
-                      notifications.map((notif, idx) => (
-                        <div key={idx} className="px-4 py-3 border-b border-gray-100 last:border-b-0 hover:bg-gray-50 transition-colors">
-                          <div className="text-sm text-gray-800 font-medium">{notif.type === 'offer' ? '🎁 Offer' : '📅 Appointment'}</div>
-                          <div className="text-sm text-gray-600 mt-1">{notif.message}</div>
-                          <div className="text-xs text-gray-400 mt-2">
-                            {new Date(notif.created_at || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                          </div>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="px-4 py-8 text-center text-gray-500 text-sm">No new notifications</div>
-                    )}
-                  </div>
-                </div>
+          <div className="relative" ref={notifRef}>
+            <button 
+              onClick={() => setShowNotifications(!showNotifications)}
+              className="btn-interactive w-10 h-10 rounded-full flex items-center justify-center relative bg-[#FEF9ED] border border-[rgba(201,168,76,0.2)]"
+              title="Notifications"
+            >
+              <span className="material-symbols-outlined text-primary text-[24px]">notifications</span>
+              {notifications.length > 0 && (
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-error text-white text-[10px] rounded-full flex items-center justify-center font-bold shadow-sm">
+                  {notifications.length > 9 ? '9+' : notifications.length}
+                </span>
               )}
-            </div>
-            {loading ? (
-              <div className="w-9 h-9 rounded-full bg-gray-200 animate-pulse" />
-            ) : (
-              <Link to="/admin/settings" className="flex items-center gap-3">
-                {avatarSrc ? (
-                  <img src={avatarSrc} alt={displayName} className="w-9 h-9 rounded-full object-cover" />
-                ) : (
-                  <div className="w-9 h-9 rounded-full bg-gray-300 flex items-center justify-center text-sm font-semibold">{avatarInitials(displayName, user?.email)}</div>
-                )}
-                <span className="hidden sm:inline-block user-name">{displayName}</span>
-              </Link>
+            </button>
+
+            {/* Notification Dropdown */}
+            {showNotifications && (
+              <div className="absolute right-0 mt-3 w-80 bg-white border border-light-border rounded-card shadow-modal z-50 overflow-hidden animate-fade-in">
+                <div className="p-4 border-b border-light-border flex items-center justify-between bg-cream">
+                  <h3 className="font-body font-bold text-dark">Notifications</h3>
+                  <span className="text-label text-grey uppercase tracking-widest">{notifications.length} new</span>
+                </div>
+                <div className="max-h-80 overflow-y-auto">
+                  {notifications.length > 0 ? (
+                    notifications.map((notif, idx) => (
+                      <div key={idx} className="p-4 border-b border-light-border last:border-b-0 hover:bg-[#FEF9ED] transition-colors cursor-pointer">
+                        <div className="text-[14px] text-dark font-medium">{notif.type === 'offer' ? '🎁 Offer Update' : '📅 Appointment'}</div>
+                        <div className="text-[13px] text-grey mt-1 leading-snug">{notif.message}</div>
+                        <div className="text-[11px] text-[#AAAAAA] mt-2 font-medium">
+                          {new Date(notif.created_at || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="p-8 text-center flex flex-col items-center">
+                      <span className="material-symbols-outlined text-primary text-[32px] mb-2 opacity-50">notifications_off</span>
+                      <p className="text-[14px] text-grey">No new notifications</p>
+                    </div>
+                  )}
+                </div>
+              </div>
             )}
           </div>
+
+          <div className="h-8 w-[1px] bg-light-border hidden md:block"></div>
+
+          {loading ? (
+            <div className="w-10 h-10 rounded-full bg-[#E0E0E0] animate-pulse" />
+          ) : (
+            <Link to="/admin/settings" className="btn-interactive flex items-center gap-3">
+              {avatarSrc ? (
+                <img src={avatarSrc} alt={displayName} className="w-10 h-10 rounded-full object-cover border-2 border-primary" />
+              ) : (
+                <div className="w-10 h-10 rounded-full bg-[#FEF9ED] border-2 border-primary flex items-center justify-center text-[14px] font-bold text-primary">
+                  {avatarInitials(displayName, user?.email)}
+                </div>
+              )}
+              <span className="hidden sm:inline-block font-body text-[14px] font-medium text-dark">{displayName}</span>
+              <span className="material-symbols-outlined text-grey text-[20px]">expand_more</span>
+            </Link>
+          )}
         </div>
       </div>
     </header>
