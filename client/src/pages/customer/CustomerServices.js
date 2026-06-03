@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import CustomerNavbar from '../../components/CustomerNavbar';
+import CustomerFooter from '../../components/CustomerFooter';
 
 export default function CustomerServices() {
   const [services, setServices] = useState([]);
@@ -241,18 +242,7 @@ export default function CustomerServices() {
         )}
 
       {/* Footer */}
-      <footer className="bg-[#1C1C1E] px-12 py-12 text-center">
-        <div className="font-['Playfair_Display'] text-[28px] text-[#C9A84C] tracking-widest uppercase mb-6">L'Atelier</div>
-        <div className="flex flex-wrap justify-center gap-8 mb-8">
-          {['Privacy Policy', 'Terms of Service', 'Career', 'Contact Us'].map(l => (
-            <a key={l} href="#" className="font-sans text-[13px] text-white/50 hover:text-[#C9A84C] transition-colors">{l}</a>
-          ))}
-        </div>
-        <p className="font-sans text-[14px] text-white/50 max-w-lg mx-auto mb-8 leading-relaxed">
-          Crafting excellence in beauty and grooming since 2012. Our atelier is a sanctuary for those who appreciate the finer things in life.
-        </p>
-        <p className="font-sans text-[12px] text-white/30">© 2024 L'Atelier Modern. All Rights Reserved.</p>
-      </footer>
+      <CustomerFooter />
     </>
   );
 }

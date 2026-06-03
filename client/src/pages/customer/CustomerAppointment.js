@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import CustomerNavbar from '../../components/CustomerNavbar';
+import CustomerFooter from '../../components/CustomerFooter';
 import { useAuth } from '../../context/AuthContext';
 
 const getStatusConfig = (status) => {
@@ -255,16 +256,7 @@ const AppointmentsPage = () => {
         )}
       </main>
 
-      {/* Footer Component */}
-      <footer className="w-full mt-12 py-12 px-8 bg-[#1A1A1A] flex flex-col items-center justify-center gap-6">
-        <h2 className="font-serif text-[28px] text-[#C9A84C] uppercase tracking-widest m-0">L'Atelier</h2>
-        <div className="flex flex-wrap justify-center gap-6">
-          <a className="text-[#888888] hover:text-[#C9A84C] text-[13px] uppercase tracking-wider transition-colors" href="#">Privacy Policy</a>
-          <a className="text-[#888888] hover:text-[#C9A84C] text-[13px] uppercase tracking-wider transition-colors" href="#">Terms of Service</a>
-          <a className="text-[#888888] hover:text-[#C9A84C] text-[13px] uppercase tracking-wider transition-colors" href="#">Career</a>
-          <a className="text-[#888888] hover:text-[#C9A84C] text-[13px] uppercase tracking-wider transition-colors" href="#">Contact Us</a>
-        </div>
-      </footer>
+      <CustomerFooter />
     </div>
   );
 };
