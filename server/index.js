@@ -8,6 +8,7 @@ const initializeDatabase = require("./db-init");
 dotenv.config();
 
 const app = express();
+const compression = require('compression');
 const path = require('path');
 const fs = require('fs');
 
@@ -32,6 +33,9 @@ app.use(
     credentials: true,
   })
 );
+
+// compress responses to reduce payload sizes
+app.use(compression());
 
 app.use(session({
   secret: sessionSecret,

@@ -17,10 +17,19 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
+// Simple in-memory cache for GET /services
+const cache = { services: { ts: 0, data: null } };
+const SERVICES_TTL = 30 * 1000; // 30 seconds
+
 // Get all services
 router.get("/", async (req, res) => {
   try {
+    const now = Date.now();
+    if (cache.services.data && (now - cache.services.ts) < SERVICES_TTL) {
+      return res.json(cache.services.data);
+    }
     const result = await pool.query("SELECT * FROM services ORDER BY id");
+    cache.services = { ts: now, data: result.rows };
     res.json(result.rows);
   } catch (err) {
     console.error('GET /api/services error', err);

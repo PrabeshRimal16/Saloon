@@ -16,10 +16,20 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
+// Simple in-memory cache for offers
+const offersCache = { ts: 0, data: null };
+const OFFERS_TTL = 30 * 1000; // 30 seconds
+
 // Get all offers
 router.get("/", async (req, res) => {
   try {
+    const now = Date.now();
+    if (offersCache.data && (now - offersCache.ts) < OFFERS_TTL) {
+      return res.json(offersCache.data);
+    }
     const result = await pool.query("SELECT * FROM offers");
+    offersCache.ts = now;
+    offersCache.data = result.rows;
     res.json(result.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
