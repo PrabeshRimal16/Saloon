@@ -395,23 +395,4 @@ const OffersAndRitualsPage = () => {
   );
 };
 
-export default OffersAndRitualsPage;`
-        @keyframes slideIn {
-          from {
-            opacity: 0;
-            transform: translateX(100px);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-        .animate-slide-in {
-          animation: slideIn 0.3s ease-out;
-        }
-      `}</style>
-    </div>
-  );
-};
-
 export default OffersAndRitualsPage;
