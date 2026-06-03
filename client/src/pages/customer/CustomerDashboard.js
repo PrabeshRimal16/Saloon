@@ -24,7 +24,7 @@ export default function CustomerDashboard() {
   const firstName = user?.name?.split(' ')[0] || 'Guest';
 
   return (
-    <div className="min-h-screen bg-[#F4F4F6] animate-fade-in">
+    <div className="min-h-screen bg-[#FBF8F2] animate-[fadeIn_0.3s_ease-in]">
       <CustomerNavbar />
 
       <main className="pt-[80px]">
@@ -40,24 +40,24 @@ export default function CustomerDashboard() {
           {/* Content */}
           <div className="absolute inset-0 flex flex-col justify-center px-12 md:px-24">
             <div className="animate-fade-in">
-              <div className="font-body text-[12px] text-[#C9A84C] uppercase tracking-[0.4em] mb-4">Welcome back</div>
-              <h1 className="font-heading text-[56px] md:text-[72px] text-white font-bold leading-tight mb-4 max-w-2xl">
+              <div className="font-sans text-[12px] text-[#C9A84C] uppercase tracking-[0.4em] mb-4">Welcome back</div>
+              <h1 className="font-['Playfair_Display'] text-[56px] md:text-[72px] text-white font-bold leading-tight mb-4 max-w-2xl">
                 {firstName},<br />Look Stunning.
               </h1>
-              <p className="font-body text-[16px] text-white/70 mb-8 max-w-md leading-relaxed">
+              <p className="font-sans text-[16px] text-white/70 mb-8 max-w-md leading-relaxed">
                 Experience luxury grooming tailored to your unique style at L'Atelier.
               </p>
               <div className="flex items-center gap-4">
                 <button
                   onClick={() => navigate('/appointments')}
-                  className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#C9A84C] text-white font-body font-bold text-[14px] rounded-[8px] hover:bg-[#b5943b] shadow-[0_4px_20px_rgba(201,168,76,0.5)] transition-all hover:scale-[1.02] uppercase tracking-wider"
+                  className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#C9A84C] text-white font-sans font-bold text-[14px] rounded-[8px] hover:bg-[#b5943b] shadow-[0_4px_20px_rgba(201,168,76,0.5)] transition-all hover:scale-[1.02] uppercase tracking-wider"
                 >
                   <span className="material-symbols-outlined text-[20px]">calendar_month</span>
                   Book Now
                 </button>
                 <button
                   onClick={() => navigate('/services')}
-                  className="inline-flex items-center gap-2 px-8 py-3.5 bg-white/10 backdrop-blur-sm text-white font-body font-bold text-[14px] rounded-[8px] border border-white/30 hover:bg-white/20 transition-all uppercase tracking-wider"
+                  className="inline-flex items-center gap-2 px-8 py-3.5 bg-white/10 backdrop-blur-sm text-white font-sans font-bold text-[14px] rounded-[8px] border border-white/30 hover:bg-white/20 transition-all uppercase tracking-wider"
                 >
                   View Services
                   <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
@@ -81,7 +81,7 @@ export default function CustomerDashboard() {
             ].map(f => (
               <div key={f.text} className="flex items-center gap-3">
                 <span className="material-symbols-outlined text-[#C9A84C] text-[22px]">{f.icon}</span>
-                <span className="font-body text-[13px] text-white/80 font-medium">{f.text}</span>
+                <span className="font-sans text-[13px] text-white/80 font-medium">{f.text}</span>
               </div>
             ))}
           </div>
@@ -91,10 +91,10 @@ export default function CustomerDashboard() {
         <section className="px-8 md:px-16 py-16">
           <div className="flex items-end justify-between mb-10">
             <div>
-              <div className="font-body text-[11px] text-[#C9A84C] uppercase tracking-[0.4em] mb-2">Our Expertise</div>
-              <h2 className="font-heading text-[36px] font-bold text-[#1A1A1A]">Featured Services</h2>
+              <div className="font-sans text-[11px] text-[#C9A84C] uppercase tracking-[0.4em] mb-2">Our Expertise</div>
+              <h2 className="font-['Playfair_Display'] text-[36px] font-bold text-[#1A1A1A]">Featured Services</h2>
             </div>
-            <button onClick={() => navigate('/services')} className="inline-flex items-center gap-2 text-[#C9A84C] font-body text-[14px] font-bold hover:gap-3 transition-all">
+            <button onClick={() => navigate('/services')} className="inline-flex items-center gap-2 text-[#C9A84C] font-sans text-[14px] font-bold hover:gap-3 transition-all">
               View All <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
             </button>
           </div>
@@ -126,10 +126,10 @@ export default function CustomerDashboard() {
                     <span className="material-symbols-outlined text-[#C9A84C] text-[64px]">{s.icon}</span>
                   </div>
                   <div className="p-6">
-                    <h3 className="font-heading text-[18px] font-bold text-[#1A1A1A] mb-2">{s.title}</h3>
-                    <p className="font-body text-[13px] text-[#6B6B6B] leading-relaxed mb-4">{s.desc}</p>
+                    <h3 className="font-['Playfair_Display'] text-[18px] font-bold text-[#1A1A1A] mb-2">{s.title}</h3>
+                    <p className="font-sans text-[13px] text-[#6B6B6B] leading-relaxed mb-4">{s.desc}</p>
                     <div className="flex items-center justify-between">
-                      <span className="font-heading text-[20px] font-bold text-[#C9A84C]">${s.price}</span>
+                      <span className="font-['Playfair_Display'] text-[20px] font-bold text-[#C9A84C]">${s.price}</span>
                       <button onClick={() => navigate('/appointments')} className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#C9A84C] text-white rounded-[6px] text-[13px] font-bold hover:bg-[#b5943b] transition-all">
                         Book Now
                       </button>
@@ -158,10 +158,10 @@ export default function CustomerDashboard() {
                           {s.category}
                         </span>
                       )}
-                      <h3 className="font-heading text-[18px] font-bold text-[#1A1A1A] mb-2">{s.name}</h3>
-                      <p className="font-body text-[13px] text-[#6B6B6B] leading-relaxed mb-4 line-clamp-2">{s.description}</p>
+                      <h3 className="font-['Playfair_Display'] text-[18px] font-bold text-[#1A1A1A] mb-2">{s.name}</h3>
+                      <p className="font-sans text-[13px] text-[#6B6B6B] leading-relaxed mb-4 line-clamp-2">{s.description}</p>
                       <div className="flex items-center justify-between">
-                        <span className="font-heading text-[20px] font-bold text-[#C9A84C]">${s.price}</span>
+                        <span className="font-['Playfair_Display'] text-[20px] font-bold text-[#C9A84C]">${s.price}</span>
                         <button onClick={() => navigate('/appointments')} className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#C9A84C] text-white rounded-[6px] text-[13px] font-bold hover:bg-[#b5943b] transition-all">
                           Book Now
                         </button>
@@ -179,10 +179,10 @@ export default function CustomerDashboard() {
           <section className="px-8 md:px-16 pb-16">
             <div className="flex items-end justify-between mb-10">
               <div>
-                <div className="font-body text-[11px] text-[#C9A84C] uppercase tracking-[0.4em] mb-2">Exclusive Deals</div>
-                <h2 className="font-heading text-[36px] font-bold text-[#1A1A1A]">Active Offers</h2>
+                <div className="font-sans text-[11px] text-[#C9A84C] uppercase tracking-[0.4em] mb-2">Exclusive Deals</div>
+                <h2 className="font-['Playfair_Display'] text-[36px] font-bold text-[#1A1A1A]">Active Offers</h2>
               </div>
-              <button onClick={() => navigate('/offers')} className="inline-flex items-center gap-2 text-[#C9A84C] font-body text-[14px] font-bold hover:gap-3 transition-all">
+              <button onClick={() => navigate('/offers')} className="inline-flex items-center gap-2 text-[#C9A84C] font-sans text-[14px] font-bold hover:gap-3 transition-all">
                 See All <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
               </button>
             </div>
@@ -204,8 +204,8 @@ export default function CustomerDashboard() {
                       )}
                     </div>
                     <div className="p-4">
-                      <h3 className="font-heading text-[15px] font-bold text-[#1A1A1A] mb-1">{offer.title}</h3>
-                      <p className="font-body text-[12px] text-[#6B6B6B] line-clamp-2 mb-3">{offer.description}</p>
+                      <h3 className="font-['Playfair_Display'] text-[15px] font-bold text-[#1A1A1A] mb-1">{offer.title}</h3>
+                      <p className="font-sans text-[12px] text-[#6B6B6B] line-clamp-2 mb-3">{offer.description}</p>
                       <div className="flex items-center gap-1 text-[11px] text-[#6B6B6B]">
                         <span className="material-symbols-outlined text-[14px] text-[#C9A84C]">event</span>
                         {offer.valid_until ? `Until ${new Date(offer.valid_until).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}` : 'Limited time'}
@@ -223,11 +223,11 @@ export default function CustomerDashboard() {
           <div className="absolute inset-0 bg-[#1C1C1E]"></div>
           <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6 p-10 md:p-12">
             <div>
-              <div className="font-body text-[11px] text-[#C9A84C] uppercase tracking-[0.4em] mb-2">Manage</div>
-              <h2 className="font-heading text-[32px] font-bold text-white mb-2">Your Appointments</h2>
-              <p className="font-body text-[14px] text-white/60">View, manage and track all your upcoming and past bookings.</p>
+              <div className="font-sans text-[11px] text-[#C9A84C] uppercase tracking-[0.4em] mb-2">Manage</div>
+              <h2 className="font-['Playfair_Display'] text-[32px] font-bold text-white mb-2">Your Appointments</h2>
+              <p className="font-sans text-[14px] text-white/60">View, manage and track all your upcoming and past bookings.</p>
             </div>
-            <button onClick={() => navigate('/appointments')} className="shrink-0 inline-flex items-center gap-2 px-8 py-3.5 bg-[#C9A84C] text-white font-body font-bold text-[14px] rounded-[8px] hover:bg-[#b5943b] shadow-[0_4px_20px_rgba(201,168,76,0.4)] transition-all hover:scale-[1.02] uppercase tracking-wider">
+            <button onClick={() => navigate('/appointments')} className="shrink-0 inline-flex items-center gap-2 px-8 py-3.5 bg-[#C9A84C] text-white font-sans font-bold text-[14px] rounded-[8px] hover:bg-[#b5943b] shadow-[0_4px_20px_rgba(201,168,76,0.4)] transition-all hover:scale-[1.02] uppercase tracking-wider">
               <span className="material-symbols-outlined text-[20px]">calendar_month</span>
               My Appointments
             </button>
@@ -236,13 +236,13 @@ export default function CustomerDashboard() {
 
         {/* Footer */}
         <footer className="bg-[#1C1C1E] px-12 py-12 text-center">
-          <div className="font-heading text-[28px] text-[#C9A84C] tracking-widest uppercase mb-6">L'Atelier</div>
+          <div className="font-['Playfair_Display'] text-[28px] text-[#C9A84C] tracking-widest uppercase mb-6">L'Atelier</div>
           <div className="flex flex-wrap justify-center gap-8 mb-8">
             {['Privacy Policy', 'Terms of Service', 'Contact Us'].map(l => (
-              <a key={l} href="#" className="font-body text-[13px] text-white/50 hover:text-[#C9A84C] transition-colors">{l}</a>
+              <a key={l} href="#" className="font-sans text-[13px] text-white/50 hover:text-[#C9A84C] transition-colors">{l}</a>
             ))}
           </div>
-          <p className="font-body text-[12px] text-white/30">© 2024 L'Atelier. All Rights Reserved.</p>
+          <p className="font-sans text-[12px] text-white/30">© 2024 L'Atelier. All Rights Reserved.</p>
         </footer>
       </main>
     </div>
