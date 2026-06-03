@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import CustomerNavbar from '../../components/CustomerNavbar';
 import CustomerFooter from '../../components/CustomerFooter';
 
@@ -29,7 +29,7 @@ const CSS = `
   .info-text { font-size: 14px; color: #1C1C1E; line-height: 1.6; }
 
   /* Main body */
-  .contact-main { max-width: 1200px; margin: 0 auto; padding: 56px 40px 80px; display: grid; grid-template-columns: 1.1fr 1fr; gap: 48px; }
+  .contact-main { max-width: 1200px; margin: 0 auto; padding: 56px 40px 80px; display: grid; grid-template-columns: 1fr; gap: 48px; }
   @media (max-width: 880px) { .contact-main { grid-template-columns: 1fr; padding: 40px 24px 60px; } }
 
   /* Form card */
@@ -96,16 +96,7 @@ const CSS = `
 `;
 
 const ContactUsPage = () => {
-  const [formData, setFormData] = useState({ name: '', email: '', phone: '', service: '', message: '' });
-  const [submitted, setSubmitted] = useState(false);
-
-  const handleChange = e => setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
-  const handleSubmit = e => {
-    e.preventDefault();
-    setSubmitted(true);
-    setFormData({ name: '', email: '', phone: '', service: '', message: '' });
-    setTimeout(() => setSubmitted(false), 4000);
-  };
+  
 
   const infoCards = [
     { icon: 'location_on', title: 'Address', lines: ['1613 Washington Plaza N, Reston, VA 20190, United States', 'Located in Lake Anne Plaza - Main Parking lot'] },
@@ -170,59 +161,6 @@ const ContactUsPage = () => {
 
           {/* Main content */}
           <div className="contact-main">
-
-            {/* Form */}
-            <div className="contact-form-card">
-              <p className="form-eyebrow">Message Us</p>
-              <h2 className="form-title">Send a Message</h2>
-
-              {submitted && (
-                <div className="success-toast">
-                  <span className="material-symbols-outlined" style={{ fontSize: 20, color: '#2D7A4F' }}>check_circle</span>
-                  <p className="success-toast-text">Thank you! We'll be in touch soon.</p>
-                </div>
-              )}
-
-              <form onSubmit={handleSubmit}>
-                <div className="form-row-2">
-                  <div className="field-wrap">
-                    <input className="field-input" type="text" name="name" placeholder="Name" value={formData.name} onChange={handleChange} required />
-                    <label className="field-label">Full Name</label>
-                  </div>
-                  <div className="field-wrap">
-                    <input className="field-input" type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} required />
-                    <label className="field-label">Email Address</label>
-                  </div>
-                </div>
-                <div className="form-row-2">
-                  <div className="field-wrap">
-                    <input className="field-input" type="tel" name="phone" placeholder="Phone" value={formData.phone} onChange={handleChange} />
-                    <label className="field-label">Phone (Optional)</label>
-                  </div>
-                  <div className="field-wrap">
-                    <select className="field-select" name="service" value={formData.service} onChange={handleChange}>
-                      <option value="">Select service</option>
-                      <option>Hair Styling</option>
-                      <option>Beard Grooming</option>
-                      <option>Facial Treatment</option>
-                      <option>Nail Care</option>
-                      <option>Other</option>
-                    </select>
-                    <label className="field-label" style={{ top: formData.service ? -14 : 12, fontSize: formData.service ? 10 : 13, color: formData.service ? '#B8960C' : '#AAAAAA', letterSpacing: formData.service ? '2px' : '1px' }}>Service</label>
-                  </div>
-                </div>
-                <div className="field-wrap">
-                  <textarea className="field-textarea" name="message" placeholder="Message" rows={4} value={formData.message} onChange={handleChange} required />
-                  <label className="field-label">How can we assist you?</label>
-                </div>
-                <button type="submit" className="btn-send">
-                  <span className="material-symbols-outlined" style={{ fontSize: 18 }}>send</span>
-                  Send Message
-                </button>
-              </form>
-            </div>
-
-            {/* Right side */}
             <div className="contact-right">
               {/* Map */}
               <div className="map-card">
