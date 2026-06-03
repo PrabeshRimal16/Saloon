@@ -6,112 +6,111 @@ import { useAuth } from '../../context/AuthContext';
 const CSS = `
   .profile-page { background: #F8F7F5; min-height: 100vh; font-family: 'DM Sans', sans-serif; }
 
-  /* Hero banner */
-  .profile-hero { background: #1C1C1E; position: relative; overflow: hidden; padding: 56px 80px; }
-  @media (max-width: 768px) { .profile-hero { padding: 48px 32px; } }
-  .profile-hero-bokeh { position: absolute; inset: 0; pointer-events: none; }
-  .profile-hero-bokeh::before { content: ''; position: absolute; top: -80px; right: -80px; width: 400px; height: 400px; background: radial-gradient(circle, rgba(184,150,12,0.18) 0%, transparent 65%); border-radius: 50%; }
-  .profile-hero-bokeh::after { content: ''; position: absolute; bottom: -60px; left: 20%; width: 260px; height: 260px; background: radial-gradient(circle, rgba(184,150,12,0.1) 0%, transparent 65%); border-radius: 50%; }
-  .profile-hero-inner { position: relative; z-index: 2; display: flex; align-items: center; gap: 28px; max-width: 1200px; margin: 0 auto; }
-  @media (max-width: 600px) { .profile-hero-inner { flex-direction: column; align-items: flex-start; gap: 20px; } }
-
-  .hero-avatar { width: 96px; height: 96px; border-radius: 50%; border: 3px solid #B8960C; box-shadow: 0 0 0 6px rgba(184,150,12,0.2); overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); }
-  .hero-avatar img { width: 100%; height: 100%; object-fit: cover; }
-  .hero-avatar-initials { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 36px; font-weight: 600; color: #B8960C; }
-  .hero-info { flex-grow: 1; }
-  .hero-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; color: #B8960C; margin-bottom: 8px; }
-  .hero-name { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 40px; font-weight: 400; color: white; margin: 0 0 6px; line-height: 1; }
-  .hero-email { font-size: 14px; color: rgba(255,255,255,0.5); margin: 0 0 12px; }
-  .hero-member-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(184,150,12,0.15); border: 1px solid rgba(184,150,12,0.3); color: #D4AF37; font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; padding: 4px 14px; border-radius: 50px; }
-
   /* Layout */
-  .profile-body { max-width: 1200px; margin: 0 auto; padding: 40px 40px 80px; display: grid; grid-template-columns: 260px 1fr; gap: 28px; }
-  @media (max-width: 900px) { .profile-body { grid-template-columns: 1fr; padding: 32px 24px 60px; } }
+  .profile-header-text { max-width: 1200px; margin: 0 auto; padding: 48px 40px 0; }
+  @media (max-width: 768px) { .profile-header-text { padding: 32px 24px 0; } }
+  .profile-layout { max-width: 1200px; margin: 0 auto; padding: 32px 40px 80px; display: grid; grid-template-columns: 300px 1fr; gap: 32px; align-items: start; }
+  @media (max-width: 900px) { .profile-layout { grid-template-columns: 1fr; padding: 24px 24px 60px; } }
 
-  /* Sidebar */
-  .profile-sidebar { display: flex; flex-direction: column; gap: 16px; }
-  .sidebar-nav { background: white; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.07); overflow: hidden; }
-  .sidebar-nav-btn { width: 100%; display: flex; align-items: center; gap: 12px; padding: 16px 20px; text-align: left; background: none; border: none; border-left: 3px solid transparent; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; color: #6B6B6B; border-bottom: 1px solid #F0EBE0; transition: all 0.2s; }
-  .sidebar-nav-btn:last-child { border-bottom: none; }
-  .sidebar-nav-btn:hover { color: #1C1C1E; background: #FDFCFA; }
-  .sidebar-nav-btn.active { border-left-color: #B8960C; color: #B8960C; background: rgba(184,150,12,0.05); font-weight: 600; }
-  .sidebar-nav-icon { font-size: 18px; }
+  /* Left Column: Profile Card */
+  .profile-card { background: white; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.06); overflow: hidden; margin-bottom: 24px; }
+  .pc-banner { height: 100px; background: linear-gradient(135deg, #1C1C1E 0%, #2A2A2A 100%); position: relative; }
+  .pc-avatar-wrap { position: absolute; bottom: 0; left: 50%; transform: translate(-50%, 50%); width: 88px; height: 88px; border-radius: 50%; border: 4px solid white; background: #FEF9ED; display: flex; align-items: center; justify-content: center; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+  .pc-avatar-wrap img { width: 100%; height: 100%; object-fit: cover; }
+  .pc-initials { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 600; color: #B8960C; }
+  .pc-body { padding: 60px 24px 24px; text-align: center; }
+  .pc-name { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 24px; font-weight: 600; color: #1C1C1E; margin: 0 0 4px; }
+  .pc-email { font-size: 13px; color: #6B6B6B; margin: 0 0 12px; }
+  .pc-badge { display: inline-flex; align-items: center; gap: 4px; background: #FEF9ED; border: 1px solid #E8D9A0; color: #B8960C; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; padding: 4px 12px; border-radius: 50px; }
 
-  /* Privilege card */
-  .privilege-card { background: #1C1C1E; border-radius: 16px; padding: 28px; position: relative; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.2); }
-  .privilege-glow { position: absolute; top: -40px; right: -40px; width: 180px; height: 180px; background: radial-gradient(circle, rgba(184,150,12,0.25) 0%, transparent 65%); pointer-events: none; }
-  .privilege-shimmer { position: absolute; inset: 0; background: linear-gradient(135deg, transparent 40%, rgba(184,150,12,0.06) 50%, transparent 60%); pointer-events: none; }
-  .privilege-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 28px; position: relative; z-index: 1; }
-  .privilege-title { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 26px; color: #B8960C; line-height: 1.15; }
-  .privilege-body { position: relative; z-index: 1; }
-  .privilege-status-label { font-size: 11px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 4px; }
-  .privilege-status { font-size: 16px; color: white; font-weight: 500; margin-bottom: 20px; }
-  .privilege-divider { width: 100%; height: 1px; background: rgba(255,255,255,0.1); margin-bottom: 16px; }
-  .privilege-benefit { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 13px; color: rgba(255,255,255,0.75); }
-  .privilege-check { font-size: 16px; color: #B8960C; }
+  /* Left Column: Nav */
+  .nav-card { background: white; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.06); padding: 8px; margin-bottom: 24px; }
+  .nav-link { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 10px; color: #6B6B6B; font-size: 14px; font-weight: 500; text-decoration: none; transition: all 0.2s; }
+  .nav-link:hover { background: #FEF9ED; color: #B8960C; }
+  .nav-icon { font-size: 18px; transition: color 0.2s; }
 
-  /* Logout */
-  .sidebar-logout { width: 100%; display: flex; align-items: center; gap: 10px; justify-content: center; padding: 12px 20px; border-radius: 12px; background: transparent; border: 1.5px solid rgba(192,57,43,0.3); color: #C0392B; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; transition: all 0.2s; }
-  .sidebar-logout:hover { background: rgba(192,57,43,0.07); border-color: #C0392B; }
+  /* Right Column: Section Cards */
+  .section-card { background: white; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.06); overflow: hidden; margin-bottom: 32px; }
+  .section-header { padding: 24px; border-bottom: 1px solid #F0EBE0; background: #FAFAF8; display: flex; align-items: center; gap: 16px; }
+  .section-icon-wrap { width: 40px; height: 40px; border-radius: 50%; background: #FEF9ED; border: 1px solid #E8D9A0; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .section-icon { color: #B8960C; font-size: 20px; }
+  .section-title { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 20px; font-weight: 600; color: #1C1C1E; margin: 0; }
+  .section-sub { font-size: 13px; color: #6B6B6B; margin: 2px 0 0; }
+  .section-body { padding: 24px; }
 
-  /* Main panels */
-  .panel { background: white; border-radius: 20px; box-shadow: 0 4px 24px rgba(0,0,0,0.07); padding: 40px; }
-  @media (max-width: 600px) { .panel { padding: 28px 20px; } }
-  .panel-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; color: #B8960C; margin-bottom: 8px; }
-  .panel-title { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 36px; font-weight: 400; color: #1C1C1E; margin: 0 0 6px; }
-  .panel-sub { font-size: 14px; color: #AAAAAA; margin: 0 0 32px; }
+  /* Rows */
+  .info-row { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid #F8F7F5; }
+  .info-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .info-row:first-child { padding-top: 0; }
+  .info-label { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #AAAAAA; margin-bottom: 4px; }
+  .info-value { font-size: 14px; font-weight: 500; color: #1C1C1E; }
+  
+  .setting-row { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid #F8F7F5; }
+  .setting-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .setting-row:first-child { padding-top: 0; }
+  .setting-info { display: flex; gap: 16px; align-items: center; }
+  .setting-icon { width: 40px; height: 40px; border-radius: 50%; background: #F8F7F5; display: flex; align-items: center; justify-content: center; color: #6B6B6B; flex-shrink: 0; }
+  .setting-title { font-size: 14px; font-weight: 600; color: #1C1C1E; margin: 0 0 2px; }
+  .setting-desc { font-size: 13px; color: #AAAAAA; margin: 0; }
 
-  /* Avatar row in panel */
-  .avatar-row { display: flex; align-items: center; gap: 20px; background: #F8F7F5; border-radius: 14px; padding: 20px 24px; margin-bottom: 32px; border: 1px solid #E8E0D5; }
-  .panel-avatar { width: 64px; height: 64px; border-radius: 50%; border: 2px solid #B8960C; overflow: hidden; display: flex; align-items: center; justify-content: center; background: rgba(184,150,12,0.08); flex-shrink: 0; }
-  .panel-avatar-initials { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 600; color: #B8960C; }
-  .btn-update-photo { padding: 8px 20px; border-radius: 50px; background: transparent; border: 1.5px solid #1C1C1E; color: #1C1C1E; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s; }
-  .btn-update-photo:hover { background: #1C1C1E; color: white; }
+  /* Inputs & Forms */
+  .ul-field-wrap { position: relative; margin-bottom: 24px; }
+  .ul-input { width: 100%; background: transparent; border: none; border-bottom: 1.5px solid #E8E0D5; padding: 12px 0 10px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: #1C1C1E; outline: none; transition: border-color 0.25s; box-sizing: border-box; display: block; }
+  .ul-input:focus { border-bottom-color: #B8960C; }
+  .ul-label { display: block; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #AAAAAA; margin-bottom: 4px; }
 
-  /* Underline inputs */
-  .ul-field-wrap { position: relative; margin-bottom: 32px; }
-  .ul-input, .ul-select {
-    width: 100%; background: transparent; border: none;
-    border-bottom: 1.5px solid #E8E0D5; padding: 12px 0 10px;
-    font-family: 'DM Sans', sans-serif; font-size: 15px; color: #1C1C1E;
-    outline: none; transition: border-color 0.25s; box-sizing: border-box; display: block;
-  }
-  .ul-input:focus, .ul-select:focus { border-bottom-color: #B8960C; }
-  .ul-label { display: block; font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: #AAAAAA; margin-bottom: 8px; }
-
-  .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-  @media (max-width: 600px) { .form-grid-2 { grid-template-columns: 1fr; } }
-
-  .btn-save { display: inline-flex; align-items: center; gap: 8px; padding: 14px 0; border-radius: 50px; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: white; background: linear-gradient(90deg, #B8960C 0%, #D4AF37 50%, #B8960C 100%); background-size: 200% auto; animation: shimmer 3s linear infinite; box-shadow: 0 4px 20px rgba(184,150,12,0.3); transition: transform 0.2s, box-shadow 0.2s; width: 100%; justify-content: center; margin-top: 8px; }
-  .btn-save:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(184,150,12,0.4); }
+  /* Buttons */
+  .btn-outline { padding: 10px 20px; border-radius: 8px; border: 1.5px solid #E8E0D5; background: transparent; color: #6B6B6B; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+  .btn-outline:hover { border-color: #B8960C; color: #B8960C; background: #FEF9ED; }
+  .btn-gold { padding: 12px 28px; border-radius: 8px; background: #B8960C; border: none; color: white; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.2s; box-shadow: 0 4px 12px rgba(184,150,12,0.25); }
+  .btn-gold:hover { background: #8B7209; }
+  .btn-danger-outline { padding: 10px 20px; border-radius: 8px; border: 1.5px solid rgba(192,57,43,0.3); background: transparent; color: #C0392B; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+  .btn-danger-outline:hover { background: rgba(192,57,43,0.05); border-color: #C0392B; }
 
   /* Toggle switch */
-  .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 18px 20px; background: #F8F7F5; border-radius: 12px; margin-bottom: 12px; border: 1px solid #E8E0D5; cursor: pointer; transition: border-color 0.2s; }
-  .toggle-row:hover { border-color: rgba(184,150,12,0.4); }
-  .toggle-info-title { font-size: 14px; font-weight: 600; color: #1C1C1E; margin: 0 0 3px; }
-  .toggle-info-sub { font-size: 12px; color: #AAAAAA; }
-  .toggle-switch { position: relative; display: inline-flex; }
+  .toggle-switch { position: relative; display: inline-flex; cursor: pointer; }
   .toggle-input { position: absolute; opacity: 0; width: 0; height: 0; }
-  .toggle-track { width: 44px; height: 24px; border-radius: 12px; background: #E8E0D5; transition: background 0.3s; cursor: pointer; display: block; }
+  .toggle-track { width: 44px; height: 24px; border-radius: 12px; background: #E8E0D5; transition: background 0.3s; display: block; }
   .toggle-input:checked + .toggle-track { background: #B8960C; }
   .toggle-track::after { content: ''; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: white; box-shadow: 0 1px 4px rgba(0,0,0,0.2); transition: transform 0.25s; }
   .toggle-input:checked + .toggle-track::after { transform: translateX(20px); }
 
-  /* Success */
-  .success-bar { background: rgba(45,122,79,0.1); border: 1px solid rgba(45,122,79,0.25); border-radius: 10px; padding: 12px 18px; display: flex; align-items: center; gap: 10px; margin-bottom: 24px; }
-  .success-bar-text { font-size: 13px; color: #1E6B40; font-weight: 500; }
-
-  /* Danger zone */
-  .danger-section { margin-top: 32px; padding-top: 32px; border-top: 1px solid #E8E0D5; }
-  .danger-title { font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #C0392B; margin-bottom: 16px; }
-  .btn-danger { display: inline-flex; align-items: center; gap: 8px; padding: 10px 24px; border-radius: 50px; background: transparent; border: 1.5px solid rgba(192,57,43,0.35); color: #C0392B; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s; }
-  .btn-danger:hover { background: rgba(192,57,43,0.08); border-color: #C0392B; }
+  /* Success Toast */
+  .success-toast { position: fixed; top: 24px; right: 24px; z-index: 9999; display: flex; items-center; gap: 12px; padding: 14px 20px; border-radius: 10px; background: #2D7A4F; color: white; font-size: 14px; font-weight: 500; box-shadow: 0 8px 24px rgba(0,0,0,0.15); animation: slideIn 0.3s ease-out; }
+  @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 `;
+
+function SectionCard({ id, icon, title, subtitle, children }) {
+  return (
+    <div id={id} className="section-card">
+      <div className="section-header">
+        <div className="section-icon-wrap">
+          <span className="material-symbols-outlined section-icon">{icon}</span>
+        </div>
+        <div>
+          <h2 className="section-title">{title}</h2>
+          <p className="section-sub">{subtitle}</p>
+        </div>
+      </div>
+      <div className="section-body">{children}</div>
+    </div>
+  );
+}
+
+function Toggle({ checked, onChange }) {
+  return (
+    <label className="toggle-switch">
+      <input type="checkbox" className="toggle-input" checked={checked} onChange={onChange} />
+      <span className="toggle-track" />
+    </label>
+  );
+}
 
 const CustomerSetting = () => {
   const { user, loading, logout } = useAuth();
-  const [activeTab, setActiveTab] = useState('profile');
+  
   const [profile, setProfile] = useState({ firstName: '', lastName: '', email: '', phone: '' });
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
   const [passwords, setPasswords] = useState({ current: '', newPass: '', confirm: '' });
   const [prefs, setPrefs] = useState({ emailReminders: true, smsReminders: true, newsletterOffers: false });
   const [saved, setSaved] = useState(false);
@@ -137,216 +136,190 @@ const CustomerSetting = () => {
   const displayName = `${profile.firstName} ${profile.lastName}`.trim() || user?.name || 'User';
   const initials = (profile.firstName?.[0] || user?.name?.[0] || 'U').toUpperCase();
 
-  const tabs = [
-    { id: 'profile', icon: 'person', label: 'Profile' },
-    { id: 'security', icon: 'lock', label: 'Security' },
-    { id: 'preferences', icon: 'tune', label: 'Preferences' },
-  ];
-
   return (
     <>
       <style>{CSS}</style>
       <div className="profile-page">
         <CustomerNavbar />
 
-        <main style={{ paddingTop: 72 }}>
+        {saved && (
+          <div className="success-toast">
+            <span className="material-symbols-outlined" style={{ fontSize: 20 }}>check_circle</span>
+            Settings saved successfully!
+          </div>
+        )}
 
-          {/* Hero */}
-          <div className="profile-hero">
-            <div className="profile-hero-bokeh" />
-            <div className="profile-hero-inner">
-              <div className="hero-avatar">
-                {avatar
-                  ? <img src={avatar} alt="Avatar" />
-                  : <span className="hero-avatar-initials">{initials}</span>
-                }
-              </div>
-              <div className="hero-info">
-                <p className="hero-eyebrow">Account Profile</p>
-                <h1 className="hero-name">{displayName}</h1>
-                <p className="hero-email">{profile.email || user?.email}</p>
-                <span className="hero-member-badge">
-                  <span className="material-symbols-outlined" style={{ fontSize: 14 }}>diamond</span>
-                  Noir Member
-                </span>
-              </div>
-            </div>
+        <main style={{ paddingTop: 72 }}>
+          
+          <div className="profile-header-text">
+            <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '3px', textTransform: 'uppercase', color: '#B8960C', margin: '0 0 4px' }}>Customer Portal</p>
+            <p style={{ fontSize: 14, color: '#6B6B6B', margin: 0 }}>Manage your personal details and salon preferences</p>
           </div>
 
-          {/* Body */}
-          <div className="profile-body">
+          <div className="profile-layout">
+            
+            {/* Left Column */}
+            <div>
+              {/* Profile Card */}
+              <div className="profile-card">
+                <div className="pc-banner">
+                  <div className="pc-avatar-wrap">
+                    {avatar ? <img src={avatar} alt="Avatar" /> : <span className="pc-initials">{initials}</span>}
+                  </div>
+                </div>
+                <div className="pc-body">
+                  <h2 className="pc-name">{displayName}</h2>
+                  <p className="pc-email">{profile.email || user?.email || '—'}</p>
+                  <div className="pc-badge">
+                    <span className="material-symbols-outlined" style={{ fontSize: 14 }}>diamond</span>
+                    Noir Member
+                  </div>
+                </div>
+              </div>
 
-            {/* Sidebar */}
-            <div className="profile-sidebar">
-              <div className="sidebar-nav">
-                {tabs.map(tab => (
-                  <button key={tab.id} className={`sidebar-nav-btn${activeTab === tab.id ? ' active' : ''}`} onClick={() => setActiveTab(tab.id)}>
-                    <span className="material-symbols-outlined sidebar-nav-icon" style={{ color: activeTab === tab.id ? '#B8960C' : '#AAAAAA' }}>{tab.icon}</span>
-                    {tab.label}
-                  </button>
+              {/* Navigation Links */}
+              <div className="nav-card">
+                {[
+                  { icon: 'person', label: 'Account Info', href: '#account' },
+                  { icon: 'lock', label: 'Security', href: '#security' },
+                  { icon: 'notifications', label: 'Notifications', href: '#notifications' },
+                ].map(link => (
+                  <a key={link.label} href={link.href} className="nav-link">
+                    <span className="material-symbols-outlined nav-icon">{link.icon}</span>
+                    {link.label}
+                  </a>
                 ))}
               </div>
-
-              {/* Privilege card */}
-              <div className="privilege-card">
-                <div className="privilege-glow" />
-                <div className="privilege-shimmer" />
-                <div className="privilege-header">
-                  <h3 className="privilege-title">Atelier<br />Privilege</h3>
-                  <span className="material-symbols-outlined" style={{ fontSize: 36, color: '#B8960C', fontVariationSettings: "'FILL' 1" }}>diamond</span>
-                </div>
-                <div className="privilege-body">
-                  <p className="privilege-status-label">Current Status</p>
-                  <p className="privilege-status">Noir Membership</p>
-                  <div className="privilege-divider" />
-                  {['Priority Booking Access', 'Complimentary Styling Consult', 'Exclusive Seasonal Offers'].map(b => (
-                    <div key={b} className="privilege-benefit">
-                      <span className="material-symbols-outlined privilege-check">check</span>
-                      {b}
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <button className="sidebar-logout" onClick={logout}>
-                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>logout</span>
-                Sign Out
-              </button>
             </div>
 
-            {/* Main panel */}
+            {/* Right Column */}
             <div>
-
-              {/* Profile tab */}
-              {activeTab === 'profile' && (
-                <div className="panel">
-                  <p className="panel-eyebrow">Personal Info</p>
-                  <h2 className="panel-title">Personal Details</h2>
-                  <p className="panel-sub">Update your name, contact info, and profile photo.</p>
-
-                  {saved && (
-                    <div className="success-bar">
-                      <span className="material-symbols-outlined" style={{ fontSize: 18, color: '#2D7A4F' }}>check_circle</span>
-                      <p className="success-bar-text">Changes saved successfully!</p>
-                    </div>
-                  )}
-
-                  {/* Avatar row */}
-                  <div className="avatar-row">
-                    <div className="panel-avatar">
-                      {avatar ? <img src={avatar} alt="Avatar" style={{ width:'100%', height:'100%', objectFit:'cover' }} /> : <span className="panel-avatar-initials">{initials}</span>}
-                    </div>
+              
+              <SectionCard id="account" icon="person" title="Account Information" subtitle="Your profile details on file">
+                <div className="info-row">
+                  <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+                    <div className="setting-icon"><span className="material-symbols-outlined">badge</span></div>
                     <div>
-                      <p style={{ fontFamily:'DM Sans,sans-serif', fontSize:14, fontWeight:600, color:'#1C1C1E', margin:'0 0 4px' }}>Profile Photo</p>
-                      <p style={{ fontFamily:'DM Sans,sans-serif', fontSize:12, color:'#AAAAAA', margin:'0 0 12px' }}>JPG or PNG. Max 2MB.</p>
-                      <button className="btn-update-photo">Update Photo</button>
+                      <div className="info-label">Full Name</div>
+                      <div className="info-value">{displayName}</div>
                     </div>
                   </div>
-
-                  <div className="form-grid-2" style={{ marginBottom: 0 }}>
-                    {[
-                      { key:'firstName', label:'First Name', placeholder:'Jane' },
-                      { key:'lastName', label:'Last Name', placeholder:'Doe' },
-                    ].map(f => (
-                      <div key={f.key} className="ul-field-wrap" style={{ marginBottom: 0 }}>
-                        <label className="ul-label">{f.label}</label>
-                        <input className="ul-input" type="text" value={profile[f.key]} onChange={e => setProfile(p => ({ ...p, [f.key]: e.target.value }))} placeholder={f.placeholder} />
-                      </div>
-                    ))}
-                  </div>
-                  <div style={{ marginTop: 28 }}>
-                    {[
-                      { key:'email', label:'Email Address', type:'email', placeholder:'jane@example.com' },
-                      { key:'phone', label:'Phone Number', type:'tel', placeholder:'+1 (555) 000-0000' },
-                    ].map(f => (
-                      <div key={f.key} className="ul-field-wrap">
-                        <label className="ul-label">{f.label}</label>
-                        <input className="ul-input" type={f.type} value={profile[f.key]} onChange={e => setProfile(p => ({ ...p, [f.key]: e.target.value }))} placeholder={f.placeholder} />
-                      </div>
-                    ))}
-                  </div>
-                  <button className="btn-save" onClick={handleSave}>Save Changes</button>
                 </div>
-              )}
-
-              {/* Security tab */}
-              {activeTab === 'security' && (
-                <div className="panel">
-                  <p className="panel-eyebrow">Account Security</p>
-                  <h2 className="panel-title">Security Settings</h2>
-                  <p className="panel-sub">Keep your account secure with a strong password.</p>
-
-                  {[
-                    { key:'current', label:'Current Password', placeholder:'Enter current password' },
-                    { key:'newPass', label:'New Password', placeholder:'Minimum 8 characters' },
-                    { key:'confirm', label:'Confirm New Password', placeholder:'Repeat new password' },
-                  ].map(f => (
-                    <div key={f.key} className="ul-field-wrap">
-                      <label className="ul-label">{f.label}</label>
-                      <input className="ul-input" type="password" value={passwords[f.key]} onChange={e => setPasswords(p => ({ ...p, [f.key]: e.target.value }))} placeholder={f.placeholder} />
+                <div className="info-row">
+                  <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+                    <div className="setting-icon"><span className="material-symbols-outlined">mail</span></div>
+                    <div>
+                      <div className="info-label">Email Address</div>
+                      <div className="info-value">{profile.email}</div>
                     </div>
-                  ))}
-                  <button className="btn-save" style={{ marginBottom: 32 }}>Update Password</button>
-
-                  <div style={{ paddingTop:28, borderTop:'1px solid #E8E0D5' }}>
-                    <p style={{ fontFamily:'DM Sans,sans-serif', fontSize:12, fontWeight:700, letterSpacing:'2px', textTransform:'uppercase', color:'#1C1C1E', marginBottom:8 }}>Two-Factor Authentication</p>
-                    <p style={{ fontFamily:'DM Sans,sans-serif', fontSize:14, color:'#AAAAAA', marginBottom:16 }}>Add an extra layer of security to your account.</p>
-                    <label className="toggle-row" style={{ cursor:'pointer' }}>
-                      <div>
-                        <p className="toggle-info-title">Enable 2FA</p>
-                        <p className="toggle-info-sub">Secure your login with a second step</p>
-                      </div>
-                      <div className="toggle-switch" style={{ position:'relative', width:44, height:24 }}>
-                        <input type="checkbox" className="toggle-input" defaultChecked style={{ position:'absolute', opacity:0, width:0, height:0 }} />
-                        <span className="toggle-track" style={{ width:44, height:24, borderRadius:12, background:'#B8960C', display:'block', position:'relative', transition:'background 0.3s' }}>
-                          <span style={{ content:'', position:'absolute', top:3, left:3, width:18, height:18, borderRadius:'50%', background:'white', boxShadow:'0 1px 4px rgba(0,0,0,0.2)', transition:'transform 0.25s', transform:'translateX(20px)', display:'block' }} />
-                        </span>
-                      </div>
-                    </label>
                   </div>
                 </div>
-              )}
-
-              {/* Preferences tab */}
-              {activeTab === 'preferences' && (
-                <div className="panel">
-                  <p className="panel-eyebrow">Notifications</p>
-                  <h2 className="panel-title">Preferences</h2>
-                  <p className="panel-sub">Control how we keep you in the loop.</p>
-
-                  {[
-                    { key:'emailReminders', label:'Email Appointment Reminders', desc:'Get notified 24 hours before your booking.' },
-                    { key:'smsReminders', label:'SMS Appointment Reminders', desc:'Text message alerts for upcoming bookings.' },
-                    { key:'newsletterOffers', label:'Exclusive Offers &amp; News', desc:'Be first to know about seasonal rituals and promotions.' },
-                  ].map(pref => (
-                    <label key={pref.key} className="toggle-row">
-                      <div>
-                        <p className="toggle-info-title" dangerouslySetInnerHTML={{ __html: pref.label }} />
-                        <p className="toggle-info-sub">{pref.desc}</p>
-                      </div>
-                      <div style={{ position:'relative', width:44, height:24, flexShrink:0 }}>
-                        <input
-                          type="checkbox"
-                          style={{ position:'absolute', opacity:0, width:0, height:0 }}
-                          checked={prefs[pref.key]}
-                          onChange={e => setPrefs(p => ({ ...p, [pref.key]: e.target.checked }))}
-                        />
-                        <span style={{ width:44, height:24, borderRadius:12, background: prefs[pref.key] ? '#B8960C' : '#E8E0D5', display:'block', position:'relative', transition:'background 0.3s', cursor:'pointer' }}>
-                          <span style={{ position:'absolute', top:3, left: prefs[pref.key] ? 23 : 3, width:18, height:18, borderRadius:'50%', background:'white', boxShadow:'0 1px 4px rgba(0,0,0,0.2)', transition:'left 0.25s', display:'block' }} />
-                        </span>
-                      </div>
-                    </label>
-                  ))}
-
-                  <div className="danger-section">
-                    <p className="danger-title">Danger Zone</p>
-                    <button className="btn-danger">
-                      <span className="material-symbols-outlined" style={{ fontSize: 16 }}>delete_forever</span>
-                      Delete Account
-                    </button>
+                <div className="info-row">
+                  <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+                    <div className="setting-icon"><span className="material-symbols-outlined">call</span></div>
+                    <div>
+                      <div className="info-label">Phone Number</div>
+                      <div className="info-value">{profile.phone || '—'}</div>
+                    </div>
                   </div>
                 </div>
-              )}
+                <div style={{ paddingTop: 24, marginTop: 16, borderTop: '1px solid #F0EBE0' }}>
+                  <button className="btn-outline">Edit Details</button>
+                </div>
+              </SectionCard>
+
+              <SectionCard id="security" icon="lock" title="Security Settings" subtitle="Manage your password and authentication">
+                <div className="setting-row">
+                  <div className="setting-info">
+                    <div className="setting-icon"><span className="material-symbols-outlined">key</span></div>
+                    <div>
+                      <p className="setting-title">Password</p>
+                      <p className="setting-desc">Keep your account secure with a strong password</p>
+                    </div>
+                  </div>
+                  <button className="btn-outline" onClick={() => setShowPasswordForm(!showPasswordForm)}>
+                    {showPasswordForm ? 'Cancel' : 'Change'}
+                  </button>
+                </div>
+
+                {showPasswordForm && (
+                  <div style={{ background: '#F8F7F5', borderRadius: 12, padding: 24, marginTop: 16, marginBottom: 16 }}>
+                    <div className="ul-field-wrap">
+                      <label className="ul-label">Current Password</label>
+                      <input className="ul-input" type="password" value={passwords.current} onChange={e => setPasswords({...passwords, current: e.target.value})} placeholder="Enter current password" />
+                    </div>
+                    <div className="ul-field-wrap">
+                      <label className="ul-label">New Password</label>
+                      <input className="ul-input" type="password" value={passwords.newPass} onChange={e => setPasswords({...passwords, newPass: e.target.value})} placeholder="Min. 6 characters" />
+                    </div>
+                    <div className="ul-field-wrap">
+                      <label className="ul-label">Confirm New Password</label>
+                      <input className="ul-input" type="password" value={passwords.confirm} onChange={e => setPasswords({...passwords, confirm: e.target.value})} placeholder="Repeat new password" />
+                    </div>
+                    <button className="btn-gold" onClick={() => { handleSave(); setShowPasswordForm(false); }}>Update Password</button>
+                  </div>
+                )}
+
+                <div className="setting-row">
+                  <div className="setting-info">
+                    <div className="setting-icon"><span className="material-symbols-outlined">security</span></div>
+                    <div>
+                      <p className="setting-title">Two-Factor Authentication</p>
+                      <p className="setting-desc">Adds an extra layer of security to your account</p>
+                    </div>
+                  </div>
+                  <span style={{ padding: '4px 12px', borderRadius: 50, background: '#FDEDED', color: '#C0392B', fontSize: 10, fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase' }}>Inactive</span>
+                </div>
+              </SectionCard>
+
+              <SectionCard id="notifications" icon="notifications" title="Notification Preferences" subtitle="Choose how you want to be notified">
+                <div className="setting-row">
+                  <div className="setting-info">
+                    <div className="setting-icon"><span className="material-symbols-outlined">mail</span></div>
+                    <div>
+                      <p className="setting-title">Email Reminders</p>
+                      <p className="setting-desc">Receive appointment updates via email</p>
+                    </div>
+                  </div>
+                  <Toggle checked={prefs.emailReminders} onChange={e => setPrefs({...prefs, emailReminders: e.target.checked})} />
+                </div>
+                <div className="setting-row">
+                  <div className="setting-info">
+                    <div className="setting-icon"><span className="material-symbols-outlined">sms</span></div>
+                    <div>
+                      <p className="setting-title">SMS Reminders</p>
+                      <p className="setting-desc">Text message alerts for upcoming bookings</p>
+                    </div>
+                  </div>
+                  <Toggle checked={prefs.smsReminders} onChange={e => setPrefs({...prefs, smsReminders: e.target.checked})} />
+                </div>
+                <div className="setting-row">
+                  <div className="setting-info">
+                    <div className="setting-icon"><span className="material-symbols-outlined">star</span></div>
+                    <div>
+                      <p className="setting-title">Exclusive Offers</p>
+                      <p className="setting-desc">Be first to know about seasonal rituals and promotions</p>
+                    </div>
+                  </div>
+                  <Toggle checked={prefs.newsletterOffers} onChange={e => setPrefs({...prefs, newsletterOffers: e.target.checked})} />
+                </div>
+                <div style={{ paddingTop: 24, marginTop: 16, borderTop: '1px solid #F0EBE0' }}>
+                  <button className="btn-gold" onClick={handleSave}>Save Preferences</button>
+                </div>
+              </SectionCard>
+
+              <SectionCard id="danger" icon="warning" title="Danger Zone" subtitle="Irreversible account actions">
+                <div className="setting-row">
+                  <div className="setting-info">
+                    <div className="setting-icon" style={{ background: '#FDEDED', color: '#C0392B' }}><span className="material-symbols-outlined">logout</span></div>
+                    <div>
+                      <p className="setting-title" style={{ color: '#C0392B' }}>Sign Out</p>
+                      <p className="setting-desc">End your current session</p>
+                    </div>
+                  </div>
+                  <button className="btn-danger-outline" onClick={logout}>Sign Out</button>
+                </div>
+              </SectionCard>
 
             </div>
           </div>
