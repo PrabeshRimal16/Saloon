@@ -115,7 +115,7 @@ export default function AdminAppointmentManagement() {
   return (
     <div className="min-h-screen bg-[#F4F4F6]">
       <AdminSidebar />
-      <div className="ml-[240px] pt-[80px]">
+      <div className="ml-[220px] pt-[80px]">
         <AdminHeader title="Appointments" />
 
         <main

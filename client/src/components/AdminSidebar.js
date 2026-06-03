@@ -20,7 +20,7 @@ export default function AdminSidebar() {
   };
 
   return (
-    <aside className="fixed top-0 left-0 h-screen w-[240px] bg-[#1C1C1E] flex flex-col z-40">
+    <aside className="fixed top-0 left-0 h-screen w-[220px] bg-[#1A1A1A] flex flex-col z-40">
       <div className="pt-8 pb-8 px-6 text-center">
         <h1 className="font-heading text-primary text-h2 uppercase tracking-widest text-center">The Salon At Reston</h1>
       </div>
@@ -54,29 +54,32 @@ export default function AdminSidebar() {
       <div className="p-6 border-t border-[rgba(255,255,255,0.05)] flex flex-col gap-4">
         <div className="flex items-center gap-3">
           {loading ? (
-            <div className="w-12 h-12 rounded-full bg-[#333] animate-pulse shrink-0" />
+            <div className="w-[44px] h-[44px] rounded-full bg-[#333] animate-pulse shrink-0" />
           ) : (
             <>
               {(user && (user.avatar_url || user.photo || user.avatar || user.avatarUrl || user.picture)) ? (
-                <img src={user.avatar_url || user.photo || user.avatar || user.avatarUrl || user.picture} alt={user.name || user.email} className="w-12 h-12 rounded-full object-cover border-2 border-[#C9A84C] shrink-0" />
-              ) : (
-                <div className="w-12 h-12 rounded-full bg-[#333] flex items-center justify-center text-[16px] font-bold border-2 border-[#C9A84C] text-[#C9A84C] shrink-0">
-                  {(user && (user.name || user.email)) ? (user.name ? user.name.split(' ').map(p=>p[0]).slice(0,2).join('').toUpperCase() : (user.email[0]||'U').toUpperCase()) : 'U'}
+                <img src={user.avatar_url || user.photo || user.avatar || user.avatarUrl || user.picture} alt={user.name || user.email} className="w-[44px] h-[44px] rounded-full object-cover border-2 border-[#C9A84C] shrink-0" onError={(e)=>{e.currentTarget.onerror=null;e.currentTarget.style.display='none';}} />
+              ) : null}
+
+              {!(user && (user.avatar_url || user.photo || user.avatar || user.avatarUrl || user.picture)) && (
+                <div className="w-[44px] h-[44px] rounded-full bg-[#C9A84C] flex items-center justify-center text-[14px] font-bold text-white border-2 border-[#C9A84C] shrink-0">
+                  {((user && (user.name || user.email)) ? (user.name ? user.name.split(' ').map(p=>p[0]).slice(0,2).join('').toUpperCase() : (user.email[0]||'P').toUpperCase()) : 'PR')}
                 </div>
               )}
+
               <div className="flex-1 min-w-0">
-                <div className="text-white text-[14px] font-bold truncate">{user?.name || user?.displayName || user?.email || 'Admin'}</div>
+                <div className="text-white text-[14px] font-bold truncate">{user?.name || user?.displayName || user?.email || 'Administrator'}</div>
                 <div className="text-[#AAAAAA] text-[12px] truncate">Administrator</div>
               </div>
             </>
           )}
         </div>
-        
-        <div className="h-[1px] w-full bg-[rgba(255,255,255,0.1)]"></div>
-        
-        <button onClick={handleLogout} className="flex items-center gap-2 w-full px-4 py-2.5 rounded-[8px] text-[#C0392B] hover:bg-[rgba(192,57,43,0.1)] transition-colors duration-200">
-          <span className="material-symbols-outlined text-[20px]">logout</span>
-          <span className="font-bold text-[13px] uppercase tracking-wider">Logout</span>
+
+        <div className="h-[1px] w-full bg-[rgba(255,255,255,0.06)]" />
+
+        <button onClick={handleLogout} className="flex items-center gap-2 w-full px-4 py-2.5 rounded-[6px] text-[#C0392B] transition-colors duration-150">
+          <span className="material-symbols-outlined text-[18px]">logout</span>
+          <span className="font-bold text-[13px]">Logout</span>
         </button>
       </div>
     </aside>

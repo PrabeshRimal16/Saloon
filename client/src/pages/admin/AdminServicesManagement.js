@@ -127,7 +127,7 @@ export default function AdminServicesManagement() {
   return (
     <div className="min-h-screen bg-[#F4F4F6]">
       <AdminSidebar />
-      <div className="ml-[240px] pt-[80px]">
+      <div className="ml-[220px] pt-[80px]">
         <AdminHeader title="Service Catalog" />
 
         <main className="p-8 animate-[fadeIn_0.3s_ease-in]">
