@@ -35,6 +35,63 @@ function StatCard({ icon, label, value, sub, loading }) {
   );
 }
 
+function ChartCard({ title, subtitle, badgeText, data, labels, maxVal, currentIdxStr }) {
+  return (
+    <div className="bg-white rounded-[12px] shadow-[0_2px_16px_rgba(0,0,0,0.07)] p-6">
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="font-['Playfair_Display'] text-[20px] font-bold text-[#1A1A1A]">{title}</h2>
+          <p className="text-[13px] text-[#6B6B6B] mt-0.5">{subtitle}</p>
+        </div>
+        <div className="flex items-center gap-1.5 text-[12px] text-[#2D7A4F] bg-[#EAF5EF] px-3 py-1.5 rounded-full font-medium">
+          <span className="material-symbols-outlined text-[14px]">trending_up</span>
+          {badgeText}
+        </div>
+      </div>
+
+      <div className="relative h-[220px] pt-2">
+        {/* Grid lines */}
+        <div className="absolute inset-0 flex flex-col justify-between pointer-events-none">
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="w-full border-t border-dashed border-[#F0F0F0]" />
+          ))}
+        </div>
+        {/* Bars */}
+        <div className="relative h-full flex items-end justify-around gap-2 px-2">
+          {data.map((val, idx) => {
+            const pct = maxVal > 0 ? (val / maxVal) * 100 : 0;
+            const isCurrent = currentIdxStr !== undefined && String(labels[idx]) === String(currentIdxStr);
+            const hasData = val > 0;
+            const barBg = hasData
+              ? (isCurrent ? 'bg-[#A8882A]' : 'bg-[#C9A84C]')
+              : 'bg-[#EEEEEE]';
+            const labelColor = isCurrent ? 'text-[#C9A84C]' : 'text-[#AAAAAA]';
+
+            return (
+              <div key={idx} className="flex flex-col items-center justify-end flex-1 h-full group relative">
+                <div className="relative w-full flex flex-col items-center justify-end" style={{ height: '100%' }}>
+                  {hasData && (
+                    <span className="text-[11px] font-bold text-[#1A1A1A] mb-1">{val}</span>
+                  )}
+                  <div
+                    className={`w-full max-w-[32px] rounded-t-[6px] transition-all duration-500 ${barBg}`}
+                    style={{ height: `${Math.max(pct, hasData ? 6 : 3)}%` }}
+                  />
+                  {/* Tooltip on hover */}
+                  <div className="absolute bottom-[calc(100%+4px)] left-1/2 -translate-x-1/2 px-2 py-1 bg-[#C9A84C] text-white text-[11px] font-bold rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10 shadow-md">
+                    {val} {val === 1 ? 'Booking' : 'Bookings'}
+                  </div>
+                </div>
+                <div className={`text-[11px] font-bold ${labelColor} uppercase tracking-wider mt-2`}>{labels[idx]}</div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function StatusBadge({ status }) {
   const s = String(status || '').toLowerCase();
   const cfg = s === 'approved'
@@ -98,14 +155,45 @@ export default function AdminDashboard() {
   const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
   const weeklyCounts = [0, 0, 0, 0, 0, 0, 0];
   const now = new Date();
+  
+  // Monthly Data
+  const monthLabels = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+  const monthlyCounts = new Array(12).fill(0);
+  
+  // Yearly Data
+  const yearlyMap = {};
+
   appointments.forEach(a => {
     const d = new Date(a.appointment_date || a.created_at);
-    const diff = Math.floor((now - d) / 86400000);
-    if (diff >= 0 && diff < 7 && String(a.status).toLowerCase() !== 'cancelled') {
-      weeklyCounts[(d.getDay() + 6) % 7] += 1;
+    if (String(a.status).toLowerCase() !== 'cancelled') {
+      // Weekly
+      const diff = Math.floor((now - d) / 86400000);
+      if (diff >= 0 && diff < 7) {
+        weeklyCounts[(d.getDay() + 6) % 7] += 1;
+      }
+      
+      // Monthly
+      if (d.getFullYear() === now.getFullYear()) {
+        monthlyCounts[d.getMonth()] += 1;
+      }
+      
+      // Yearly
+      const y = d.getFullYear();
+      yearlyMap[y] = (yearlyMap[y] || 0) + 1;
     }
   });
-  const maxBar = Math.max(...weeklyCounts, 5);
+
+  const maxWeekly = Math.max(...weeklyCounts, 0) + 1;
+  const currentDayStr = daysOfWeek[(now.getDay() + 6) % 7];
+
+  const maxMonthly = Math.max(...monthlyCounts, 0) + 1;
+  const currentMonthStr = monthLabels[now.getMonth()];
+
+  if (!yearlyMap[now.getFullYear()]) yearlyMap[now.getFullYear()] = 0;
+  const yearLabels = Object.keys(yearlyMap).sort();
+  const yearlyCounts = yearLabels.map(y => yearlyMap[y]);
+  const maxYearly = Math.max(...yearlyCounts, 0) + 1;
+  const currentYearStr = now.getFullYear().toString();
 
   const recentAppointments = [...appointments]
     .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
@@ -141,47 +229,37 @@ export default function AdminDashboard() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-8">
-            {/* Weekly Chart */}
-            <div className="lg:col-span-2 bg-white rounded-[12px] shadow-[0_2px_16px_rgba(0,0,0,0.07)] p-6">
-              <div className="flex items-center justify-between mb-6">
-                <div>
-                  <h2 className="font-['Playfair_Display'] text-[20px] font-bold text-[#1A1A1A]">Weekly Bookings</h2>
-                  <p className="text-[13px] text-[#6B6B6B] mt-0.5">Last 7 days activity</p>
-                </div>
-                <div className="flex items-center gap-1.5 text-[12px] text-[#2D7A4F] bg-[#EAF5EF] px-3 py-1.5 rounded-full font-medium">
-                  <span className="material-symbols-outlined text-[14px]">trending_up</span>
-                  {weeklyCounts.reduce((a, b) => a + b, 0)} this week
-                </div>
-              </div>
-
-              <div className="relative h-[200px] pt-2">
-                {/* Grid lines */}
-                <div className="absolute inset-0 flex flex-col justify-between pointer-events-none">
-                  {[...Array(5)].map((_, i) => (
-                    <div key={i} className="w-full border-t border-dashed border-[#F0F0F0]" />
-                  ))}
-                </div>
-                {/* Bars */}
-                <div className="relative h-full flex items-end justify-around gap-2 px-2">
-                  {weeklyCounts.map((val, idx) => {
-                    const pct = maxBar > 0 ? (val / maxBar) * 100 : 0;
-                    return (
-                      <div key={idx} className="flex flex-col items-center justify-end flex-1 h-full group">
-                        <div className="relative w-full flex flex-col items-center justify-end" style={{ height: '100%' }}>
-                          {val > 0 && (
-                            <span className="text-[11px] font-bold text-[#1A1A1A] mb-1 opacity-0 group-hover:opacity-100 transition-opacity">{val}</span>
-                          )}
-                          <div
-                            className={`w-full max-w-[32px] rounded-t-[6px] transition-all duration-500 ${val > 0 ? 'bg-gradient-to-t from-[#b5943b] to-[#C9A84C] group-hover:from-[#9a7d32] group-hover:to-[#b5943b]' : 'bg-[#F0F0F0]'}`}
-                            style={{ height: `${Math.max(pct, val > 0 ? 6 : 3)}%` }}
-                          />
-                        </div>
-                        <div className="text-[11px] font-bold text-[#AAAAAA] uppercase tracking-wider mt-2">{daysOfWeek[idx]}</div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
+            {/* Left Column: Stacked Charts */}
+            <div className="lg:col-span-2 flex flex-col gap-4">
+              <ChartCard 
+                title="Weekly Bookings"
+                subtitle="Last 7 days activity"
+                badgeText={`${weeklyCounts.reduce((a, b) => a + b, 0)} this week`}
+                data={weeklyCounts}
+                labels={daysOfWeek}
+                maxVal={maxWeekly}
+                currentIdxStr={currentDayStr}
+              />
+              
+              <ChartCard 
+                title="Monthly Bookings"
+                subtitle="This year's activity"
+                badgeText={`${monthlyCounts.reduce((a, b) => a + b, 0)} this year`}
+                data={monthlyCounts}
+                labels={monthLabels}
+                maxVal={maxMonthly}
+                currentIdxStr={currentMonthStr}
+              />
+              
+              <ChartCard 
+                title="Yearly Bookings"
+                subtitle="All time activity"
+                badgeText={`${yearlyCounts.reduce((a, b) => a + b, 0)} all time`}
+                data={yearlyCounts}
+                labels={yearLabels}
+                maxVal={maxYearly}
+                currentIdxStr={currentYearStr}
+              />
             </div>
 
             {/* Revenue & Stats Panel */}
