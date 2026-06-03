@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import AdminSidebar from "../../components/AdminSidebar";
-import AdminHeader from "../../components/AdminHeader";
+import { useAdmin } from '../../context/AdminContext';
 
 function StatusBadge({ status }) {
   const s = String(status || "").toLowerCase();
@@ -34,7 +33,8 @@ function formatTime(timeStr) {
 }
 
 export default function AdminAppointmentManagement() {
-  const [appointments, setAppointments] = useState([]);
+  const { appointments, fetchAppointments, loading: adminLoading, error } = useAdmin();
+  const [localAppointments, setLocalAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState("All");
@@ -50,14 +50,19 @@ export default function AdminAppointmentManagement() {
   }, []);
 
   useEffect(() => {
-    const API_BASE = process.env.REACT_APP_API_URL || "";
+    let mounted = true;
     setLoading(true);
-    fetch(`${API_BASE}/api/appointments`)
-      .then((r) => r.json())
-      .then((data) => setAppointments(data))
-      .catch((err) => console.error("Failed to load appointments", err))
-      .finally(() => setLoading(false));
-  }, []);
+    fetchAppointments({ force: false })
+      .then((data) => { if (mounted) { setLocalAppointments(data || appointments || []); } })
+      .catch((err) => console.error('Failed to load appointments', err))
+      .finally(() => { if (mounted) setLoading(false); });
+    return () => { mounted = false; };
+  }, [fetchAppointments]);
+
+  // keep localAppointments in sync with context appointments when updated
+  useEffect(() => {
+    setLocalAppointments(appointments || []);
+  }, [appointments]);
 
   const updateStatus = async (id, status) => {
     setUpdatingId(id);

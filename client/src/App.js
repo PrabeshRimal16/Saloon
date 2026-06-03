@@ -1,9 +1,11 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import './styles/animations.css';
+import './styles/admin-animations.css';
 import initScrollAnimations from './utils/scrollAnimations';
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Login from "./pages/Login";
+import AdminLayout from './components/AdminLayout';
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminServicesManagement from "./pages/admin/AdminServicesManagement";
 import AdminAppointmentManagement from "./pages/admin/AdminAppointmentManagement";
@@ -44,32 +46,14 @@ const AppRoutes = () => {
         path="/login"
         element={!isLoggedIn ? <Login /> : <Navigate to={defaultAuthedPath} />}
       />
-      <Route
-        path="/admin"
-        element={
-          isAdmin ? <AdminDashboard /> : <Navigate to={isLoggedIn ? "/customer" : "/login"} />
-        }
-      />
-      <Route
-        path="/admin/services"
-        element={isAdmin ? <AdminServicesManagement /> : <Navigate to={isLoggedIn ? "/customer" : "/login"} />}
-      />
-      <Route
-        path="/admin/appointments"
-        element={isAdmin ? <AdminAppointmentManagement /> : <Navigate to={isLoggedIn ? "/customer" : "/login"} />}
-      />
-      <Route
-        path="/admin/offers"
-        element={isAdmin ? <AdminOfferManagement /> : <Navigate to={isLoggedIn ? "/customer" : "/login"} />}
-      />
-      <Route
-        path="/admin/users"
-        element={isAdmin ? <AdminUserManagement /> : <Navigate to={isLoggedIn ? "/customer" : "/login"} />}
-      />
-      <Route
-        path="/admin/settings"
-        element={isAdmin ? <AdminSetting /> : <Navigate to={isLoggedIn ? "/customer" : "/login"} />}
-      />
+      <Route path="/admin" element={isAdmin ? <AdminLayout /> : <Navigate to={isLoggedIn ? "/customer" : "/login"} />}>
+        <Route index element={<AdminDashboard />} />
+        <Route path="services" element={<AdminServicesManagement />} />
+        <Route path="appointments" element={<AdminAppointmentManagement />} />
+        <Route path="offers" element={<AdminOfferManagement />} />
+        <Route path="users" element={<AdminUserManagement />} />
+        <Route path="settings" element={<AdminSetting />} />
+      </Route>
       <Route
         path="/customer"
         element={
