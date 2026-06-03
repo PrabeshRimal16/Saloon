@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const pool = require("../db");
+const bcrypt = require("bcrypt");
 
 // Get all users (for admin)
 router.get("/", async (req, res) => {
@@ -8,7 +9,6 @@ router.get("/", async (req, res) => {
     const result = await pool.query(
       `SELECT id, name, email, role, avatar_url, google_id, phone, created_at FROM users ORDER BY id DESC`
     );
-    console.log(`[users] GET /api/users -> ${result.rows.length} rows`);
     res.json(result.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -20,11 +20,7 @@ router.delete('/:id', async (req, res) => {
   const { id } = req.params;
   try {
     const result = await pool.query('DELETE FROM users WHERE id = $1 RETURNING *', [id]);
-    if (result.rows.length === 0) {
-      console.log(`[users] DELETE ${id} -> not found`);
-      return res.status(404).json({ error: 'User not found' });
-    }
-    console.log(`[users] DELETE ${id} -> deleted`);
+    if (result.rows.length === 0) return res.status(404).json({ error: 'User not found' });
     res.json({ success: true, user: result.rows[0] });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -36,11 +32,7 @@ router.post('/:id/restrict', async (req, res) => {
   const { id } = req.params;
   try {
     const result = await pool.query("UPDATE users SET role = 'restricted' WHERE id = $1 RETURNING id, name, email, role", [id]);
-    if (result.rows.length === 0) {
-      console.log(`[users] POST ${id}/restrict -> not found`);
-      return res.status(404).json({ error: 'User not found' });
-    }
-    console.log(`[users] POST ${id}/restrict -> ok`);
+    if (result.rows.length === 0) return res.status(404).json({ error: 'User not found' });
     res.json(result.rows[0]);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -52,22 +44,17 @@ router.post('/:id/unrestrict', async (req, res) => {
   const { id } = req.params;
   try {
     const result = await pool.query("UPDATE users SET role = 'customer' WHERE id = $1 RETURNING id, name, email, role", [id]);
-    if (result.rows.length === 0) {
-      console.log(`[users] POST ${id}/unrestrict -> not found`);
-      return res.status(404).json({ error: 'User not found' });
-    }
-    console.log(`[users] POST ${id}/unrestrict -> ok`);
+    if (result.rows.length === 0) return res.status(404).json({ error: 'User not found' });
     res.json(result.rows[0]);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// Create user
+// Create user (manual registration)
 router.post("/register", async (req, res) => {
   const { name, email, password, phone } = req.body;
   try {
-    // Require manual registration fields
     if (!name || !name.trim() || !email || !password || !phone) {
       return res.status(400).json({ error: "name, email, phone and password are required" });
     }
@@ -81,22 +68,6 @@ router.post("/register", async (req, res) => {
     const result = await pool.query(
       "INSERT INTO users (name, email, password, phone, role) VALUES ($1, $2, $3, $4, $5) RETURNING *",
       [name.trim(), email, hashedPassword, phone, 'customer']
-    );
-    res.json(result.rows[0]);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-      return res.status(400).json({ error: "Email already exists" });
-    }
-    let hashedPassword = null;
-    if (password) {
-      hashedPassword = await bcrypt.hash(password, 10);
-    }
-
-    const result = await pool.query(
-      "INSERT INTO users (name, email, google_id, avatar_url, password, phone) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
-      [name || null, email, google_id || null, avatar_url || null, hashedPassword, phone || null]
     );
     res.json(result.rows[0]);
   } catch (err) {
@@ -123,6 +94,7 @@ router.post("/complete-profile", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
 // Login
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
@@ -140,9 +112,7 @@ router.post("/login", async (req, res) => {
 
     // Establish passport session for the logged-in user
     req.login(user, (err) => {
-      if (err) {
-        return res.status(500).json({ error: err.message });
-      }
+      if (err) return res.status(500).json({ error: err.message });
       res.json(user);
     });
   } catch (err) {

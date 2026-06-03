@@ -10,7 +10,13 @@ router.get("/google", (req, res, next) => {
   const { action, name, password, phone } = req.query;
   if (action === "register") {
     req.session.registerData = { name, password, phone };
+    // Ensure session is saved before redirecting to Google
+    return req.session.save((err) => {
+      if (err) return next(err);
+      passport.authenticate("google", { scope: ["profile", "email"] })(req, res, next);
+    });
   }
+
   passport.authenticate("google", { scope: ["profile", "email"] })(req, res, next);
 });
 
