@@ -45,7 +45,7 @@ export default function AdminSidebar() {
           <h1 className="font-heading text-primary text-h4 uppercase tracking-widest">The Salon At Reston</h1>
         </div>
         <div className="pr-1">
-          <button onClick={toggleCollapse} className="w-8 h-8 rounded-full flex items-center justify-center text-[#AAAAAA] hover:text-white transition-colors">
+          <button onClick={toggleCollapse} aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'} className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${collapsed ? 'text-[#C9A84C]' : 'text-[#AAAAAA] hover:text-white'}`}>
             <span className="material-symbols-outlined">{collapsed ? 'chevron_right' : 'chevron_left'}</span>
           </button>
         </div>
@@ -79,54 +79,31 @@ export default function AdminSidebar() {
       <div className="p-3 border-t border-[rgba(255,255,255,0.05)] flex flex-col mt-2">
         <div className="flex items-center gap-3">
           {loading ? (
-            <div className="w-[44px] h-[44px] rounded-full bg-[#333] animate-pulse shrink-0" />
+            <div className={`${collapsed ? 'w-[36px] h-[36px]' : 'w-[44px] h-[44px]'} rounded-full bg-[#333] animate-pulse shrink-0`} />
           ) : (
             <>
               {(user && (user.avatar_url || user.photo || user.avatar || user.avatarUrl || user.picture)) ? (
-                <img src={user.avatar_url || user.photo || user.avatar || user.avatarUrl || user.picture} alt={user.name || user.email} className="w-[44px] h-[44px] rounded-full object-cover border-2 border-[#C9A84C] shrink-0" onError={(e)=>{e.currentTarget.onerror=null;e.currentTarget.style.display='none';}} />
-              ) : null}
-
-              {!(user && (user.avatar_url || user.photo || user.avatar || user.avatarUrl || user.picture)) && (
-                <div className="w-[44px] h-[44px] rounded-full bg-[#C9A84C] flex items-center justify-center text-[14px] font-bold text-white border-2 border-[#C9A84C] shrink-0">
+                <img src={user.avatar_url || user.photo || user.avatar || user.avatarUrl || user.picture} alt={user.name || user.email} className={`${collapsed ? 'w-[36px] h-[36px]' : 'w-[44px] h-[44px]'} rounded-full object-cover border-2 border-[#C9A84C] shrink-0`} onError={(e)=>{e.currentTarget.onerror=null;e.currentTarget.style.display='none';}} />
+              ) : (
+                <div className={`${collapsed ? 'w-[36px] h-[36px]' : 'w-[44px] h-[44px]'} rounded-full bg-[#C9A84C] flex items-center justify-center text-[14px] font-bold text-white border-2 border-[#C9A84C] shrink-0`}>
                   {((user && (user.name || user.email)) ? (user.name ? user.name.split(' ').map(p=>p[0]).slice(0,2).join('').toUpperCase() : (user.email[0]||'P').toUpperCase()) : 'PR')}
                 </div>
               )}
 
-              <div className="flex-1 min-w-0">
+              <div className={`flex flex-col ml-3 ${collapsed ? 'hidden' : ''}`}>
                 <div className="text-white text-[14px] font-bold truncate">{user?.name || user?.displayName || user?.email || 'Administrator'}</div>
                 <div className="text-[#AAAAAA] text-[12px] truncate">Administrator</div>
               </div>
             </>
           )}
         </div>
+      </div>
 
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            {/* left: avatar + name (name hidden when collapsed) */}
-            {loading ? (
-              <div className="w-[44px] h-[44px] rounded-full bg-[#333] animate-pulse shrink-0" />
-            ) : (
-              <>
-                {(user && (user.avatar_url || user.photo || user.avatar || user.avatarUrl || user.picture)) ? (
-                  <img src={user.avatar_url || user.photo || user.avatar || user.avatarUrl || user.picture} alt={user.name || user.email} className="w-[44px] h-[44px] rounded-full object-cover border-2 border-[#C9A84C] shrink-0" onError={(e)=>{e.currentTarget.onerror=null;e.currentTarget.style.display='none';}} />
-                ) : (
-                  <div className="w-[44px] h-[44px] rounded-full bg-[#C9A84C] flex items-center justify-center text-[14px] font-bold text-white border-2 border-[#C9A84C] shrink-0">
-                    {((user && (user.name || user.email)) ? (user.name ? user.name.split(' ').map(p=>p[0]).slice(0,2).join('').toUpperCase() : (user.email[0]||'P').toUpperCase()) : 'PR')}
-                  </div>
-                )}
-                <div className={`flex flex-col ml-3 ${collapsed ? 'hidden' : ''}`}>
-                  <div className="text-white text-[14px] font-bold truncate">{user?.name || user?.displayName || user?.email || 'Administrator'}</div>
-                  <div className="text-[#AAAAAA] text-[12px] truncate">Administrator</div>
-                </div>
-              </>
-            )}
-          </div>
-
-          <div>
-            <button onClick={handleLogout} className="w-10 h-10 rounded-full flex items-center justify-center text-[#C0392B] hover:bg-[rgba(192,57,43,0.06)] transition-colors">
-              <span className="material-symbols-outlined text-[18px]">logout</span>
-            </button>
-          </div>
+      <div className="px-3 pb-4 mt-auto">
+        <div className="w-full flex justify-center">
+          <button onClick={handleLogout} aria-label="Logout" className="w-10 h-10 rounded-full flex items-center justify-center text-[#C0392B] hover:bg-[rgba(192,57,43,0.06)] transition-colors">
+            <span className="material-symbols-outlined text-[18px]">logout</span>
+          </button>
         </div>
       </div>
     </aside>
