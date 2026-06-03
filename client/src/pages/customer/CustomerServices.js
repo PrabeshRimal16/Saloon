@@ -180,7 +180,7 @@ export default function CustomerServices() {
                         <p className="svc-desc">{s.description}</p>
                         {s.duration && <p className="svc-dur"><span className="material-symbols-outlined" style={{ fontSize: 14 }}>schedule</span>{s.duration} min</p>}
                         <div className="svc-footer">
-                          <span className="svc-price">NPR {Number(s.price || 0).toLocaleString()}</span>
+                          <span className="svc-price">${Number(s.price || 0).toLocaleString()}</span>
                           <button className="btn-book" onClick={() => setBookingService(s)}>Book Now</button>
                         </div>
                       </div>

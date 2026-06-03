@@ -181,7 +181,7 @@ export default function CustomerDashboard() {
                       <h3 className="svc-name">{s.name || s.title}</h3>
                       <p className="svc-desc">{s.description || s.desc}</p>
                       <div className="svc-footer">
-                        <span className="svc-price">NPR {Number(s.price || 0).toLocaleString()}</span>
+                        <span className="svc-price">${Number(s.price || 0).toLocaleString()}</span>
                         <button className="btn-svc-book" onClick={() => navigate('/appointments')}>Book Now</button>
                       </div>
                     </div>
