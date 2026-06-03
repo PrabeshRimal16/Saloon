@@ -255,6 +255,15 @@ export default function AdminOfferManagement() {
             </div>
           )}
         </main>
+        <ConfirmModal
+          isOpen={confirmOpen}
+          title={confirmProps.title}
+          message={confirmProps.message}
+          confirmText={confirmProps.confirmText}
+          confirmColor={confirmProps.confirmColor}
+          onConfirm={() => confirmProps.onConfirm && confirmProps.onConfirm()}
+          onCancel={() => setConfirmOpen(false)}
+        />
 
         {/* Modal */}
         {showModal && (
