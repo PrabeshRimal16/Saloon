@@ -177,7 +177,7 @@ export default function AdminOfferManagement() {
                     {f === 'all' ? 'All' : f.charAt(0).toUpperCase() + f.slice(1)}
                   </button>
                 ))}
-              </div>
+              </main>
             </div>
             <button onClick={() => setShowModal(true)} className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#C9A84C] text-white rounded-[8px] font-body text-[14px] font-bold hover:bg-[#b5943b] shadow-[0_4px_16px_rgba(201,168,76,0.3)] transition-all hover:scale-[1.02]">
               <span className="material-symbols-outlined text-[20px]">add</span>
@@ -331,7 +331,7 @@ export default function AdminOfferManagement() {
             </div>
           </div>
         )}
-      </div>
+      </main>
     </div>
   );
 }
