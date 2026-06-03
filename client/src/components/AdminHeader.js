@@ -16,7 +16,6 @@ export default function AdminHeader({ title }) {
   const [showNotifications, setShowNotifications] = useState(false);
   const notifRef = useRef(null);
 
-  // Fetch admin notifications
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
@@ -33,7 +32,6 @@ export default function AdminHeader({ title }) {
     return () => clearInterval(interval);
   }, []);
 
-  // Handle click outside notification dropdown
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (notifRef.current && !notifRef.current.contains(e.target)) {
@@ -50,7 +48,7 @@ export default function AdminHeader({ title }) {
   const avatarSrc = user?.avatar_url || user?.photo || user?.avatar || user?.avatarUrl || user?.picture || null;
 
   return (
-    <header className="fixed top-0 left-[240px] right-0 z-40 bg-white border-b border-light-border h-[80px] flex items-center px-8 transition-all duration-300">
+    <header className="fixed top-0 left-[240px] right-0 z-40 bg-white border-b border-[#EDE8DC] h-[80px] flex items-center px-8 transition-all duration-300">
       <div className="flex items-center justify-between w-full">
         <div>
           <h1 className="font-heading text-[20px] font-bold text-dark">{title || 'Admin'}</h1>
@@ -62,25 +60,22 @@ export default function AdminHeader({ title }) {
             <input
               type="text"
               placeholder="Search admin..."
-              className="w-64 bg-[#F5F5F5] border border-transparent rounded-[8px] py-[10px] pl-10 pr-4 text-body font-body outline-none transition-all duration-200 focus:border-primary focus:bg-white focus:shadow-[0_0_0_3px_rgba(201,168,76,0.15)]"
+              className="w-64 bg-[#F5F5F5] border border-transparent rounded-full py-[10px] pl-10 pr-4 text-body font-body outline-none transition-all duration-200 focus:border-primary focus:bg-white focus:shadow-[0_0_0_3px_rgba(201,168,76,0.15)]"
             />
           </div>
 
           <div className="relative" ref={notifRef}>
             <button 
               onClick={() => setShowNotifications(!showNotifications)}
-              className="btn-interactive w-10 h-10 rounded-full flex items-center justify-center relative bg-[#FEF9ED] border border-[rgba(201,168,76,0.2)]"
+              className="btn-interactive w-10 h-10 rounded-full flex items-center justify-center relative hover:bg-[#FEF9ED] transition-colors"
               title="Notifications"
             >
               <span className="material-symbols-outlined text-primary text-[24px]">notifications</span>
               {notifications.length > 0 && (
-                <span className="absolute -top-1 -right-1 w-5 h-5 bg-error text-white text-[10px] rounded-full flex items-center justify-center font-bold shadow-sm">
-                  {notifications.length > 9 ? '9+' : notifications.length}
-                </span>
+                <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-error rounded-full border-2 border-white"></span>
               )}
             </button>
 
-            {/* Notification Dropdown */}
             {showNotifications && (
               <div className="absolute right-0 mt-3 w-80 bg-white border border-light-border rounded-card shadow-modal z-50 overflow-hidden animate-fade-in">
                 <div className="p-4 border-b border-light-border flex items-center justify-between bg-cream">
@@ -114,16 +109,18 @@ export default function AdminHeader({ title }) {
           {loading ? (
             <div className="w-10 h-10 rounded-full bg-[#E0E0E0] animate-pulse" />
           ) : (
-            <Link to="/admin/settings" className="btn-interactive flex items-center gap-3">
+            <Link to="/admin/settings" className="flex items-center gap-3">
               {avatarSrc ? (
-                <img src={avatarSrc} alt={displayName} className="w-10 h-10 rounded-full object-cover border-2 border-primary" />
+                <img src={avatarSrc} alt={displayName} className="w-10 h-10 rounded-full object-cover border-[2px] border-primary" />
               ) : (
-                <div className="w-10 h-10 rounded-full bg-[#FEF9ED] border-2 border-primary flex items-center justify-center text-[14px] font-bold text-primary">
+                <div className="w-10 h-10 rounded-full bg-[#FEF9ED] border-[2px] border-primary flex items-center justify-center text-[14px] font-bold text-primary">
                   {avatarInitials(displayName, user?.email)}
                 </div>
               )}
-              <span className="hidden sm:inline-block font-body text-[14px] font-medium text-dark">{displayName}</span>
-              <span className="material-symbols-outlined text-grey text-[20px]">expand_more</span>
+              <div className="hidden sm:flex flex-col justify-center">
+                <span className="font-body text-[14px] font-bold text-dark leading-tight">{displayName || 'Admin'}</span>
+                <span className="font-body text-[12px] text-grey leading-tight">Administrator</span>
+              </div>
             </Link>
           )}
         </div>

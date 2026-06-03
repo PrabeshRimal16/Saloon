@@ -20,7 +20,7 @@ export default function AdminSidebar() {
   };
 
   return (
-    <aside className="fixed top-0 left-0 h-screen w-[240px] bg-sidebar flex flex-col z-40">
+    <aside className="fixed top-0 left-0 h-screen w-[240px] bg-[#1C1C1E] flex flex-col z-40">
       <div className="pt-8 pb-8 px-6 text-center">
         <h1 className="font-heading text-primary text-h2 uppercase tracking-widest">L'Atelier</h1>
       </div>
@@ -35,7 +35,7 @@ export default function AdminSidebar() {
                 className={({ isActive }) => 
                   `flex items-center gap-3 px-6 py-3 transition-all duration-200 border-l-[3px] ` + 
                   (isActive 
-                    ? 'border-primary bg-[rgba(201,168,76,0.1)] text-white' 
+                    ? 'border-primary bg-[rgba(201,168,76,0.08)] text-white' 
                     : 'border-transparent text-[#AAAAAA] hover:text-white hover:bg-[rgba(255,255,255,0.02)]')
                 }
               >
@@ -71,9 +71,9 @@ export default function AdminSidebar() {
             </>
           )}
         </div>
-        <button onClick={handleLogout} className="flex items-center gap-2 w-full px-4 py-2 text-[#AAAAAA] hover:text-white transition-colors duration-200">
+        <button onClick={handleLogout} className="flex items-center gap-2 w-full px-4 py-2 text-error hover:text-[#a93226] transition-colors duration-200">
           <span className="material-symbols-outlined text-[20px]">logout</span>
-          <span className="font-label">LOGOUT</span>
+          <span className="font-label font-bold">LOGOUT</span>
         </button>
       </div>
     </aside>
