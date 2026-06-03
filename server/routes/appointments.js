@@ -4,11 +4,11 @@ const pool = require("../db");
 
 // Customer - Book an appointment
 router.post("/", async (req, res) => {
-  const { user_id, service_id, appointment_date, phone } = req.body;
+  const { user_id, service_id, appointment_date, appointment_time, phone } = req.body;
   try {
     const result = await pool.query(
-      "INSERT INTO appointments (user_id, service_id, appointment_date, phone) VALUES ($1, $2, $3, $4) RETURNING *",
-      [user_id, service_id, appointment_date, phone]
+      "INSERT INTO appointments (user_id, service_id, appointment_date, appointment_time, phone) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+      [user_id, service_id, appointment_date, appointment_time, phone]
     );
     res.json(result.rows[0]);
   } catch (err) {
