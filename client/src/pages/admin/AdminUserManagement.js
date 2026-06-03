@@ -87,30 +87,38 @@ export default function AdminUserManagement() {
       <div className="ml-[240px] pt-[80px]">
         <AdminHeader title="Manage Users" />
 
-        <main className="p-8 animate-fade-in">
+        <main className="p-8 animate-[fadeIn_0.3s_ease-in]">
 
           {/* Stats Row */}
-          <div className="font-body text-[11px] text-primary uppercase tracking-widest mb-3">At a Glance</div>
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <div className="text-[11px] font-bold text-[#C9A84C] uppercase tracking-[0.35em] mb-1">Overview</div>
+              <p className="text-[#6B6B6B] text-[14px]">User statistics</p>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
             {[
-              { label: 'Total Users', value: stats.total, icon: 'group', color: 'border-primary' },
-              { label: 'Active Members', value: stats.active, icon: 'verified_user', color: 'border-[#2D7A4F]' },
-              { label: 'Restricted', value: stats.restricted, icon: 'block', color: 'border-[#C0392B]' },
+              { label: 'Total Users', value: stats.total, icon: 'group', color: 'border-[#C9A84C]', iconColor: 'text-[#C9A84C]', iconBg: 'bg-[#FEF9ED]' },
+              { label: 'Active Members', value: stats.active, icon: 'verified_user', color: 'border-[#2D7A4F]', iconColor: 'text-[#2D7A4F]', iconBg: 'bg-[#EAF5EF]' },
+              { label: 'Restricted', value: stats.restricted, icon: 'block', color: 'border-[#C0392B]', iconColor: 'text-[#C0392B]', iconBg: 'bg-[#FDEDED]' },
             ].map((s) => (
-              <div key={s.label} className={`bg-white rounded-[10px] shadow-[0_2px_12px_rgba(0,0,0,0.06)] p-6 border-l-[4px] ${s.color} flex items-center justify-between`}>
+              <div key={s.label} className={`bg-white rounded-[12px] shadow-[0_2px_16px_rgba(0,0,0,0.07)] p-6 border-l-[4px] ${s.color} flex items-start justify-between hover:shadow-[0_6px_24px_rgba(0,0,0,0.1)] hover:-translate-y-0.5 transition-all duration-200`}>
                 <div>
-                  <div className="text-[40px] font-bold font-heading text-[#1A1A1A] leading-none mb-1">{s.value}</div>
-                  <div className="text-[11px] font-body font-bold text-[#6B6B6B] uppercase tracking-widest">{s.label}</div>
+                  <div className="text-[42px] font-bold font-['Playfair_Display'] text-[#1A1A1A] leading-none mb-1.5">{s.value}</div>
+                  <div className="text-[11px] font-bold text-[#6B6B6B] uppercase tracking-widest">{s.label}</div>
                 </div>
-                <span className="material-symbols-outlined text-primary text-[28px]">{s.icon}</span>
+                <div className={`w-11 h-11 rounded-full ${s.iconBg} flex items-center justify-center shrink-0`}>
+                  <span className={`material-symbols-outlined ${s.iconColor} text-[22px]`}>{s.icon}</span>
+                </div>
               </div>
             ))}
           </div>
 
           {/* Table Card */}
-          <div className="bg-white rounded-[10px] shadow-[0_2px_12px_rgba(0,0,0,0.06)] overflow-hidden">
+          <div className="bg-white rounded-[12px] shadow-[0_2px_16px_rgba(0,0,0,0.07)] overflow-hidden">
             {/* Search Bar */}
-            <div className="p-5 border-b border-[#EDE8DC] flex items-center justify-between">
+            <div className="px-6 py-5 border-b border-[#EDE8DC] flex items-center justify-between">
               <div className="relative w-full max-w-sm">
                 <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#C9A84C] text-[20px] pointer-events-none">search</span>
                 <input
@@ -118,25 +126,22 @@ export default function AdminUserManagement() {
                   placeholder="Search by name or email..."
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  className="w-full bg-[#F5F5F5] border border-transparent rounded-full py-2.5 pl-10 pr-4 text-[14px] font-body outline-none transition-all duration-200 focus:border-[#C9A84C] focus:bg-white focus:shadow-[0_0_0_3px_rgba(201,168,76,0.15)]"
+                  className="w-full bg-[#FAFAF8] border border-[#EDE8DC] rounded-full py-2 pl-10 pr-4 text-[14px] outline-none transition-all duration-200 focus:border-[#C9A84C] focus:bg-white focus:shadow-[0_0_0_3px_rgba(201,168,76,0.1)]"
                 />
               </div>
-              <div className="text-[13px] text-[#6B6B6B] font-body ml-4 shrink-0">
-                {filteredUsers.length} of {users.length} users
+              <div className="text-[13px] text-[#6B6B6B] ml-4 shrink-0 font-medium">
+                Showing {filteredUsers.length} of {users.length} users
               </div>
             </div>
 
             {/* Table */}
             <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
+              <table className="w-full text-left">
                 <thead className="bg-[#FAFAF8] border-b border-[#EDE8DC]">
                   <tr>
-                    <th className="px-6 py-4 text-[11px] font-body font-bold text-[#6B6B6B] uppercase tracking-widest">User</th>
-                    <th className="px-6 py-4 text-[11px] font-body font-bold text-[#6B6B6B] uppercase tracking-widest">Phone</th>
-                    <th className="px-6 py-4 text-[11px] font-body font-bold text-[#6B6B6B] uppercase tracking-widest">Role</th>
-                    <th className="px-6 py-4 text-[11px] font-body font-bold text-[#6B6B6B] uppercase tracking-widest">Joined</th>
-                    <th className="px-6 py-4 text-[11px] font-body font-bold text-[#6B6B6B] uppercase tracking-widest">Status</th>
-                    <th className="px-6 py-4 text-[11px] font-body font-bold text-[#6B6B6B] uppercase tracking-widest text-right">Actions</th>
+                    {['User', 'Phone', 'Role', 'Joined', 'Status', 'Actions'].map(h => (
+                      <th key={h} className={`px-6 py-3.5 text-[11px] font-bold text-[#6B6B6B] uppercase tracking-widest ${h === 'Actions' ? 'text-right' : ''}`}>{h}</th>
+                    ))}
                   </tr>
                 </thead>
                 <tbody>
@@ -163,46 +168,47 @@ export default function AdminUserManagement() {
                     filteredUsers.map((user, index) => {
                       const isRestricted = String(user.status || '').toLowerCase() === 'restricted';
                       const isAdmin = String(user.role || '').toLowerCase() === 'admin';
-                      const rowBg = index % 2 === 0 ? 'bg-white' : 'bg-[#FAFAF8]';
+                      const rowBg = index % 2 === 1 ? 'bg-[#FAFAF8]' : 'bg-white';
                       const initials = (user.name || 'U').split(' ').map(p => p[0]).slice(0, 2).join('').toUpperCase();
 
                       return (
                         <tr key={user.id} className={`${rowBg} border-b border-[#EDE8DC] hover:bg-[#FEF9ED] transition-colors`}>
                           <td className="px-6 py-4">
-                            <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-3">
                               <div className="relative shrink-0">
-                                <div className="w-[44px] h-[44px] rounded-full border-2 border-[#C9A84C] bg-[#FEF9ED] flex items-center justify-center text-[#C9A84C] font-bold text-[15px]">
+                                <div className="w-9 h-9 rounded-full bg-[#FEF9ED] border-[2px] border-[#C9A84C] flex items-center justify-center text-[#C9A84C] font-bold text-[12px]">
                                   {initials}
                                 </div>
-                                <div className={`absolute bottom-0 right-0 w-2.5 h-2.5 border-2 border-white rounded-full ${isRestricted ? 'bg-[#C0392B]' : 'bg-[#2D7A4F]'}`}></div>
+                                <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 border-2 border-white rounded-full ${isRestricted ? 'bg-[#C0392B]' : 'bg-[#2D7A4F]'}`}></div>
                               </div>
                               <div>
-                                <div className="font-body text-[14px] font-bold text-[#1A1A1A]">{user.name || 'Unknown'}</div>
-                                <div className="font-body text-[12px] text-[#6B6B6B]">{user.email}</div>
+                                <div className="font-bold text-[14px] text-[#1A1A1A] leading-tight">{user.name || 'Unknown'}</div>
+                                <div className="text-[12px] text-[#6B6B6B] mt-0.5">{user.email}</div>
                               </div>
                             </div>
                           </td>
-                          <td className="px-6 py-4 font-body text-[14px] text-[#6B6B6B]">
+                          <td className="px-6 py-4 text-[14px] text-[#1A1A1A] font-medium">
                             {user.phone || '—'}
                           </td>
                           <td className="px-6 py-4">
-                            <span className={`px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest ${
+                            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider ${
                               isAdmin
-                                ? 'bg-[#C9A84C] text-white'
-                                : 'bg-[#F5F5F5] text-[#6B6B6B] border border-[#EDE8DC]'
+                                ? 'bg-[#1A1A1A] text-white'
+                                : 'bg-[#FAFAF8] text-[#6B6B6B] border border-[#EDE8DC]'
                             }`}>
                               {isAdmin ? 'Admin' : 'Customer'}
                             </span>
                           </td>
-                          <td className="px-6 py-4 font-body text-[14px] text-[#6B6B6B]">
+                          <td className="px-6 py-4 text-[14px] text-[#1A1A1A] font-medium">
                             {user.created_at ? new Date(user.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}
                           </td>
                           <td className="px-6 py-4">
-                            <span className={`px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest ${
+                            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider ${
                               isRestricted
-                                ? 'bg-[#FDEDED] text-[#C0392B] border border-[#FBBAB7]'
-                                : 'bg-[#EAF5EF] text-[#2D7A4F] border border-[#A8D8BC]'
+                                ? 'bg-[#FDEDED] text-[#C0392B]'
+                                : 'bg-[#EAF5EF] text-[#2D7A4F]'
                             }`}>
+                              <span className={`w-1.5 h-1.5 rounded-full ${isRestricted ? 'bg-[#C0392B]' : 'bg-[#2D7A4F]'}`} />
                               {isRestricted ? 'Restricted' : 'Active'}
                             </span>
                           </td>
@@ -210,32 +216,24 @@ export default function AdminUserManagement() {
                             <div className="flex justify-end gap-2">
                               <button
                                 onClick={() => setConfirmDialog({ action: 'restrict', user })}
-                                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] text-[12px] font-bold border transition-all duration-200 hover:scale-[1.02] ${
-                                  isRestricted
-                                    ? 'border-[#2D7A4F] text-[#2D7A4F] hover:bg-[#EAF5EF]'
-                                    : 'border-[#EDE8DC] text-[#6B6B6B] hover:border-[#C9A84C] hover:text-[#C9A84C]'
-                                }`}
+                                className="w-8 h-8 rounded border border-[#EDE8DC] text-[#6B6B6B] flex items-center justify-center hover:text-[#C9A84C] hover:border-[#C9A84C] hover:bg-[#FEF9ED] transition-all"
+                                title={isRestricted ? "Unblock User" : "Restrict User"}
                               >
-                                <span className="material-symbols-outlined text-[14px]">{isRestricted ? 'lock_open' : 'block'}</span>
-                                {isRestricted ? 'Unblock' : 'Restrict'}
+                                <span className="material-symbols-outlined text-[16px]">{isRestricted ? 'lock_open' : 'block'}</span>
                               </button>
                               <button
                                 onClick={() => setConfirmDialog({ action: 'make_admin', user })}
-                                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] text-[12px] font-bold border transition-all duration-200 hover:scale-[1.02] ${
-                                  isAdmin
-                                    ? 'border-[#1A1A1A] text-[#1A1A1A] hover:bg-[#F5F5F5]'
-                                    : 'border-[#C9A84C] text-[#C9A84C] hover:bg-[#FEF9ED]'
-                                }`}
+                                className="w-8 h-8 rounded border border-[#EDE8DC] text-[#6B6B6B] flex items-center justify-center hover:text-[#1A1A1A] hover:border-[#1A1A1A] hover:bg-[#F5F5F5] transition-all"
+                                title={isAdmin ? "Demote to Customer" : "Make Admin"}
                               >
-                                <span className="material-symbols-outlined text-[14px]">admin_panel_settings</span>
-                                {isAdmin ? 'Demote' : 'Make Admin'}
+                                <span className="material-symbols-outlined text-[16px]">admin_panel_settings</span>
                               </button>
                               <button
                                 onClick={() => setConfirmDialog({ action: 'remove', user })}
-                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] text-[12px] font-bold border border-[#FBBAB7] text-[#C0392B] hover:bg-[#FDEDED] transition-all duration-200 hover:scale-[1.02]"
+                                className="w-8 h-8 rounded border border-[#EDE8DC] text-[#6B6B6B] flex items-center justify-center hover:text-[#C0392B] hover:border-[#FBBAB7] hover:bg-[#FDEDED] transition-all"
+                                title="Remove User"
                               >
-                                <span className="material-symbols-outlined text-[14px]">delete</span>
-                                Remove
+                                <span className="material-symbols-outlined text-[16px]">delete</span>
                               </button>
                             </div>
                           </td>
@@ -253,16 +251,16 @@ export default function AdminUserManagement() {
         {confirmDialog && (
           <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 animate-fade-in px-4">
             <div className="bg-white rounded-[10px] w-full max-w-[440px] shadow-[0_8px_32px_rgba(0,0,0,0.15)] overflow-hidden">
-              <div className={`p-5 border-b border-[#EDE8DC] flex items-center gap-3 ${confirmDialog.action === 'remove' ? 'bg-[#FDEDED]' : 'bg-[#FEF9ED]'}`}>
+              <div className="p-5 border-b border-[#EDE8DC] flex items-center gap-3">
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                  confirmDialog.action === 'remove' ? 'bg-[#C0392B] text-white' : 'bg-[#C9A84C] text-white'
+                  confirmDialog.action === 'remove' ? 'bg-[#FDEDED] text-[#C0392B]' : 'bg-[#FEF9ED] text-[#C9A84C]'
                 }`}>
                   <span className="material-symbols-outlined text-[20px]">
                     {confirmDialog.action === 'remove' ? 'warning' : 'info'}
                   </span>
                 </div>
                 <div>
-                  <h2 className="font-heading text-[18px] font-bold text-[#1A1A1A]">Confirm Action</h2>
+                  <h2 className="font-['Playfair_Display'] text-[18px] font-bold text-[#1A1A1A]">Confirm Action</h2>
                   <p className="text-[12px] text-[#6B6B6B] capitalize">{confirmDialog.action.replace('_', ' ')} · {confirmDialog.user.name}</p>
                 </div>
               </div>
