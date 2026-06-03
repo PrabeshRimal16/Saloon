@@ -66,7 +66,7 @@ export default function Register() {
                 <div className="bg-[#FDEDED] text-error p-3 rounded mb-4 text-center">{error}</div>
               )}
 
-              <div className="flex flex-col gap-6">
+              <form onSubmit={submit} className="flex flex-col gap-6">
                 <div>
                   <label className="block font-body text-xs text-gray-500 uppercase tracking-[0.35em] mb-2" htmlFor="email">EMAIL</label>
                   <input
@@ -81,6 +81,10 @@ export default function Register() {
                   />
                 </div>
 
+                <button type="submit" disabled={loading} className="w-full bg-amber-700 text-white py-3 font-semibold uppercase rounded-none">
+                  {loading ? 'Creating…' : 'CREATE ACCOUNT'}
+                </button>
+
                 <button type="button" onClick={handleGoogle} className="w-full flex items-center justify-center gap-3 py-2 border border-gray-200 text-sm text-stone-800">
                   <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-5 h-5" />
                   <span>Continue with Google</span>
@@ -90,7 +94,7 @@ export default function Register() {
                   Already have an account?{' '}
                   <button onClick={() => navigate('/login')} className="text-amber-700 font-semibold hover:underline ml-1">Login</button>
                 </div>
-              </div>
+              </form>
             </div>
           </div>
         </div>
