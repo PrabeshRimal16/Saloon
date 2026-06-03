@@ -103,11 +103,11 @@ const CustomerFooter = () => {
             <span className="lux-footer-col-title">Visit Us</span>
             <div className="lux-footer-contact-item">
               <span className="material-symbols-outlined lux-footer-contact-icon">location_on</span>
-              <span className="lux-footer-contact-text">123 Avenue Montaigne<br />75008 Paris, France</span>
+              <span className="lux-footer-contact-text">1613 Washington Plaza N<br />Reston, VA 20190</span>
             </div>
             <div className="lux-footer-contact-item">
               <span className="material-symbols-outlined lux-footer-contact-icon">call</span>
-              <span className="lux-footer-contact-text">+33 1 23 45 67 89</span>
+              <span className="lux-footer-contact-text"><a href="tel:+15715196741" style={{ color: '#AAAAAA', textDecoration: 'none' }}>+1 571-519-6741</a></span>
             </div>
             <div className="lux-footer-contact-item">
               <span className="material-symbols-outlined lux-footer-contact-icon">mail</span>

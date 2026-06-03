@@ -105,8 +105,8 @@ const ContactUsPage = () => {
   };
 
   const infoCards = [
-    { icon: 'location_on', title: 'The Salon At Reston', lines: ['123 Avenue Montaigne', '75008 Paris, France'] },
-    { icon: 'call', title: 'Phone', lines: ['+33 1 23 45 67 89'] },
+    { icon: 'location_on', title: 'Address', lines: ['1613 Washington Plaza N, Reston, VA 20190, United States', 'Located in Lake Anne Plaza - Main Parking lot'] },
+    { icon: 'call', title: 'Phone', lines: ['+1 571-519-6741'] },
     { icon: 'mail', title: 'Email', lines: ['info@thesalonatreston.com'] },
     { icon: 'schedule', title: 'Hours', lines: ['Mon–Sat: 10AM – 8PM', 'Sunday: Closed'] },
   ];
@@ -138,7 +138,22 @@ const ContactUsPage = () => {
                   <span className="material-symbols-outlined info-icon">{card.icon}</span>
                 </div>
                 <p className="info-title">{card.title}</p>
-                {card.lines.map((l, i) => <p key={i} className="info-text" style={{ margin: i < card.lines.length - 1 ? '0 0 2px' : 0 }}>{l}</p>)}
+                {card.lines.map((l, i) => {
+                  if (card.title === 'Phone') {
+                    const tel = l.replace(/[^+\d]/g, '');
+                    return (
+                      <p key={i} className="info-text" style={{ margin: i < card.lines.length - 1 ? '0 0 2px' : 0 }}>
+                        <a href={`tel:${tel}`} style={{ color: '#1C1C1E', textDecoration: 'none', fontWeight: 700 }}>{l}</a>
+                      </p>
+                    );
+                  }
+                  if (card.title === 'Address' && i === 1) {
+                    return (
+                      <p key={i} className="info-text" style={{ margin: 0, color: '#777777', fontSize: 13 }}>{l}</p>
+                    );
+                  }
+                  return <p key={i} className="info-text" style={{ margin: i < card.lines.length - 1 ? '0 0 2px' : 0 }}>{l}</p>;
+                })}
               </div>
             ))}
           </div>
@@ -201,12 +216,28 @@ const ContactUsPage = () => {
             <div className="contact-right">
               {/* Map */}
               <div className="map-card">
-                <img src="https://images.unsplash.com/photo-1519999482648-25049ddd37b1?w=800&q=80" alt="Salon location" />
+                <iframe
+                  title="The Salon At Reston - Map"
+                  src="https://www.google.com/maps/place/The+Salon+At+Reston/@38.9688042,-77.3434271,17z"
+                  width="100%"
+                  height="260"
+                  style={{ border: 0 }}
+                  allowFullScreen=""
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
                 <div className="map-overlay-card">
                   <span className="material-symbols-outlined" style={{ fontSize: 22, color: '#B8960C' }}>explore</span>
                   <div>
-                    <p style={{ fontFamily:'DM Sans,sans-serif', fontSize:13, fontWeight:600, color:'#1C1C1E', margin:0 }}>123 Avenue Montaigne, Paris</p>
-                    <p style={{ fontFamily:'DM Sans,sans-serif', fontSize:11, color:'#AAAAAA', margin:'2px 0 0', textTransform:'uppercase', letterSpacing:'1px' }}>Tap to open in Maps</p>
+                    <p style={{ fontFamily:'DM Sans,sans-serif', fontSize:13, fontWeight:600, color:'#1C1C1E', margin:0 }}>1613 Washington Plaza N, Reston, VA 20190</p>
+                    <p style={{ fontFamily:'DM Sans,sans-serif', fontSize:11, color:'#AAAAAA', margin:'2px 0 0', textTransform:'uppercase', letterSpacing:'1px' }}>
+                      Located in Lake Anne Plaza - Main Parking lot
+                    </p>
+                  </div>
+                  <div style={{ marginLeft: 'auto' }}>
+                    <a href="https://www.google.com/maps/place/The+Salon+At+Reston/@38.9688042,-77.3434271,17z" target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
+                      <button className="btn-send" style={{ padding: '8px 14px', borderRadius: 12 }}>Click to open in Maps</button>
+                    </a>
                   </div>
                 </div>
               </div>
