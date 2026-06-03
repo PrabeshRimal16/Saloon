@@ -217,8 +217,8 @@ export default function CustomerDashboard() {
                   const img = offer.image_url ? (offer.image_url.startsWith('/') ? `${API_BASE}${offer.image_url}` : offer.image_url) : null;
                   return (
                     <div key={offer.id} className="offer-card">
-                      <div style={{ aspectRatio: '4/5', minHeight: 400, background: 'linear-gradient(145deg,#2A2A2A,#1C1C1E)', display:'flex', alignItems:'center', justifyContent:'center', position:'relative', overflow:'hidden' }}>
-                        {img ? <img src={img} alt={offer.title} style={{ width:'100%', height:'100%', objectFit:'cover', objectPosition: 'top center', display: 'block' }} /> : <span className="material-symbols-outlined" style={{ fontSize:40, color:'rgba(184,150,12,0.5)' }}>local_offer</span>}
+                      <div style={{ background: 'linear-gradient(145deg,#2A2A2A,#1C1C1E)', display:'flex', alignItems:'center', justifyContent:'center', position:'relative', overflow:'hidden' }}>
+                        {img ? <img src={img} alt={offer.title} style={{ width:'100%', height:'auto', display: 'block' }} /> : <span className="material-symbols-outlined" style={{ fontSize:40, color:'rgba(184,150,12,0.5)', padding:'40px 0' }}>local_offer</span>}
                         {offer.discount_percent > 0 && (
                           <div style={{ position:'absolute', top:10, left:10, background:'#B8960C', color:'white', fontFamily:'DM Sans,sans-serif', fontSize:13, fontWeight:700, padding:'3px 12px', borderRadius:50 }}>{offer.discount_percent}% OFF</div>
                         )}
