@@ -16,7 +16,6 @@ export default function CustomerNavbar() {
     return currentPath === path || currentPath.startsWith(path);
   };
 
-  // Fetch customer notifications
   useEffect(() => {
     if (!user || !user.id) return;
     const fetchNotifications = async () => {
@@ -30,11 +29,10 @@ export default function CustomerNavbar() {
       }
     };
     fetchNotifications();
-    const interval = setInterval(fetchNotifications, 10000); // Poll every 10 seconds
+    const interval = setInterval(fetchNotifications, 10000);
     return () => clearInterval(interval);
   }, [user]);
 
-  // Handle click outside notification dropdown
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (notifRef.current && !notifRef.current.contains(e.target)) {
@@ -47,104 +45,105 @@ export default function CustomerNavbar() {
     }
   }, [showNotifications]);
 
-  return (
-    <nav className="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-gutter py-3 transition-all duration-300" style={{background: 'var(--primary)', color: 'var(--primary-contrast)', boxShadow: '0 6px 24px rgba(15,23,42,0.06)'}}>
-      <div className="flex items-center gap-8">
-        <button aria-label="home" onClick={() => navigate('/')} className="btn-interactive font-headline-md text-headline-md font-bold text-primary uppercase tracking-widest" style={{color:'var(--primary-contrast)'}}>L'Atelier</button>
+  const navLinks = [
+    { name: 'Home', path: '/' },
+    { name: 'Services', path: '/services' },
+    { name: 'Appointments', path: '/appointments' },
+    { name: 'Offers', path: '/offers' },
+    { name: 'Contact', path: '/contact' },
+    { name: 'Profile', path: '/settings' },
+  ];
 
-        <div className="hidden md:flex items-center gap-6">
-          <a
-            href="/"
-            onClick={(e) => { e.preventDefault(); navigate('/'); }}
-            className={
-              (isActive('/') ? 'font-bold ' : '') +
-              'transition-colors font-label-md text-label-md hover:text-secondary'
-            }
-            style={{color:'rgba(255,255,255,0.85)', textDecoration: isActive('/') ? 'underline' : 'none'}}
-          >Home</a>
-          <a
-            href="/services"
-            onClick={(e) => { e.preventDefault(); navigate('/services'); }}
-            className={(isActive('/services') ? 'font-bold ' : '') + 'transition-colors font-label-md text-label-md hover:text-secondary'}
-            style={{color:'rgba(255,255,255,0.85)'}}
-          >Services</a>
-          <a
-            href="/appointments"
-            onClick={(e) => { e.preventDefault(); navigate('/appointments'); }}
-            className={(isActive('/appointments') ? 'text-secondary font-bold border-b-2 border-secondary pb-1 ' : '') + 'text-on-surface-variant hover:text-secondary transition-colors font-label-md text-label-md'}
-          >Appointments</a>
-          <a
-            href="/offers"
-            onClick={(e) => { e.preventDefault(); navigate('/offers'); }}
-            className={(isActive('/offers') ? 'text-secondary font-bold ' : '') + 'text-on-surface-variant hover:text-secondary transition-colors font-label-md text-label-md'}
-          >Offers</a>
-          <a
-            href="/contact"
-            onClick={(e) => { e.preventDefault(); navigate('/contact'); }}
-            className={(isActive('/contact') ? 'text-secondary font-bold ' : '') + 'text-on-surface-variant hover:text-secondary transition-colors font-label-md text-label-md'}
-          >Contact</a>
-          <a
-            href="/settings"
-            onClick={(e) => { e.preventDefault(); navigate('/settings'); }}
-            className={(isActive('/settings') ? 'text-secondary font-bold ' : '') + 'text-on-surface-variant hover:text-secondary transition-colors font-label-md text-label-md'}
-          >Profile</a>
+  return (
+    <nav className="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-[32px] h-[80px] bg-white border-b border-light-border transition-all duration-300">
+      <div className="flex items-center gap-12">
+        <button aria-label="home" onClick={() => navigate('/')} className="btn-interactive font-heading text-[20px] font-bold text-dark uppercase tracking-widest">
+          L'Atelier
+        </button>
+
+        <div className="hidden md:flex items-center gap-8">
+          {navLinks.map(link => (
+            <a
+              key={link.name}
+              href={link.path}
+              onClick={(e) => { e.preventDefault(); navigate(link.path); }}
+              className={`font-body text-[14px] font-medium transition-colors duration-200 ${
+                isActive(link.path) 
+                  ? 'text-primary border-b-2 border-primary pb-1' 
+                  : 'text-grey hover:text-primary'
+              }`}
+            >
+              {link.name}
+            </a>
+          ))}
         </div>
       </div>
 
-        <div className="flex items-center gap-4">
-        <div className="hidden lg:flex items-center gap-3 mr-4">
-          <span className="font-label-md text-label-md user-name truncate" style={{color:'var(--primary-contrast)'}}>Welcome, {user?.name || 'Guest'}</span>
-          <div className="relative" ref={notifRef}>
-            <button 
-              onClick={() => setShowNotifications(!showNotifications)}
-              aria-label="notifications" 
-              className="btn-interactive material-symbols-outlined relative hover:opacity-75 transition-opacity"
-              style={{color:'var(--primary-contrast)'}}
-            >
-              notifications
-              {notifications.length > 0 && (
-                <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
-                  {notifications.length > 9 ? '9+' : notifications.length}
-                </span>
-              )}
-            </button>
-
-            {/* Notification Dropdown */}
-            {showNotifications && (
-              <div className="absolute right-0 mt-2 w-80 bg-white text-on-background border border-outline-variant rounded-lg shadow-lg z-50">
-                <div className="p-4 border-b border-outline-variant flex items-center justify-between">
-                  <h3 className="font-semibold">Notifications</h3>
-                  <span className="text-xs text-outline">{notifications.length} new</span>
-                </div>
-                <div className="max-h-96 overflow-y-auto">
-                  {notifications.length > 0 ? (
-                    notifications.map((notif, idx) => (
-                      <div key={idx} className="px-4 py-3 border-b border-outline-variant last:border-b-0 hover:bg-surface-container transition-colors">
-                        <div className="text-sm font-medium">{notif.type === 'offer' ? '🎁 New Offer' : '📅 Appointment Update'}</div>
-                        <div className="text-sm text-on-surface-variant mt-1">{notif.message}</div>
-                        <div className="text-xs text-outline mt-2">
-                          {new Date(notif.created_at || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="px-4 py-8 text-center text-on-surface-variant text-sm">No new notifications</div>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
+      <div className="flex items-center gap-6">
+        <div className="hidden md:flex items-center relative">
+          <span className="material-symbols-outlined absolute left-3 text-primary text-[20px] pointer-events-none">search</span>
+          <input
+            type="text"
+            placeholder="Search services..."
+            className="w-48 bg-[#F5F5F5] border border-transparent rounded-[8px] py-[10px] pl-10 pr-4 text-body font-body outline-none transition-all duration-200 focus:border-primary focus:bg-white focus:shadow-[0_0_0_3px_rgba(201,168,76,0.15)]"
+          />
         </div>
 
-        <div className="flex items-center gap-3 pl-4" style={{borderLeft: '1px solid rgba(255,255,255,0.06)'}}>
-          <button onClick={() => navigate('/settings')} className="btn-interactive w-10 h-10 rounded-full overflow-hidden border" style={{borderColor:'rgba(255,255,255,0.08)'}}>
+        <div className="relative" ref={notifRef}>
+          <button 
+            onClick={() => setShowNotifications(!showNotifications)}
+            aria-label="notifications" 
+            className="btn-interactive w-10 h-10 rounded-full flex items-center justify-center relative bg-[#FEF9ED] border border-[rgba(201,168,76,0.2)]"
+          >
+            <span className="material-symbols-outlined text-primary text-[24px]">notifications</span>
+            {notifications.length > 0 && (
+              <span className="absolute -top-1 -right-1 w-5 h-5 bg-error text-white text-[10px] rounded-full flex items-center justify-center font-bold shadow-sm">
+                {notifications.length > 9 ? '9+' : notifications.length}
+              </span>
+            )}
+          </button>
+
+          {showNotifications && (
+            <div className="absolute right-0 mt-3 w-80 bg-white border border-light-border rounded-card shadow-modal z-50 overflow-hidden animate-fade-in">
+              <div className="p-4 border-b border-light-border flex items-center justify-between bg-cream">
+                <h3 className="font-body font-bold text-dark">Notifications</h3>
+                <span className="text-label text-grey uppercase tracking-widest">{notifications.length} new</span>
+              </div>
+              <div className="max-h-80 overflow-y-auto">
+                {notifications.length > 0 ? (
+                  notifications.map((notif, idx) => (
+                    <div key={idx} className="p-4 border-b border-light-border last:border-b-0 hover:bg-[#FEF9ED] transition-colors cursor-pointer">
+                      <div className="text-[14px] text-dark font-medium">{notif.type === 'offer' ? '🎁 New Offer' : '📅 Appointment Update'}</div>
+                      <div className="text-[13px] text-grey mt-1 leading-snug">{notif.message}</div>
+                      <div className="text-[11px] text-[#AAAAAA] mt-2 font-medium">
+                        {new Date(notif.created_at || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="p-8 text-center flex flex-col items-center">
+                    <span className="material-symbols-outlined text-primary text-[32px] mb-2 opacity-50">notifications_off</span>
+                    <p className="text-[14px] text-grey">No new notifications</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="h-8 w-[1px] bg-light-border"></div>
+
+        <div className="flex items-center gap-3">
+          <button onClick={() => navigate('/settings')} className="btn-interactive w-10 h-10 rounded-full overflow-hidden border-2 border-primary bg-[#FEF9ED] flex items-center justify-center">
             {user?.avatar_url || user?.photo || user?.avatar ? (
               <img alt="User Profile" className="w-full h-full object-cover" src={user?.avatar_url || user?.photo || user?.avatar} />
             ) : (
-              <span className="text-sm font-medium" style={{color:'var(--primary-contrast)'}}>{(user?.name || user?.email)?.charAt(0)?.toUpperCase() || 'U'}</span>
+              <span className="text-[14px] font-bold text-primary">{(user?.name || user?.email)?.charAt(0)?.toUpperCase() || 'U'}</span>
             )}
           </button>
-          <button onClick={logout} title="Logout" className="btn-interactive header-button">Logout</button>
+          <button onClick={logout} title="Logout" className="btn-interactive text-[14px] font-medium text-grey hover:text-primary transition-colors">
+            Logout
+          </button>
         </div>
       </div>
     </nav>
