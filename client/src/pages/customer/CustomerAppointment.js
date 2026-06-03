@@ -98,12 +98,16 @@ const AppointmentsPage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user?.id) return;
+    let mounted = true;
     const API_BASE = process.env.REACT_APP_API_URL || '';
-    fetch(`${API_BASE}/api/appointments/my/${user.id}`)
-      .then(r => r.json())
-      .then(data => {
-        const mapped = data.map(a => {
+
+    const doFetch = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch(`${API_BASE}/api/appointments/my/${user.id}`);
+        const data = await res.json();
+        if (!mounted) return;
+        const mapped = (Array.isArray(data) ? data : []).map(a => {
           const dt = a.appointment_date ? new Date(a.appointment_date) : null;
           let dateStr = '', timeStr = '';
           if (dt) {
@@ -114,9 +118,22 @@ const AppointmentsPage = () => {
           return { id: a.id, serviceName: a.service_name || 'Service', duration: a.service_duration ? `${a.service_duration} min` : '', date: dateStr, time: timeStr, status: a.status || 'pending' };
         });
         setAppointments(mapped);
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
+      } catch (err) {
+        // keep appointments as-is on error
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+
+    if (!user?.id) {
+      // no user – no appointments to load
+      setAppointments([]);
+      setLoading(false);
+      return () => { mounted = false; };
+    }
+
+    doFetch();
+    return () => { mounted = false; };
   }, [user]);
 
   const handleCancel = async (id) => {
@@ -217,7 +234,7 @@ const AppointmentsPage = () => {
                     ) : appointments.length === 0 ? (
                       <tr><td colSpan={5} className="table-empty">
                         <span className="material-symbols-outlined" style={{ fontSize:48, color:'rgba(184,150,12,0.35)', display:'block', marginBottom:12 }}>calendar_month</span>
-                        <p style={{ fontFamily:'Cormorant Garamond,serif', fontSize:20, marginBottom:6 }}>No appointments yet</p>
+                        <p style={{ fontFamily:'Cormorant Garamond,serif', fontSize:20, marginBottom:6 }}>No appointments booked yet</p>
                         <p style={{ fontSize:13 }}>Book your first luxury session above</p>
                       </td></tr>
                     ) : appointments.map((a, idx) => {
