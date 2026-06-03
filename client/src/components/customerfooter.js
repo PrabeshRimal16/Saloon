@@ -112,7 +112,6 @@ const CustomerFooter = () => {
             <div className="lux-footer-contact-item">
               <span className="material-symbols-outlined lux-footer-contact-icon">mail</span>
               <span className="lux-footer-contact-text">
-                <a href="mailto:info@thesalonatreston.com" style={{ color: '#AAAAAA', textDecoration: 'none' }}>info@thesalonatreston.com</a>
                 <br />
                 <a href="mailto:thesalonatreston@gmail.com" style={{ color: '#AAAAAA', textDecoration: 'none' }}>thesalonatreston@gmail.com</a>
               </span>
