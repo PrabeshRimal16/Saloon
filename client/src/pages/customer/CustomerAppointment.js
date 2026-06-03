@@ -130,7 +130,7 @@ const AppointmentsPage = () => {
       onConfirm: async () => {
         try {
           const API_BASE = process.env.REACT_APP_API_URL || '';
-          const res = await fetch(`${API_BASE}/api/appointments/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: 'cancelled' }) });
+          const res = await fetch(`${API_BASE}/api/appointments/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: 'cancelled', cancelled_by: 'user' }) });
           if (!res.ok) throw new Error();
           const updated = await res.json();
           setAppointments(prev => prev.map(a => a.id === id ? { ...a, status: updated.status } : a));
