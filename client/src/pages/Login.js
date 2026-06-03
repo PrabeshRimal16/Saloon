@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { Eye, EyeOff } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
@@ -7,12 +8,18 @@ import { useAuth } from "../context/AuthContext";
 export default function Login() {
   const { refreshUser, loginWithGoogle, apiBaseUrl } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    const err = searchParams.get('error');
+    if (err) setError(err);
+  }, [searchParams]);
 
   const submit = async (e) => {
     e.preventDefault();

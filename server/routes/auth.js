@@ -17,7 +17,7 @@ router.get("/google", (req, res, next) => {
 // Google Callback
 router.get(
   "/google/callback",
-  passport.authenticate("google", { failureRedirect: `${CLIENT_URL}/login` }),
+  passport.authenticate("google", { failureRedirect: `${CLIENT_URL}/login?error=No%20account%20found.%20Please%20register%20to%20continue.` }),
   async (req, res) => {
     // If registration data was saved in session, create the user now
     if (req.session && req.session.registerData) {

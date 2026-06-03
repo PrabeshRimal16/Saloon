@@ -11,24 +11,19 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        // Check if user already exists
+        // Find user by google_id OR email
+        const email = profile.emails?.[0]?.value || null;
         const existing = await pool.query(
-          "SELECT * FROM users WHERE google_id = $1",
-          [profile.id]
+          "SELECT * FROM users WHERE google_id = $1 OR email = $2",
+          [profile.id, email]
         );
 
         if (existing.rows.length > 0) {
           return done(null, existing.rows[0]);
         }
 
-        // New user - do not auto-save. Return profile info and mark as new.
-        return done(null, {
-          google_id: profile.id,
-          email: profile.emails?.[0]?.value,
-          avatar_url: profile.photos?.[0]?.value,
-          name: profile.displayName,
-          isNewUser: true,
-        });
+        // No matching user — reject authentication (do not create auto-user)
+        return done(null, false, { message: "No account found. Please register to continue." });
       } catch (err) {
         done(err, null);
       }
