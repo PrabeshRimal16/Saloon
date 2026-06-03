@@ -116,7 +116,7 @@ export default function CustomerDashboard() {
 
         {/* ── Hero ── */}
         <section className="hero-section">
-          <img className="hero-img" src="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=2000&q=85" alt="Luxury Salon" />
+          <img className="hero-img" src="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=2000&q=85" alt="Luxury Salon" loading="lazy" onError={(e)=>{e.currentTarget.onerror=null;e.currentTarget.src='/placeholder.png';}} />
           <div className="hero-overlay" />
           <div className="hero-content">
             <div className="hero-eyebrow">

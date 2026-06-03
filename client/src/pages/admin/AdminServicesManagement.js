@@ -172,7 +172,7 @@ export default function AdminServicesManagement() {
                           <div className="flex items-center gap-4">
                             <label className="w-[52px] h-[52px] rounded-[10px] bg-[#FEF9ED] border border-[#E8D9A0] flex items-center justify-center overflow-hidden cursor-pointer relative shrink-0 group hover:border-[#C9A84C] transition-colors">
                               {img
-                                ? <img src={img} alt={service.name} className="w-full h-full object-cover" />
+                                ? <img src={img} alt={service.name || 'Service image'} className="w-full h-full object-cover" loading="lazy" onError={(e)=>{e.currentTarget.onerror=null;e.currentTarget.src='/placeholder.png';}} />
                                 : <span className="material-symbols-outlined text-[#C9A84C] text-[24px]">content_cut</span>
                               }
                               <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">

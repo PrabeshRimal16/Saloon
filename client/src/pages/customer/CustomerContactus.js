@@ -117,7 +117,7 @@ const ContactUsPage = () => {
 
           {/* Hero */}
           <section className="contact-hero">
-            <img className="contact-hero-img" src="https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?w=1600&q=80" alt="Salon interior" />
+            <img className="contact-hero-img" src="https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?w=1600&q=80" alt="Salon interior" loading="lazy" onError={(e)=>{e.currentTarget.onerror=null;e.currentTarget.src='/placeholder.png';}} />
             <div className="contact-hero-overlay" />
             <div className="contact-hero-content">
               <p className="contact-hero-eyebrow">Reach Out</p>

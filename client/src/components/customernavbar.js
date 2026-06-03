@@ -257,7 +257,7 @@ function CustomerNavbar() {
           <div className="lux-avatar-wrap" ref={avatarRef}>
             <button className="lux-avatar-btn" onClick={() => setShowAvatar(v => !v)}>
               {avatar
-                ? <img src={avatar} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ? <img src={avatar} alt={user?.name || user?.email || 'User avatar'} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e)=>{e.currentTarget.onerror=null;e.currentTarget.src='/placeholder.png';}} />
                 : <span className="lux-avatar-initials">{initials}</span>
               }
             </button>

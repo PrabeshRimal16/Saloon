@@ -18,6 +18,7 @@ export default function CompleteProfile() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [avatarError, setAvatarError] = useState(false);
+  const API_BASE = process.env.REACT_APP_API_URL || '';
 
   const handleChange = (e) => setForm((s) => ({ ...s, [e.target.name]: e.target.value }));
 
@@ -54,7 +55,7 @@ export default function CompleteProfile() {
 
     setLoading(true);
     try {
-      await axios.post("http://localhost:5000/api/users/complete-profile", {
+      await axios.post(`${API_BASE}/api/users/complete-profile`, {
         name: form.name,
         email,
         google_id,
@@ -100,12 +101,13 @@ export default function CompleteProfile() {
 
             <div className="relative w-20 h-20 mx-auto mb-6">
               {avatar_url && !avatarError ? (
-                <img
-                  src={avatar_url}
-                  alt={form.name || nameParam || 'avatar'}
-                  className="w-20 h-20 rounded-full object-cover ring-4 ring-amber-100"
-                  onError={(e) => { setAvatarError(true); e.currentTarget.style.display = 'none'; }}
-                />
+                  <img
+                    src={avatar_url}
+                    alt={form.name || 'Profile avatar'}
+                    loading="lazy"
+                    className="w-20 h-20 rounded-full object-cover ring-4 ring-amber-100"
+                    onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/placeholder.png'; }}
+                  />
               ) : (
                 <div className="w-20 h-20 rounded-full bg-amber-100 flex items-center justify-center text-2xl font-serif text-amber-700">
                   {(form.name || nameParam)?.charAt(0)?.toUpperCase() || 'U'}

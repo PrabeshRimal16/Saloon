@@ -147,7 +147,7 @@ const OffersAndRitualsPage = () => {
         {/* Gold top or image */}
         {imgUrl ? (
           <div style={{ overflow: 'hidden', position: 'relative', flexShrink: 0 }}>
-            <img src={imgUrl} alt={offer.title} className="offer-card-img" />
+            <img src={imgUrl} alt={offer.title || 'Offer image'} className="offer-card-img" loading="lazy" onError={(e)=>{e.currentTarget.onerror=null;e.currentTarget.src='/placeholder.png';}} />
             {discountPercent > 0 && (
               <div style={{ position:'absolute', top:12, left:12, background:'#B8960C', color:'white', fontFamily:'DM Sans,sans-serif', fontSize:13, fontWeight:700, padding:'3px 12px', borderRadius:50 }}>{discountPercent}% OFF</div>
             )}

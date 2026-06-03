@@ -213,7 +213,7 @@ export default function AdminOfferManagement() {
                     {/* Image / Placeholder */}
                     <div className="h-44 bg-gradient-to-br from-[#FEF9ED] to-[#E8D9A0] relative flex items-center justify-center overflow-hidden">
                       {imgSrc ? (
-                        <img src={imgSrc} alt={offer.title} className="w-full h-full object-cover" />
+                        <img src={imgSrc} alt={offer.title || 'Offer image'} className="w-full h-full object-cover" loading="lazy" onError={(e)=>{e.currentTarget.onerror=null;e.currentTarget.src='/placeholder.png';}} />
                       ) : (
                         <span className="material-symbols-outlined text-[#C9A84C] text-[64px] opacity-40">local_offer</span>
                       )}

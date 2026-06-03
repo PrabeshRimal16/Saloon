@@ -136,7 +136,7 @@ export default function AdminHeader({ title }) {
           ) : (
             <Link to="/admin/settings" className="flex items-center gap-3">
               {avatarSrc ? (
-                <img src={avatarSrc} alt={displayName} className="w-10 h-10 rounded-full object-cover border-[2px] border-primary" />
+                <img src={avatarSrc} alt={displayName || 'Admin avatar'} loading="lazy" className="w-10 h-10 rounded-full object-cover border-[2px] border-primary" onError={(e)=>{e.currentTarget.onerror=null;e.currentTarget.src='/placeholder.png';}} />
               ) : (
                 <div className="w-10 h-10 rounded-full bg-[#FEF9ED] border-[2px] border-primary flex items-center justify-center text-[14px] font-bold text-primary">
                   {avatarInitials(displayName, user?.email)}
