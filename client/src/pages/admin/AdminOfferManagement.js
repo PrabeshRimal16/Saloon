@@ -125,7 +125,7 @@ export default function AdminOfferManagement() {
   return (
     <div className="min-h-screen bg-[#F4F4F6]">
       <AdminSidebar />
-      <div className="ml-[220px] pt-[80px]">
+      <div className="admin-content pt-[80px]">
         <AdminHeader title="Offers & Promotions" />
 
         {/* Toast */}

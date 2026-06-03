@@ -64,6 +64,14 @@ export default function AdminHeader({ title }) {
     setSidebarCollapsed(v);
   }, []);
 
+  useEffect(() => {
+    const onToggle = (e) => {
+      try { setSidebarCollapsed(!!e.detail); } catch (err) {}
+    };
+    window.addEventListener('adminSidebarToggle', onToggle);
+    return () => window.removeEventListener('adminSidebarToggle', onToggle);
+  }, []);
+
   return (
     <header style={{ left: sidebarCollapsed ? 64 : 220 }} className="fixed top-0 right-0 z-40 bg-white border-b border-[#EDE8DC] h-[80px] flex items-center px-8 transition-all duration-300 admin-fade-up">
       <div className="flex items-center justify-between w-full">
