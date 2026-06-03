@@ -64,31 +64,29 @@ router.post('/:id/unrestrict', async (req, res) => {
 });
 
 // Create user
-router.post("/", async (req, res) => {
-  const { name, email, role, phone } = req.body;
+router.post("/register", async (req, res) => {
+  const { name, email, password, phone } = req.body;
   try {
+    // Require manual registration fields
+    if (!name || !name.trim() || !email || !password || !phone) {
+      return res.status(400).json({ error: "name, email, phone and password are required" });
+    }
+
+    const existing = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
+    if (existing.rows.length > 0) {
+      return res.status(400).json({ error: "Email already exists" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
     const result = await pool.query(
-      "INSERT INTO users (name, email, role, phone) VALUES ($1, $2, $3, $4) RETURNING *",
-      [name, email, role || "customer", phone]
+      "INSERT INTO users (name, email, password, phone, role) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+      [name.trim(), email, hashedPassword, phone, 'customer']
     );
     res.json(result.rows[0]);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
-
-//register
-const bcrypt = require("bcrypt");
-
-// Register
-router.post("/register", async (req, res) => {
-  const { name, email, google_id, avatar_url, password, phone } = req.body;
-  try {
-    if (!email) {
-      return res.status(400).json({ error: "Email is required" });
-    }
-    const existing = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
-    if (existing.rows.length > 0) {
       return res.status(400).json({ error: "Email already exists" });
     }
     let hashedPassword = null;

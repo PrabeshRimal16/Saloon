@@ -12,6 +12,13 @@ export default function Register() {
   const [error, setError] = useState("");
 
   const handleGoogle = () => {
+    // If user has filled registration fields, initiate Google *registration* flow
+    if (name && phone && password) {
+      const params = new URLSearchParams({ action: 'register', name, password, phone }).toString();
+      return window.location.assign(`${apiBaseUrl}/auth/google?${params}`);
+    }
+
+    // Otherwise perform a normal Google login
     if (typeof loginWithGoogle === "function") return loginWithGoogle();
     window.location.assign(`${apiBaseUrl}/auth/google`);
   };

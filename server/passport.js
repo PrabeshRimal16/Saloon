@@ -22,8 +22,14 @@ passport.use(
           return done(null, existing.rows[0]);
         }
 
-        // No matching user — reject authentication (do not create auto-user)
-        return done(null, false, { message: "No account found. Please register to continue." });
+        // New user - do not auto-save. Return profile info and mark as new.
+        return done(null, {
+          google_id: profile.id,
+          email: profile.emails?.[0]?.value,
+          avatar_url: profile.photos?.[0]?.value,
+          name: profile.displayName,
+          isNewUser: true,
+        });
       } catch (err) {
         done(err, null);
       }
