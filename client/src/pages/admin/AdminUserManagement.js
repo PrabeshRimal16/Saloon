@@ -467,6 +467,7 @@ const AdminUserManagement = () => {
               </tbody>
             </table>
           </div>
+          </div>
 
           {confirmDialog && (
             <div className="modal-backdrop">
