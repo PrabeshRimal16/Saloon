@@ -2,6 +2,7 @@ import React, { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import './styles/animations.css';
 import './styles/admin-animations.css';
+import './styles/responsive.css';
 import initScrollAnimations from './utils/scrollAnimations';
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Login from "./pages/Login";
@@ -29,6 +30,7 @@ const AdminSetting = lazy(() => import("./pages/admin/AdminSetting"));
 const AppRoutes = () => {
   const { user, loading } = useAuth();
   const location = useLocation();
+  const hideLayout = ['/login', '/register', '/complete-profile'].includes(location.pathname);
 
   // Initialize scroll animations once when routes are rendered
   // and re-run to pick up new elements after navigation
@@ -44,7 +46,7 @@ const AppRoutes = () => {
   return (
     <div className="route-wrapper">
       {/* Nav and footer are mounted outside the route switch so they don't unmount on navigation */}
-      {!location.pathname.startsWith('/admin') && <CustomerNavbar />}
+      {!hideLayout && !location.pathname.startsWith('/admin') && <CustomerNavbar />}
       <div className="page-fade">
       <Suspense fallback={<div className="flex items-center justify-center h-screen"><div className="animate-spin w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full" /></div>}>
       <Routes>
@@ -98,7 +100,7 @@ const AppRoutes = () => {
       </Suspense>
       </div>
 
-      {!location.pathname.startsWith('/admin') && <CustomerFooter />}
+      {!hideLayout && !location.pathname.startsWith('/admin') && <CustomerFooter />}
 
       {loading && (
         <div className="loading-overlay" aria-hidden>

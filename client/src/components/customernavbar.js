@@ -8,6 +8,7 @@ function CustomerNavbar() {
   const [notifications, setNotifications] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showAvatar, setShowAvatar] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const notifRef = useRef(null);
   const avatarRef = useRef(null);
@@ -101,10 +102,15 @@ function CustomerNavbar() {
           font-size: 18px; color: #AAAAAA; pointer-events: none;
         }
         .lux-search {
-          width: 180px; height: 36px;
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <button className="lux-hamburger" onClick={() => setShowMobileMenu(v => !v)} aria-label="Menu">
+                    <span className="material-symbols-outlined">menu</span>
+                  </button>
+                  <div className="lux-search-wrap">
           background: #F8F7F5; border: 1.5px solid transparent;
           border-radius: 50px; padding: 0 16px 0 36px;
           font-size: 13px; color: #1C1C1E;
+                </div>
           font-family: 'DM Sans', sans-serif;
           transition: all 0.2s; outline: none;
         }
@@ -162,6 +168,27 @@ function CustomerNavbar() {
 
         /* Avatar dropdown */
         .lux-avatar-drop {
+              {/* Mobile menu panel */}
+              {showMobileMenu && (
+                <div className="mobile-nav-panel">
+                  {navLinks.map(link => (
+                    <NavLink key={link.name} to={link.path} onClick={() => setShowMobileMenu(false)}>
+                      {link.name}
+                    </NavLink>
+                  ))}
+                  <div style={{ marginTop: 12 }}>
+                    {user ? (
+                      <>
+                        <div style={{ padding: '8px 6px', fontWeight: 600 }}>{user.name || user.email}</div>
+                        <button style={{ width: '100%', padding: 10, marginTop: 8 }} onClick={() => { navigate('/settings'); setShowMobileMenu(false); }}>My Profile</button>
+                        <button style={{ width: '100%', padding: 10, marginTop: 8, background: '#FFF5F5', border: '1px solid #E8E0D5' }} onClick={() => { logout(); setShowMobileMenu(false); }}>Sign Out</button>
+                      </>
+                    ) : (
+                      <button style={{ width: '100%', padding: 10 }} onClick={() => { navigate('/login'); setShowMobileMenu(false); }}>Sign In</button>
+                    )}
+                  </div>
+                </div>
+              )}
           position: absolute; top: calc(100% + 10px); right: 0;
           width: 200px; background: white;
           border: 1px solid #E8E0D5; border-radius: 12px;

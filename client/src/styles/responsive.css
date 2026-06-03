@@ -1,0 +1,75 @@
+/* Responsive helpers and overrides */
+
+/* Breakpoints
+   Mobile: max-width 480px
+   Tablet: max-width 768px
+*/
+
+/* Images */
+img { max-width: 100%; height: auto; display: block; }
+
+/* Table wrapper (ensure horizontal scroll on small screens) */
+.table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+/* Buttons and inputs full width on mobile/tablet */
+@media (max-width: 768px) {
+  input, textarea, select, button { width: 100%; }
+  .btn-book, .btn-confirm, .btn-book-new, .modal-input { width: 100% !important; box-sizing: border-box; }
+}
+
+/* Typography scaling */
+@media (max-width: 768px) {
+  h1 { font-size: 28px; }
+  h2 { font-size: 22px; }
+  h3 { font-size: 18px; }
+  p, input, button { font-size: 14px; }
+}
+@media (max-width: 480px) {
+  h1 { font-size: 24px; }
+  h2 { font-size: 18px; }
+  h3 { font-size: 16px; }
+}
+
+/* Layout spacing reductions */
+@media (max-width: 768px) {
+  .table-wrap, .svc-grid-wrap, .stats-row, .svc-controls, .appt-header { padding-left: 16px !important; padding-right: 16px !important; }
+  .lux-nav { padding-left: 12px !important; padding-right: 12px !important; height: 64px; }
+}
+
+@media (max-width: 480px) {
+  .lux-nav { height: 56px; }
+}
+
+/* Grids -> single column on smaller screens */
+@media (max-width: 768px) {
+  .svc-grid { grid-template-columns: 1fr !important; }
+  .stats-row { grid-template-columns: 1fr 1fr !important; }
+}
+@media (max-width: 480px) {
+  .stats-row { grid-template-columns: 1fr !important; }
+}
+
+/* Navbar responsive rules */
+@media (max-width: 768px) {
+  .lux-links { display: none !important; }
+  .lux-search { display: none !important; }
+  .lux-divider { display: none !important; }
+  .lux-notif-drop-wrap { display: none !important; }
+  .lux-avatar-wrap { display: none !important; }
+  .lux-hamburger { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 8px; background: #F8F7F5; border: none; cursor: pointer; }
+  .lux-hamburger .material-symbols-outlined { font-size: 22px; color: #6B6B6B; }
+
+  .mobile-nav-panel {
+    position: fixed; top: 64px; right: 0; left: 0; background: white; z-index: 250; border-top: 1px solid #E8E0D5; box-shadow: 0 8px 32px rgba(0,0,0,0.08); padding: 12px 16px;
+  }
+  .mobile-nav-panel a { display: block; padding: 12px 8px; border-radius: 8px; color: #1C1C1E; text-decoration: none; font-weight: 600; }
+}
+
+/* Reduce modal overlay padding on small screens */
+@media (max-width: 480px) {
+  .modal-overlay { padding: 12px; }
+  .modal-box { width: 100%; max-width: 420px; }
+}
+
+/* Utility: hide on mobile */
+.hide-on-mobile { display: none; }
