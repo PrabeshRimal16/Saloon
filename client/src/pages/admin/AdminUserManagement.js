@@ -6,12 +6,14 @@ export default function AdminUserManagement() {
   const [users, setUsers] = useState([]);
   const [query, setQuery] = useState('');
   const [confirmDialog, setConfirmDialog] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchUsers();
   }, []);
 
   const fetchUsers = async () => {
+    setLoading(true);
     try {
       const API_BASE = process.env.REACT_APP_API_URL || '';
       const res = await fetch(`${API_BASE}/api/users`);
@@ -19,13 +21,14 @@ export default function AdminUserManagement() {
       setUsers(data);
     } catch (err) {
       console.error('Failed to load users', err);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleAction = async () => {
     if (!confirmDialog) return;
     const { action, user } = confirmDialog;
-    
     try {
       const API_BASE = process.env.REACT_APP_API_URL || '';
       if (action === 'remove') {
@@ -65,115 +68,173 @@ export default function AdminUserManagement() {
     restricted: users.filter(u => String(u.status).toLowerCase() === 'restricted').length
   };
 
+  const getConfirmMessage = () => {
+    if (!confirmDialog) return '';
+    const { action, user } = confirmDialog;
+    if (action === 'remove') return `Permanently remove ${user.name || 'this user'}? This action cannot be undone.`;
+    if (action === 'restrict') return String(user.status).toLowerCase() === 'restricted'
+      ? `Unrestrict ${user.name || 'this user'}? They will regain full access.`
+      : `Restrict ${user.name || 'this user'}? They will lose access until unrestricted.`;
+    if (action === 'make_admin') return String(user.role).toLowerCase() === 'admin'
+      ? `Remove admin privileges from ${user.name || 'this user'}?`
+      : `Grant admin privileges to ${user.name || 'this user'}?`;
+    return '';
+  };
+
   return (
-    <div className="min-h-screen bg-cream">
+    <div className="min-h-screen bg-[#F4F4F6]">
       <AdminSidebar />
       <div className="ml-[240px] pt-[80px]">
         <AdminHeader title="Manage Users" />
-        
-        <main className="p-page animate-fade-in">
-          {/* Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-element-gap mb-section-gap">
-            <div className="bg-white rounded-card shadow-card p-6 border-l-[4px] border-primary">
-              <div className="text-[36px] font-bold font-heading text-dark leading-none mb-2">{stats.total}</div>
-              <div className="text-[12px] font-body font-bold text-grey uppercase tracking-widest">Total Users</div>
-            </div>
-            <div className="bg-white rounded-card shadow-card p-6 border-l-[4px] border-success">
-              <div className="text-[36px] font-bold font-heading text-dark leading-none mb-2">{stats.active}</div>
-              <div className="text-[12px] font-body font-bold text-grey uppercase tracking-widest">Active Members</div>
-            </div>
-            <div className="bg-white rounded-card shadow-card p-6 border-l-[4px] border-error">
-              <div className="text-[36px] font-bold font-heading text-dark leading-none mb-2">{stats.restricted}</div>
-              <div className="text-[12px] font-body font-bold text-grey uppercase tracking-widest">Restricted</div>
-            </div>
+
+        <main className="p-8 animate-fade-in">
+
+          {/* Stats Row */}
+          <div className="font-body text-[11px] text-primary uppercase tracking-widest mb-3">At a Glance</div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            {[
+              { label: 'Total Users', value: stats.total, icon: 'group', color: 'border-primary' },
+              { label: 'Active Members', value: stats.active, icon: 'verified_user', color: 'border-[#2D7A4F]' },
+              { label: 'Restricted', value: stats.restricted, icon: 'block', color: 'border-[#C0392B]' },
+            ].map((s) => (
+              <div key={s.label} className={`bg-white rounded-[10px] shadow-[0_2px_12px_rgba(0,0,0,0.06)] p-6 border-l-[4px] ${s.color} flex items-center justify-between`}>
+                <div>
+                  <div className="text-[40px] font-bold font-heading text-[#1A1A1A] leading-none mb-1">{s.value}</div>
+                  <div className="text-[11px] font-body font-bold text-[#6B6B6B] uppercase tracking-widest">{s.label}</div>
+                </div>
+                <span className="material-symbols-outlined text-primary text-[28px]">{s.icon}</span>
+              </div>
+            ))}
           </div>
 
-          <div className="bg-white rounded-card shadow-card overflow-hidden">
-            <div className="p-6 border-b border-light-border">
-              <div className="relative max-w-[400px]">
-                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-primary">search</span>
+          {/* Table Card */}
+          <div className="bg-white rounded-[10px] shadow-[0_2px_12px_rgba(0,0,0,0.06)] overflow-hidden">
+            {/* Search Bar */}
+            <div className="p-5 border-b border-[#EDE8DC] flex items-center justify-between">
+              <div className="relative w-full max-w-sm">
+                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#C9A84C] text-[20px] pointer-events-none">search</span>
                 <input
                   type="text"
                   placeholder="Search by name or email..."
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  className="input-field pl-10"
+                  className="w-full bg-[#F5F5F5] border border-transparent rounded-full py-2.5 pl-10 pr-4 text-[14px] font-body outline-none transition-all duration-200 focus:border-[#C9A84C] focus:bg-white focus:shadow-[0_0_0_3px_rgba(201,168,76,0.15)]"
                 />
+              </div>
+              <div className="text-[13px] text-[#6B6B6B] font-body ml-4 shrink-0">
+                {filteredUsers.length} of {users.length} users
               </div>
             </div>
 
+            {/* Table */}
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
-                <thead className="bg-[#FEF9ED] border-b border-light-border">
+                <thead className="bg-[#FAFAF8] border-b border-[#EDE8DC]">
                   <tr>
-                    <th className="px-6 py-4 font-body text-label text-grey uppercase tracking-widest">User</th>
-                    <th className="px-6 py-4 font-body text-label text-grey uppercase tracking-widest">Phone</th>
-                    <th className="px-6 py-4 font-body text-label text-grey uppercase tracking-widest">Role</th>
-                    <th className="px-6 py-4 font-body text-label text-grey uppercase tracking-widest">Joined Date</th>
-                    <th className="px-6 py-4 font-body text-label text-grey uppercase tracking-widest text-right">Actions</th>
+                    <th className="px-6 py-4 text-[11px] font-body font-bold text-[#6B6B6B] uppercase tracking-widest">User</th>
+                    <th className="px-6 py-4 text-[11px] font-body font-bold text-[#6B6B6B] uppercase tracking-widest">Phone</th>
+                    <th className="px-6 py-4 text-[11px] font-body font-bold text-[#6B6B6B] uppercase tracking-widest">Role</th>
+                    <th className="px-6 py-4 text-[11px] font-body font-bold text-[#6B6B6B] uppercase tracking-widest">Joined</th>
+                    <th className="px-6 py-4 text-[11px] font-body font-bold text-[#6B6B6B] uppercase tracking-widest">Status</th>
+                    <th className="px-6 py-4 text-[11px] font-body font-bold text-[#6B6B6B] uppercase tracking-widest text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredAppointments = filteredUsers.length === 0 ? (
+                  {loading ? (
                     <tr>
-                      <td colSpan="5" className="px-6 py-12 text-center">
-                        <div className="empty-state">
-                          <span className="material-symbols-outlined empty-state-icon">group</span>
-                          <p className="font-body text-body text-grey">No users found.</p>
+                      <td colSpan="6" className="px-6 py-16 text-center">
+                        <div className="flex flex-col items-center gap-3">
+                          <div className="w-8 h-8 border-4 border-[#EDE8DC] border-t-[#C9A84C] rounded-full animate-spin"></div>
+                          <p className="text-[14px] text-[#6B6B6B]">Loading users...</p>
+                        </div>
+                      </td>
+                    </tr>
+                  ) : filteredUsers.length === 0 ? (
+                    <tr>
+                      <td colSpan="6" className="px-6 py-16 text-center">
+                        <div className="flex flex-col items-center gap-3">
+                          <span className="material-symbols-outlined text-[#C9A84C] text-[48px] opacity-60">group_off</span>
+                          <p className="text-[16px] font-bold text-[#1A1A1A]">No users found</p>
+                          <p className="text-[14px] text-[#6B6B6B]">Try adjusting your search filter</p>
                         </div>
                       </td>
                     </tr>
                   ) : (
                     filteredUsers.map((user, index) => {
-                      const bgClass = index % 2 === 0 ? 'bg-white' : 'bg-[#FDFAF4]';
-                      const isRestricted = String(user.status).toLowerCase() === 'restricted';
-                      const isAdmin = String(user.role).toLowerCase() === 'admin';
-                      
+                      const isRestricted = String(user.status || '').toLowerCase() === 'restricted';
+                      const isAdmin = String(user.role || '').toLowerCase() === 'admin';
+                      const rowBg = index % 2 === 0 ? 'bg-white' : 'bg-[#FAFAF8]';
+                      const initials = (user.name || 'U').split(' ').map(p => p[0]).slice(0, 2).join('').toUpperCase();
+
                       return (
-                        <tr key={user.id} className={`${bgClass} border-b border-light-border hover:bg-[#FEF9ED] transition-colors`}>
+                        <tr key={user.id} className={`${rowBg} border-b border-[#EDE8DC] hover:bg-[#FEF9ED] transition-colors`}>
                           <td className="px-6 py-4">
                             <div className="flex items-center gap-4">
-                              <div className="relative">
-                                <div className="w-[48px] h-[48px] rounded-full border-2 border-primary bg-[#E8D9A0] flex items-center justify-center text-primary font-bold text-[18px]">
-                                  {(user.name || 'U').slice(0, 2).toUpperCase()}
+                              <div className="relative shrink-0">
+                                <div className="w-[44px] h-[44px] rounded-full border-2 border-[#C9A84C] bg-[#FEF9ED] flex items-center justify-center text-[#C9A84C] font-bold text-[15px]">
+                                  {initials}
                                 </div>
-                                <div className="absolute bottom-0 right-0 w-3 h-3 bg-success border-2 border-white rounded-full"></div>
+                                <div className={`absolute bottom-0 right-0 w-2.5 h-2.5 border-2 border-white rounded-full ${isRestricted ? 'bg-[#C0392B]' : 'bg-[#2D7A4F]'}`}></div>
                               </div>
                               <div>
-                                <div className="font-body text-[14px] font-bold text-dark">{user.name || 'Unknown'}</div>
-                                <div className="font-body text-[12px] text-grey">{user.email}</div>
+                                <div className="font-body text-[14px] font-bold text-[#1A1A1A]">{user.name || 'Unknown'}</div>
+                                <div className="font-body text-[12px] text-[#6B6B6B]">{user.email}</div>
                               </div>
                             </div>
                           </td>
-                          <td className="px-6 py-4 font-body text-[14px] text-grey">
+                          <td className="px-6 py-4 font-body text-[14px] text-[#6B6B6B]">
                             {user.phone || '—'}
                           </td>
                           <td className="px-6 py-4">
-                            <span className={`px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest ${isAdmin ? 'bg-primary text-white' : 'bg-[#F5F5F5] text-grey border border-light-border'}`}>
-                              {user.role || 'Customer'}
+                            <span className={`px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest ${
+                              isAdmin
+                                ? 'bg-[#C9A84C] text-white'
+                                : 'bg-[#F5F5F5] text-[#6B6B6B] border border-[#EDE8DC]'
+                            }`}>
+                              {isAdmin ? 'Admin' : 'Customer'}
                             </span>
                           </td>
-                          <td className="px-6 py-4 font-body text-[14px] text-grey">
-                            {user.created_at ? new Date(user.created_at).toLocaleDateString() : '—'}
+                          <td className="px-6 py-4 font-body text-[14px] text-[#6B6B6B]">
+                            {user.created_at ? new Date(user.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}
+                          </td>
+                          <td className="px-6 py-4">
+                            <span className={`px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest ${
+                              isRestricted
+                                ? 'bg-[#FDEDED] text-[#C0392B] border border-[#FBBAB7]'
+                                : 'bg-[#EAF5EF] text-[#2D7A4F] border border-[#A8D8BC]'
+                            }`}>
+                              {isRestricted ? 'Restricted' : 'Active'}
+                            </span>
                           </td>
                           <td className="px-6 py-4 text-right">
                             <div className="flex justify-end gap-2">
-                              <button 
-                                onClick={() => setConfirmDialog({ action: 'restrict', user })} 
-                                className={`btn !px-3 !py-1 text-[13px] ${isRestricted ? 'bg-success text-white' : 'btn-secondary'}`}
+                              <button
+                                onClick={() => setConfirmDialog({ action: 'restrict', user })}
+                                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] text-[12px] font-bold border transition-all duration-200 hover:scale-[1.02] ${
+                                  isRestricted
+                                    ? 'border-[#2D7A4F] text-[#2D7A4F] hover:bg-[#EAF5EF]'
+                                    : 'border-[#EDE8DC] text-[#6B6B6B] hover:border-[#C9A84C] hover:text-[#C9A84C]'
+                                }`}
                               >
-                                {isRestricted ? 'Unrestrict' : 'Restrict'}
+                                <span className="material-symbols-outlined text-[14px]">{isRestricted ? 'lock_open' : 'block'}</span>
+                                {isRestricted ? 'Unblock' : 'Restrict'}
                               </button>
-                              <button 
-                                onClick={() => setConfirmDialog({ action: 'make_admin', user })} 
-                                className="btn bg-dark text-white hover:bg-black !px-3 !py-1 text-[13px]"
+                              <button
+                                onClick={() => setConfirmDialog({ action: 'make_admin', user })}
+                                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] text-[12px] font-bold border transition-all duration-200 hover:scale-[1.02] ${
+                                  isAdmin
+                                    ? 'border-[#1A1A1A] text-[#1A1A1A] hover:bg-[#F5F5F5]'
+                                    : 'border-[#C9A84C] text-[#C9A84C] hover:bg-[#FEF9ED]'
+                                }`}
                               >
-                                {isAdmin ? 'Remove Admin' : 'Make Admin'}
+                                <span className="material-symbols-outlined text-[14px]">admin_panel_settings</span>
+                                {isAdmin ? 'Demote' : 'Make Admin'}
                               </button>
-                              <button 
-                                onClick={() => setConfirmDialog({ action: 'remove', user })} 
-                                className="btn bg-error text-white hover:bg-[#a02f23] !px-3 !py-1 text-[13px]"
+                              <button
+                                onClick={() => setConfirmDialog({ action: 'remove', user })}
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] text-[12px] font-bold border border-[#FBBAB7] text-[#C0392B] hover:bg-[#FDEDED] transition-all duration-200 hover:scale-[1.02]"
                               >
+                                <span className="material-symbols-outlined text-[14px]">delete</span>
                                 Remove
                               </button>
                             </div>
@@ -190,30 +251,42 @@ export default function AdminUserManagement() {
 
         {/* Confirmation Modal */}
         {confirmDialog && (
-          <div className="modal-overlay">
-            <div className="luxury-modal">
-              <div className="flex items-center gap-4 mb-6">
-                <div className={`w-12 h-12 rounded-full flex items-center justify-center ${confirmDialog.action === 'remove' ? 'bg-[#FDEDED] text-error' : 'bg-[#FEF9ED] text-primary'}`}>
-                  <span className="material-symbols-outlined text-[24px]">
-                    {confirmDialog.action === 'remove' ? 'warning' : 'admin_panel_settings'}
+          <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 animate-fade-in px-4">
+            <div className="bg-white rounded-[10px] w-full max-w-[440px] shadow-[0_8px_32px_rgba(0,0,0,0.15)] overflow-hidden">
+              <div className={`p-5 border-b border-[#EDE8DC] flex items-center gap-3 ${confirmDialog.action === 'remove' ? 'bg-[#FDEDED]' : 'bg-[#FEF9ED]'}`}>
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                  confirmDialog.action === 'remove' ? 'bg-[#C0392B] text-white' : 'bg-[#C9A84C] text-white'
+                }`}>
+                  <span className="material-symbols-outlined text-[20px]">
+                    {confirmDialog.action === 'remove' ? 'warning' : 'info'}
                   </span>
                 </div>
                 <div>
-                  <h2 className="font-heading text-h3 text-dark">Confirm Action</h2>
+                  <h2 className="font-heading text-[18px] font-bold text-[#1A1A1A]">Confirm Action</h2>
+                  <p className="text-[12px] text-[#6B6B6B] capitalize">{confirmDialog.action.replace('_', ' ')} · {confirmDialog.user.name}</p>
                 </div>
               </div>
-              
-              <div className="font-body text-body text-grey mb-8">
-                {confirmDialog.action === 'remove' && `Are you sure you want to permanently remove ${confirmDialog.user.name}? This action cannot be undone.`}
-                {confirmDialog.action === 'restrict' && `Are you sure you want to change the restriction status for ${confirmDialog.user.name}?`}
-                {confirmDialog.action === 'make_admin' && `Are you sure you want to change the role for ${confirmDialog.user.name}?`}
-              </div>
 
-              <div className="flex justify-end gap-3">
-                <button onClick={() => setConfirmDialog(null)} className="btn btn-secondary">Cancel</button>
-                <button onClick={handleAction} className={`btn ${confirmDialog.action === 'remove' ? 'btn-danger' : 'btn-primary'}`}>
-                  Confirm
-                </button>
+              <div className="p-6">
+                <p className="font-body text-[14px] text-[#6B6B6B] leading-relaxed mb-6">
+                  {getConfirmMessage()}
+                </p>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setConfirmDialog(null)}
+                    className="flex-1 px-4 py-2.5 border border-[#EDE8DC] text-[#6B6B6B] rounded-[8px] font-body text-[14px] font-medium hover:bg-[#F5F5F5] transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleAction}
+                    className={`flex-1 px-4 py-2.5 rounded-[8px] font-body text-[14px] font-bold text-white transition-all hover:scale-[1.02] ${
+                      confirmDialog.action === 'remove' ? 'bg-[#C0392B] hover:bg-[#a93226]' : 'bg-[#C9A84C] hover:bg-[#b5943b]'
+                    }`}
+                  >
+                    {confirmDialog.action === 'remove' ? 'Yes, Remove' : 'Confirm'}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
