@@ -267,7 +267,7 @@ const OffersAndRitualsPage = () => {
             <div style={{ maxWidth: 1200, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 80, alignItems: 'center' }}>
               <div>
                 <p style={{ fontFamily:'DM Sans,sans-serif', fontSize:11, fontWeight:600, letterSpacing:'4px', textTransform:'uppercase', color:'#B8960C', marginBottom:14 }}>Why Choose Us</p>
-                <h2 style={{ fontFamily:'Cormorant Garamond,Georgia,serif', fontSize:44, fontWeight:400, color:'#1C1C1E', margin:'0 0 28px', lineHeight:1.15 }}>The L'Atelier Distinction</h2>
+                <h2 style={{ fontFamily:'Cormorant Garamond,Georgia,serif', fontSize:44, fontWeight:400, color:'#1C1C1E', margin:'0 0 28px', lineHeight:1.15 }}>The Salon At Reston Distinction</h2>
                 {[
                   { icon:'content_cut', title:'Master Artistry', desc:'Every professional is a certified master, trained in the latest global trends and classic techniques.' },
                   { icon:'star', title:'Premium Curations', desc:'We partner exclusively with luxury brands like Oribe and Valmont for the highest standard of care.' },
@@ -284,7 +284,7 @@ const OffersAndRitualsPage = () => {
                 ))}
               </div>
               <div style={{ borderRadius:16, overflow:'hidden', boxShadow:'0 12px 48px rgba(0,0,0,0.12)' }}>
-                <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=800&q=80" alt="Atelier" style={{ width:'100%', height:400, objectFit:'cover', display:'block' }} />
+                <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=800&q=80" alt="Salon" style={{ width:'100%', height:400, objectFit:'cover', display:'block' }} />
               </div>
             </div>
           </section>

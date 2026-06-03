@@ -202,7 +202,7 @@ export default function CustomerServices() {
             <div className="sig-inner">
               <div>
                 <p style={{ fontFamily:'DM Sans,sans-serif', fontSize:11, fontWeight:600, letterSpacing:'4px', textTransform:'uppercase', color:'#B8960C', marginBottom:14 }}>Unparalleled Luxury</p>
-                <h2 style={{ fontFamily:'Cormorant Garamond,Georgia,serif', fontSize:44, fontWeight:400, color:'white', margin:'0 0 20px', lineHeight:1.15 }}>The Signature Atelier Experience</h2>
+                <h2 style={{ fontFamily:'Cormorant Garamond,Georgia,serif', fontSize:44, fontWeight:400, color:'white', margin:'0 0 20px', lineHeight:1.15 }}>The Signature Salon Experience</h2>
                 <p style={{ fontFamily:'DM Sans,sans-serif', fontSize:15, color:'rgba(255,255,255,0.65)', marginBottom:32, lineHeight:1.75 }}>Every appointment includes a complimentary consultation, artisanal teas or champagne, and access to our private relaxation lounge.</p>
                 {['Complimentary Scalp Analysis','Personal Style Portfolio','Post-Treatment Maintenance Plan'].map(item => (
                   <div key={item} style={{ display:'flex', alignItems:'center', gap:12, marginBottom:14 }}>

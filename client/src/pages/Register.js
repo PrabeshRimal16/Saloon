@@ -63,7 +63,7 @@ export default function Register() {
     <div className="min-h-screen flex items-center justify-center bg-cream px-page py-10 animate-fade-in">
       <div className="w-full max-w-[400px] bg-white p-card rounded-card shadow-card">
         <div className="text-center mb-section-gap">
-          <h1 className="font-heading text-h2 text-primary tracking-widest uppercase mb-2">L'Atelier</h1>
+          <h1 className="font-heading text-h2 text-primary tracking-widest uppercase mb-2">The Salon At Reston</h1>
           <p className="font-body text-body text-grey">Create your luxury account.</p>
         </div>
 
