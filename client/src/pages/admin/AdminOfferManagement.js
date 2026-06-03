@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import AdminSidebar from "../../components/AdminSidebar";
 import AdminHeader from "../../components/AdminHeader";
+import ConfirmModal from '../../components/ConfirmModal';
 
 export default function AdminOfferManagement() {
   const [offers, setOffers] = useState([]);
@@ -65,14 +66,30 @@ export default function AdminOfferManagement() {
   };
 
   const handleDeleteOffer = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this offer?")) return;
-    try {
-      const res = await fetch(`${API_BASE}/api/offers/${id}`, { method: "DELETE" });
-      if (res.ok) { await fetchOffers(); showToast("Offer deleted."); }
-    } catch (err) {
-      showToast("Failed to delete offer", 'error');
-    }
+    setPendingDelete(id);
+    setConfirmProps({
+      title: 'Delete this offer?',
+      message: 'This cannot be undone.',
+      confirmText: 'Delete',
+      confirmColor: '#C0392B',
+      onConfirm: async () => {
+        try {
+          const res = await fetch(`${API_BASE}/api/offers/${id}`, { method: "DELETE" });
+          if (res.ok) { await fetchOffers(); showToast("Offer deleted."); }
+        } catch (err) {
+          showToast("Failed to delete offer", 'error');
+        } finally {
+          setConfirmOpen(false);
+          setPendingDelete(null);
+        }
+      }
+    });
+    setConfirmOpen(true);
   };
+
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmProps, setConfirmProps] = useState({});
+  const [pendingDelete, setPendingDelete] = useState(null);
 
   const handleEditOffer = (offer) => {
     setEditingId(offer.id);
