@@ -7,6 +7,16 @@ import { useNavigate } from "react-router-dom";
 
 const C = { gold: '#C9A84C', dark: '#1A1A1A', grey: '#6B6B6B', border: '#EDE8DC', bg: '#F4F4F6', card: '#FFFFFF', success: '#2D7A4F', error: '#C0392B' };
 
+function formatTime(timeStr) {
+  if (!timeStr) return null;
+  const parts = timeStr.split(':');
+  if (parts.length < 2) return timeStr;
+  const h = parseInt(parts[0], 10);
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  const h12 = h % 12 || 12;
+  return `${h12}:${parts[1]} ${ampm}`;
+}
+
 function StatCard({ icon, label, value, sub, loading }) {
   return (
     <div className="bg-white rounded-[12px] border-l-[4px] border-[#C9A84C] shadow-[0_2px_16px_rgba(0,0,0,0.07)] p-6 flex items-start justify-between hover:shadow-[0_6px_24px_rgba(0,0,0,0.1)] hover:-translate-y-0.5 transition-all duration-200">
@@ -285,8 +295,14 @@ export default function AdminDashboard() {
                                 ? new Date(app.appointment_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
                                 : '—'}
                             </div>
-                            {app.appointment_time && (
-                              <div className="text-[12px] text-[#6B6B6B]">{app.appointment_time}</div>
+                            {app.appointment_time ? (
+                              <div className="text-[12px] text-[#6B6B6B] mt-0.5">
+                                {formatTime(app.appointment_time)}
+                              </div>
+                            ) : (
+                              <div className="text-[12px] text-[#AAAAAA] italic mt-0.5">
+                                Time not set
+                              </div>
                             )}
                           </td>
                           <td className="px-6 py-4">
