@@ -132,7 +132,7 @@ export default function AdminOfferManagement() {
           </div>
         )}
 
-        <main className="p-8 animate-fade-in">
+        <div className="p-8 animate-fade-in">
           {/* Stats Row */}
           <div className="font-body text-[11px] text-[#C9A84C] uppercase tracking-widest mb-3">Overview</div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -250,7 +250,7 @@ export default function AdminOfferManagement() {
               })}
             </div>
           )}
-        </main>
+        </div>
         <ConfirmModal
           isOpen={confirmOpen}
           title={confirmProps.title}

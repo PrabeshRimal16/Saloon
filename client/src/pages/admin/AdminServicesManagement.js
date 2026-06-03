@@ -257,4 +257,90 @@ export default function AdminServicesManagement() {
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[11px] font-bold text-[#6B6B6B] uppercase tracking-widest mb-1.5">Category *</label>
+                    <input type="text" required value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} className={INPUT_CLS} placeholder="e.g., Hair Care" />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-bold text-[#6B6B6B] uppercase tracking-widest mb-1.5">Price ($) *</label>
+                    <input type="number" required min="0" value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} className={INPUT_CLS} placeholder="e.g., 2500" />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-[#6B6B6B] uppercase tracking-widest mb-1.5">Duration (minutes)</label>
+                  <input type="number" min="0" value={formData.duration} onChange={e => setFormData({...formData, duration: e.target.value})} className={INPUT_CLS} placeholder="e.g., 60" />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-[#6B6B6B] uppercase tracking-widest mb-1.5">Description *</label>
+                  <textarea required rows={3} value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className={INPUT_CLS + ' resize-none'} placeholder="Describe what the service includes..." />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-[#6B6B6B] uppercase tracking-widest mb-1.5">Service Image</label>
+                  <div className="relative border-2 border-dashed border-[#C9A84C] bg-[#FEF9ED] rounded-[8px] h-32 flex flex-col items-center justify-center overflow-hidden cursor-pointer hover:bg-[rgba(201,168,76,0.08)] transition-colors">
+                    <input type="file" accept="image/*" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onChange={e => setFormData({...formData, image: e.target.files[0]})} />
+                    {formData.image
+                      ? <><img src={URL.createObjectURL(formData.image)} alt="preview" className="absolute inset-0 w-full h-full object-cover" /><div className="absolute inset-0 bg-black/20 flex items-center justify-center"><span className="text-white text-[12px] font-bold bg-black/50 px-2 py-1 rounded">Change Image</span></div></>
+                      : editingService?.imageUrl || editingService?.image_url
+                        ? <><img src={(editingService.image_url || editingService.imageUrl).startsWith('/') ? `${API_BASE}${editingService.image_url || editingService.imageUrl}` : (editingService.image_url || editingService.imageUrl)} alt="current" className="absolute inset-0 w-full h-full object-cover" /><div className="absolute inset-0 bg-black/20 flex items-center justify-center"><span className="text-white text-[12px] font-bold bg-black/50 px-2 py-1 rounded">Replace Image</span></div></>
+                        : <><span className="material-symbols-outlined text-[#C9A84C] text-[32px] mb-1">cloud_upload</span><p className="text-[13px] text-[#1A1A1A] font-medium">Click to upload image</p><p className="text-[11px] text-[#6B6B6B]">JPG, PNG up to 5MB</p></>
+                    }
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 pt-2">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <div className="relative">
+                      <input type="checkbox" className="sr-only" checked={formData.active} onChange={e => setFormData({...formData, active: e.target.checked})} />
+                      <div className={`w-10 h-5 rounded-full transition-colors ${formData.active ? 'bg-[#C9A84C]' : 'bg-[#E0E0E0]'}`} />
+                      <div className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${formData.active ? 'translate-x-5' : ''}`} />
+                    </div>
+                    <span className="text-[13px] font-medium text-[#1A1A1A]">Mark as Active</span>
+                  </label>
+                </div>
+
+                <div className="flex gap-3 pt-2 border-t border-[#EDE8DC]">
+                  <button type="button" onClick={() => { setShowForm(false); setEditingService(null); }} className="flex-1 py-2.5 border border-[#EDE8DC] text-[#6B6B6B] rounded-[8px] text-[14px] font-medium hover:bg-[#F5F5F5] transition-colors">
+                    Cancel
+                  </button>
+                  <button type="submit" className="flex-1 py-2.5 bg-[#C9A84C] text-white rounded-[8px] text-[14px] font-bold hover:bg-[#b5943b] shadow-[0_4px_16px_rgba(201,168,76,0.3)] transition-all">
+                    {editingService ? 'Save Changes' : 'Create Service'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Delete Confirm Modal */}
+        {deleteConfirm && (
+          <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center px-4">
+            <div className="bg-white rounded-[12px] w-full max-w-[400px] shadow-[0_16px_48px_rgba(0,0,0,0.2)] overflow-hidden">
+              <div className="p-6 bg-[#FDEDED] flex items-center gap-3 border-b border-[#FBBAB7]">
+                <div className="w-10 h-10 rounded-full bg-[#C0392B] flex items-center justify-center">
+                  <span className="material-symbols-outlined text-white text-[20px]">warning</span>
+                </div>
+                <div>
+                  <h2 className="font-bold text-[18px] text-[#1A1A1A]">Delete Service</h2>
+                  <p className="text-[12px] text-[#C0392B]">This action is irreversible</p>
+                </div>
+              </div>
+              <div className="p-6">
+                <p className="text-[14px] text-[#6B6B6B] leading-relaxed mb-6">
+                  Are you sure you want to delete <strong className="text-[#1A1A1A]">"{deleteConfirm.name}"</strong>? All associated data will be permanently removed.
+                </p>
+                <div className="flex gap-3">
+                  <button onClick={() => setDeleteConfirm(null)} className="flex-1 py-2.5 border border-[#EDE8DC] text-[#6B6B6B] rounded-[8px] font-medium hover:bg-[#F5F5F5] transition-colors">Cancel</button>
+                  <button onClick={() => handleDelete(deleteConfirm.id)} className="flex-1 py-2.5 bg-[#C0392B] text-white rounded-[8px] font-bold hover:bg-[#a93226] transition-all">Delete Service</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </main>
+    </div>
+  );
+}
 *** End Patch
