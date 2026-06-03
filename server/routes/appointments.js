@@ -13,11 +13,24 @@ const pool = require("../db");
 
 // Customer - Book an appointment
 router.post("/", async (req, res) => {
-  const { user_id, service_id, appointment_date, appointment_time, phone } = req.body;
+  // Debug: log session and user to ensure passport session is restored
+  try {
+    console.log('POST /api/appointments - req.user:', req.user);
+    console.log('POST /api/appointments - req.sessionID:', req.sessionID);
+  } catch (e) { console.error('Error logging session/user', e && e.message); }
+
+  const { user_id: bodyUserId, service_id, appointment_date, appointment_time, phone } = req.body;
+  // Prefer authenticated user from session when available
+  const userId = (req.user && (req.user.id || req.user.user_id || req.user.google_id)) ? (req.user.id || req.user.user_id) : bodyUserId;
+
+  if (!userId) {
+    return res.status(401).json({ error: 'Not authenticated' });
+  }
+
   try {
     const result = await pool.query(
       "INSERT INTO appointments (user_id, service_id, appointment_date, appointment_time, phone) VALUES ($1, $2, $3, $4, $5) RETURNING *",
-      [user_id, service_id, appointment_date, appointment_time, phone]
+      [userId, service_id, appointment_date, appointment_time, phone]
     );
     // Notify admins of new booking
     try {
@@ -32,6 +45,10 @@ router.post("/", async (req, res) => {
 
 // Customer - View their own appointments
 router.get("/my/:user_id", async (req, res) => {
+  try {
+    console.log(`GET /api/appointments/my/${req.params.user_id} - req.user:`, req.user ? (req.user.id || req.user.email) : null);
+    console.log(`GET /api/appointments/my/${req.params.user_id} - sessionID:`, req.sessionID);
+  } catch (e) { /* ignore logging errors */ }
   try {
     const result = await pool.query(
       "SELECT a.*, s.name as service_name, s.price, s.duration as service_duration FROM appointments a JOIN services s ON a.service_id = s.id WHERE a.user_id = $1",

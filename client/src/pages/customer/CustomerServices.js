@@ -124,6 +124,7 @@ export default function CustomerServices() {
       const API_BASE = process.env.REACT_APP_API_URL || '';
       const res = await fetch(`${API_BASE}/api/appointments`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ user_id: user.id, service_id: bookingService.id, appointment_date: bookingDate, appointment_time: bookingTime, phone: bookingPhone })
       });
       if (!res.ok) {

@@ -104,7 +104,7 @@ const AppointmentsPage = () => {
     const doFetch = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`${API_BASE}/api/appointments/my/${user.id}`);
+        const res = await fetch(`${API_BASE}/api/appointments/my/${user.id}`, { credentials: 'include' });
         const data = await res.json();
         if (!mounted) return;
         const mapped = (Array.isArray(data) ? data : []).map(a => {
@@ -146,7 +146,7 @@ const AppointmentsPage = () => {
       onConfirm: async () => {
         try {
           const API_BASE = process.env.REACT_APP_API_URL || '';
-          const res = await fetch(`${API_BASE}/api/appointments/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: 'cancelled', cancelled_by: 'user' }) });
+          const res = await fetch(`${API_BASE}/api/appointments/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ status: 'cancelled', cancelled_by: 'user' }) });
           if (!res.ok) throw new Error();
           const updated = await res.json();
           setAppointments(prev => prev.map(a => a.id === id ? { ...a, status: updated.status } : a));

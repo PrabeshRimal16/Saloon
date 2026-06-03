@@ -71,6 +71,7 @@ export default function AdminAppointmentManagement() {
       const res = await fetch(`${API_BASE}/api/appointments/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
+        credentials: 'include',
         body: JSON.stringify({ status }),
       });
       if (!res.ok) throw new Error("Failed to update");
