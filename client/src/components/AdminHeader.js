@@ -58,9 +58,14 @@ export default function AdminHeader({ title }) {
 
   const displayName = user?.name || user?.displayName || user?.email || '';
   const avatarSrc = user?.avatar_url || user?.photo || user?.avatar || user?.avatarUrl || user?.picture || null;
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  useEffect(() => {
+    const v = localStorage.getItem('admin_sidebar_collapsed') === '1';
+    setSidebarCollapsed(v);
+  }, []);
 
   return (
-    <header className="fixed top-0 left-[220px] right-0 z-40 bg-white border-b border-[#EDE8DC] h-[80px] flex items-center px-8 transition-all duration-300 admin-fade-up">
+    <header style={{ left: sidebarCollapsed ? 64 : 220 }} className="fixed top-0 right-0 z-40 bg-white border-b border-[#EDE8DC] h-[80px] flex items-center px-8 transition-all duration-300 admin-fade-up">
       <div className="flex items-center justify-between w-full">
         <div>
           <h1 className="font-heading text-[20px] font-bold text-dark">{title || 'Admin'}</h1>

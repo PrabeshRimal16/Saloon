@@ -42,6 +42,13 @@ export default function AdminAppointmentManagement() {
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [updatingId, setUpdatingId] = useState(null);
 
+  // close drawer on Escape
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === 'Escape') setSelectedAppointment(null); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
   useEffect(() => {
     const API_BASE = process.env.REACT_APP_API_URL || "";
     setLoading(true);
@@ -328,11 +335,12 @@ export default function AdminAppointmentManagement() {
                         <tr
                           key={app.id}
                           onClick={() => setSelectedAppointment(app)}
-                          className={`border-b border-[#EDE8DC] hover:bg-[#FEF9ED] transition-colors cursor-pointer border-l-4 ${
+                          className={`table-row border-b border-[#EDE8DC] hover:bg-[#FEF9ED] transition-colors cursor-pointer border-l-4 ${
                             isSelected
-                              ? "bg-[rgba(201,168,76,0.06)] border-l-[#C9A84C]"
-                              : rowBg + " border-l-transparent"
+                              ? 'bg-[rgba(201,168,76,0.06)] border-l-[#C9A84C]'
+                              : rowBg + ' border-l-transparent'
                           }`}
+                          style={{ animationDelay: `${index * 0.04}s` }}
                         >
                           <td className="px-6 py-4 align-middle whitespace-nowrap">
                             <div className="flex items-center gap-3">
@@ -448,9 +456,7 @@ export default function AdminAppointmentManagement() {
 
       {/* ── Side Detail Drawer ── */}
       <div
-        className={`fixed top-0 right-0 h-screen w-[420px] bg-white z-50 transform transition-transform duration-300 ease-in-out shadow-[-4px_0_32px_rgba(0,0,0,0.12)] border-l border-[#EDE8DC] ${
-          selectedAppointment ? "translate-x-0" : "translate-x-full"
-        }`}
+        className={`fixed top-0 right-0 h-screen w-[420px] bg-white z-50 transform transition-transform duration-300 ease-in-out shadow-[-4px_0_32px_rgba(0,0,0,0.12)] border-l border-[#EDE8DC] ${selectedAppointment ? 'translate-x-0 drawer-slide' : 'translate-x-full'}`}
       >
         {selectedAppointment && (
           <div className="flex flex-col h-full">

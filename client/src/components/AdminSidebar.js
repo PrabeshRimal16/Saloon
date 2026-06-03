@@ -43,7 +43,7 @@ export default function AdminSidebar() {
       <nav className="flex-1 overflow-auto py-4">
         <ul className="flex flex-col gap-1">
           {navItems.map((item, idx) => (
-            <li key={item.to} className={`nav-item ${collapsed ? 'collapsed' : ''}`} style={{ animationDelay: `${idx * 0.05}s` }}>
+            <li key={item.to} className={`nav-item stagger-item ${collapsed ? 'collapsed' : ''}`} style={{ animationDelay: `${idx * 0.05}s` }}>
               <NavLink 
                 to={item.to}
                 end={item.end}
