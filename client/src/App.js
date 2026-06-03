@@ -34,19 +34,17 @@ const AppRoutes = () => {
   const isLoggedIn = Boolean(user);
   const isAdmin = user?.role === "admin";
   const defaultAuthedPath = isAdmin ? "/admin" : "/customer";
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  const authReady = !loading;
 
   return (
     <div className="route-wrapper">
+      <div key={location.pathname} className="page-fade">
       <Routes>
       <Route
         path="/login"
-        element={!isLoggedIn ? <Login /> : <Navigate to={defaultAuthedPath} />}
+        element={authReady ? (!isLoggedIn ? <Login /> : <Navigate to={defaultAuthedPath} />) : <div />}
       />
-      <Route path="/admin" element={isAdmin ? <AdminLayout /> : <Navigate to={isLoggedIn ? "/customer" : "/login"} />}>
+      <Route path="/admin" element={authReady ? (isAdmin ? <AdminLayout /> : (isLoggedIn ? <Navigate to="/customer" /> : <Navigate to="/login" />)) : <div />}>
         <Route index element={<AdminDashboard />} />
         <Route path="services" element={<AdminServicesManagement />} />
         <Route path="appointments" element={<AdminAppointmentManagement />} />
@@ -56,11 +54,7 @@ const AppRoutes = () => {
       </Route>
       <Route
         path="/customer"
-        element={
-          isLoggedIn && !isAdmin
-            ? <CustomerDashboard />
-            : <Navigate to={isLoggedIn ? "/admin" : "/login"} />
-        }
+        element={authReady ? (isLoggedIn && !isAdmin ? <CustomerDashboard /> : (isLoggedIn ? <Navigate to="/admin" /> : <Navigate to="/login" />)) : <div />}
       />
       <Route
         path="/services"
@@ -84,15 +78,11 @@ const AppRoutes = () => {
       />
       <Route
         path="/"
-        element={
-          isLoggedIn && !isAdmin
-            ? <CustomerDashboard />
-            : <Navigate to={isLoggedIn ? "/admin" : "/login"} />
-        }
+        element={authReady ? (isLoggedIn && !isAdmin ? <CustomerDashboard /> : (isLoggedIn ? <Navigate to="/admin" /> : <Navigate to="/login" />)) : <div />}
       />
       <Route
         path="*"
-        element={<Navigate to={isLoggedIn ? defaultAuthedPath : "/login"} />}
+        element={authReady ? <Navigate to={isLoggedIn ? defaultAuthedPath : "/login"} /> : <div />}
       />
       <Route 
       path="/register" 
@@ -100,6 +90,13 @@ const AppRoutes = () => {
       />
       <Route path="/complete-profile" element={<CompleteProfile />} />
       </Routes>
+      </div>
+
+      {loading && (
+        <div className="loading-overlay" aria-hidden>
+          <div className="loader" />
+        </div>
+      )}
     </div>
   );
 };

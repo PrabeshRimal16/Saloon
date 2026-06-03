@@ -20,6 +20,36 @@ body {
   background: #FFFFFF;
 }
 
+/* Page fade animation for route transitions */
+.page-fade {
+  animation: fadeIn 200ms ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Loading overlay shown while auth state is fetched */
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.75);
+  z-index: 9999;
+}
+.loader {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 4px solid #f3f3f3;
+  border-top-color: #b45309; /* amber-700 */
+  animation: spin 1s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
 /* ── Typography ───────────────────── */
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Cormorant Garamond', 'Georgia', serif;
