@@ -7,7 +7,10 @@ export default function Register() {
   const { loginWithGoogle, apiBaseUrl } = useAuth();
   const navigate = useNavigate();
 
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -16,11 +19,15 @@ export default function Register() {
     setError("");
     setLoading(true);
     try {
-      // Minimal payload: only email. Backend may require more fields.
-      await axios.post(`${apiBaseUrl}/api/users/register`, { email }, { withCredentials: true });
+      // Ensure basic client-side validation for non-Google registration
+      if (!name || !name.trim()) throw new Error('Please enter your full name');
+      if (!password || password.length < 6) throw new Error('Password must be at least 6 characters');
+      if (password !== confirmPassword) throw new Error('Passwords do not match');
+
+      await axios.post(`${apiBaseUrl}/api/users/register`, { name, email, password }, { withCredentials: true });
       navigate("/login");
     } catch (err) {
-      setError(err.response?.data?.message || err.response?.data?.error || "Failed to create account");
+      setError(err.response?.data?.message || err.response?.data?.error || err.message || "Failed to create account");
     } finally {
       setLoading(false);
     }
@@ -47,12 +54,48 @@ export default function Register() {
 
           <form onSubmit={submit} className="flex flex-col gap-4">
             <div>
+              <label className="block text-xs text-gray-500 uppercase tracking-[0.35em] mb-2">FULL NAME</label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Your full name"
+                required
+                className="w-full bg-transparent border-0 border-b border-gray-200 focus:border-amber-600 focus:outline-none py-2 text-sm text-stone-800"
+              />
+            </div>
+
+            <div>
               <label className="block text-xs text-gray-500 uppercase tracking-[0.35em] mb-2">EMAIL</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
+                required
+                className="w-full bg-transparent border-0 border-b border-gray-200 focus:border-amber-600 focus:outline-none py-2 text-sm text-stone-800"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs text-gray-500 uppercase tracking-[0.35em] mb-2">PASSWORD</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Create a password"
+                required
+                className="w-full bg-transparent border-0 border-b border-gray-200 focus:border-amber-600 focus:outline-none py-2 text-sm text-stone-800"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs text-gray-500 uppercase tracking-[0.35em] mb-2">CONFIRM PASSWORD</label>
+              <input
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Repeat your password"
                 required
                 className="w-full bg-transparent border-0 border-b border-gray-200 focus:border-amber-600 focus:outline-none py-2 text-sm text-stone-800"
               />

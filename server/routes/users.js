@@ -84,6 +84,9 @@ const bcrypt = require("bcrypt");
 router.post("/register", async (req, res) => {
   const { name, email, google_id, avatar_url, password, phone } = req.body;
   try {
+    if (!email || !password) {
+      return res.status(400).json({ error: "Email and password are required" });
+    }
     const existing = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
     if (existing.rows.length > 0) {
       return res.status(400).json({ error: "Email already exists" });
