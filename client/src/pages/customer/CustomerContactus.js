@@ -1,6 +1,5 @@
 import React from 'react';
 import CustomerNavbar from '../../components/CustomerNavbar';
-import CustomerFooter from '../../components/CustomerFooter';
 
 const CSS = `
   .contact-page { background: #FFFFFF; min-height: 100vh; font-family: 'DM Sans', sans-serif; }
@@ -242,7 +241,7 @@ const ContactUsPage = () => {
           </div>
         </main>
 
-        <CustomerFooter />
+        
       </div>
     </>
   );

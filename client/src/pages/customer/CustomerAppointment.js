@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import CustomerNavbar from '../../components/CustomerNavbar';
-import CustomerFooter from '../../components/CustomerFooter';
 import { useAuth } from '../../context/AuthContext';
 import ConfirmModal from '../../components/ConfirmModal';
 import { useNavigate } from 'react-router-dom';
@@ -274,7 +273,7 @@ const AppointmentsPage = () => {
           </div>
         </main>
 
-        <CustomerFooter />
+        
       </div>
       <ConfirmModal
         isOpen={confirmOpen}

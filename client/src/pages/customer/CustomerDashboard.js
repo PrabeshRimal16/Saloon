@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import CustomerNavbar from '../../components/CustomerNavbar';
-import CustomerFooter from '../../components/CustomerFooter';
 
 const CSS = `
   .hero-section { min-height: 90vh; position: relative; overflow: hidden; display: flex; align-items: center; }
@@ -256,7 +255,7 @@ export default function CustomerDashboard() {
 
       </main>
 
-      <CustomerFooter />
+        
     </div>
   );
 }

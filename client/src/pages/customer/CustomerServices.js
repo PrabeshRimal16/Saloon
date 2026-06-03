@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import CustomerNavbar from '../../components/CustomerNavbar';
-import CustomerFooter from '../../components/CustomerFooter';
 import ConfirmModal from '../../components/ConfirmModal';
 
 const CSS = `
@@ -240,7 +239,7 @@ export default function CustomerServices() {
           </div>
         </main>
 
-        <CustomerFooter />
+        
       </div>
 
       {/* Booking Modal */}

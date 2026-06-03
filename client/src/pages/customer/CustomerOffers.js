@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import CustomerNavbar from '../../components/CustomerNavbar';
-import CustomerFooter from '../../components/CustomerFooter';
+// footer is rendered globally in App.js
 
 const CSS = `
   .offers-page { background: #FFFFFF; min-height: 100vh; font-family: 'DM Sans', sans-serif; }
@@ -79,7 +79,7 @@ const CSS = `
 const generatePromoCode = (title) => title.substring(0, 3).toUpperCase() + Math.floor(Math.random() * 900 + 100);
 
 const OffersAndRitualsPage = () => {
-  const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:5000";
+  const API_BASE = process.env.REACT_APP_API_URL || '';
   const [offers, setOffers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showExpired, setShowExpired] = useState(false);
@@ -208,7 +208,7 @@ const OffersAndRitualsPage = () => {
         <main style={{ paddingTop: 72 }}>
           {/* Hero */}
           <section className="offers-hero">
-            <img className="offers-hero-img" src="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=1800&q=80" alt="Luxury salon" />
+            <img className="offers-hero-img" src="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=1800&q=80" alt="Luxury salon" loading="lazy" onError={(e)=>{e.currentTarget.onerror=null;e.currentTarget.src='/placeholder.png';}} />
             <div className="offers-hero-overlay" />
             <div className="offers-hero-content">
               <p className="offers-hero-eyebrow">Curated Experiences</p>
@@ -304,8 +304,6 @@ const OffersAndRitualsPage = () => {
             </div>
           </div>
         </main>
-
-        <CustomerFooter />
       </div>
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </>

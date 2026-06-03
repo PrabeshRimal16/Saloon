@@ -6,12 +6,6 @@ import initScrollAnimations from './utils/scrollAnimations';
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Login from "./pages/Login";
 import AdminLayout from './components/AdminLayout';
-const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
-const AdminServicesManagement = lazy(() => import("./pages/admin/AdminServicesManagement"));
-const AdminAppointmentManagement = lazy(() => import("./pages/admin/AdminAppointmentManagement"));
-const AdminOfferManagement = lazy(() => import("./pages/admin/AdminOfferManagement"));
-const AdminUserManagement = lazy(() => import("./pages/admin/AdminUserManagement"));
-const AdminSetting = lazy(() => import("./pages/admin/AdminSetting"));
 import CustomerDashboard from "./pages/customer/CustomerDashboard";
 import CustomerServices from "./pages/customer/CustomerServices";
 import CustomerOffers from "./pages/customer/CustomerOffers";
@@ -24,6 +18,13 @@ import CustomerNavbar from './components/CustomerNavbar';
 import CustomerFooter from './components/CustomerFooter';
 import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/ProtectedRoute';
+
+const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
+const AdminServicesManagement = lazy(() => import("./pages/admin/AdminServicesManagement"));
+const AdminAppointmentManagement = lazy(() => import("./pages/admin/AdminAppointmentManagement"));
+const AdminOfferManagement = lazy(() => import("./pages/admin/AdminOfferManagement"));
+const AdminUserManagement = lazy(() => import("./pages/admin/AdminUserManagement"));
+const AdminSetting = lazy(() => import("./pages/admin/AdminSetting"));
 
 const AppRoutes = () => {
   const { user, loading } = useAuth();

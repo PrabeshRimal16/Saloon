@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import CustomerNavbar from '../../components/CustomerNavbar';
-import CustomerFooter from '../../components/CustomerFooter';
 import { useAuth } from '../../context/AuthContext';
 
 const CSS = `
@@ -325,7 +324,7 @@ const CustomerSetting = () => {
           </div>
         </main>
 
-        <CustomerFooter />
+        
       </div>
     </>
   );
