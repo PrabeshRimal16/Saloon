@@ -55,9 +55,9 @@ export default function CustomerNavbar() {
   ];
 
   return (
-    <nav className="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-[32px] h-[80px] bg-white border-b border-light-border transition-all duration-300">
+    <nav className="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-[32px] h-[80px] bg-white border-b border-[#EDE8DC] transition-all duration-300">
       <div className="flex items-center gap-12">
-        <button aria-label="home" onClick={() => navigate('/')} className="btn-interactive font-heading text-[20px] font-bold text-dark uppercase tracking-widest">
+        <button aria-label="home" onClick={() => navigate('/')} className="btn-interactive font-serif text-[20px] font-bold text-[#C9A84C] uppercase tracking-widest">
           L'Atelier
         </button>
 
@@ -69,8 +69,8 @@ export default function CustomerNavbar() {
               onClick={(e) => { e.preventDefault(); navigate(link.path); }}
               className={`font-body text-[14px] font-medium transition-colors duration-200 ${
                 isActive(link.path) 
-                  ? 'text-primary border-b-2 border-primary pb-1' 
-                  : 'text-grey hover:text-primary'
+                  ? 'text-[#C9A84C] border-b-[2px] border-[#C9A84C] pb-1' 
+                  : 'text-gray-600 hover:text-[#C9A84C]'
               }`}
             >
               {link.name}
