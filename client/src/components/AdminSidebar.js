@@ -22,7 +22,7 @@ export default function AdminSidebar() {
   return (
     <aside className="fixed top-0 left-0 h-screen w-[240px] bg-[#1C1C1E] flex flex-col z-40">
       <div className="pt-8 pb-8 px-6 text-center">
-        <h1 className="font-heading text-primary text-h2 uppercase tracking-widest">L'Atelier</h1>
+        <h1 className="font-heading text-primary text-h2 uppercase tracking-widest text-center">The Salon At Reston</h1>
       </div>
 
       <nav className="flex-1 overflow-auto py-4">

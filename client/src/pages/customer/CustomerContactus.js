@@ -105,9 +105,9 @@ const ContactUsPage = () => {
   };
 
   const infoCards = [
-    { icon: 'location_on', title: 'The Atelier', lines: ['123 Avenue Montaigne', '75008 Paris, France'] },
+    { icon: 'location_on', title: 'The Salon At Reston', lines: ['123 Avenue Montaigne', '75008 Paris, France'] },
     { icon: 'call', title: 'Phone', lines: ['+33 1 23 45 67 89'] },
-    { icon: 'mail', title: 'Email', lines: ['atelier@modernsalon.com'] },
+    { icon: 'mail', title: 'Email', lines: ['info@thesalonatreston.com'] },
     { icon: 'schedule', title: 'Hours', lines: ['Mon–Sat: 10AM – 8PM', 'Sunday: Closed'] },
   ];
 

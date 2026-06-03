@@ -208,7 +208,7 @@ export default function CustomerNavbar() {
       <nav className={`lux-nav${scrolled ? ' scrolled' : ''}`}>
         {/* Left: Logo + Links */}
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <button className="lux-logo" onClick={() => navigate('/')}>L'Atelier</button>
+          <button className="lux-logo" onClick={() => navigate('/')}>The Salon At Reston</button>
 
           <div style={{ width: 1, height: 28, background: '#E8E0D5', margin: '0 28px' }} />
 

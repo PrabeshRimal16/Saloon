@@ -71,7 +71,7 @@ const CustomerFooter = () => {
         <div className="lux-footer-grid">
           {/* Col 1 — Brand */}
           <div>
-            <span className="lux-footer-logo">L'Atelier</span>
+            <span className="lux-footer-logo">The Salon At Reston</span>
             <p className="lux-footer-tagline">Where beauty meets artistry.</p>
             <p style={{ fontSize: 13, color: '#666666', marginBottom: 24, lineHeight: 1.7 }}>
               Crafting excellence in beauty and grooming since 2012. A sanctuary for those who appreciate the finer things.
@@ -111,7 +111,7 @@ const CustomerFooter = () => {
             </div>
             <div className="lux-footer-contact-item">
               <span className="material-symbols-outlined lux-footer-contact-icon">mail</span>
-              <span className="lux-footer-contact-text">atelier@modernsalon.com</span>
+              <span className="lux-footer-contact-text">info@thesalonatreston.com</span>
             </div>
             <div className="lux-footer-contact-item">
               <span className="material-symbols-outlined lux-footer-contact-icon">schedule</span>
@@ -122,7 +122,7 @@ const CustomerFooter = () => {
 
         {/* Bottom Bar */}
         <div className="lux-footer-bottom">
-          <p className="lux-footer-copy">© {new Date().getFullYear()} L'Atelier Modern. All Rights Reserved.</p>
+          <p className="lux-footer-copy">© {new Date().getFullYear()} The Salon At Reston. All Rights Reserved.</p>
           <div style={{ display: 'flex', gap: 24 }}>
             <button className="lux-footer-link">Privacy Policy</button>
             <button className="lux-footer-link">Terms of Service</button>

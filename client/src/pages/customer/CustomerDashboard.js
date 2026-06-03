@@ -125,7 +125,7 @@ export default function CustomerDashboard() {
               <span className="hero-gold-line" />
             </div>
             <h1 className="hero-h1">{firstName},<br />Look Stunning.</h1>
-            <p className="hero-sub">Experience luxury grooming tailored to your unique style at L'Atelier.</p>
+            <p className="hero-sub">Experience luxury grooming tailored to your unique style at The Salon At Reston.</p>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16 }}>
               <button className="btn-pill-gold" onClick={() => navigate('/appointments')}>
                 <span className="material-symbols-outlined" style={{ fontSize: 18 }}>calendar_month</span>
