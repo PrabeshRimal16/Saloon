@@ -10,6 +10,10 @@ export default function Register() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const handleGoogle = () => {
     // If user has filled registration fields, initiate Google *registration* flow
@@ -26,13 +30,30 @@ export default function Register() {
   const submit = async (e) => {
     e?.preventDefault?.();
     setError("");
+    // basic validation
+    if (!name || !name.trim()) {
+      setError('Please enter your full name');
+      return;
+    }
     if (!email || !email.includes("@")) {
       setError("Please enter a valid email");
       return;
     }
+    if (!phone || !phone.trim()) {
+      setError('Please enter your phone number');
+      return;
+    }
+    if (!password || password.length < 6) {
+      setError('Password must be at least 6 characters');
+      return;
+    }
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
     setLoading(true);
     try {
-      await axios.post(`${apiBaseUrl}/api/users/register`, { email }, { withCredentials: true });
+      await axios.post(`${apiBaseUrl}/api/users/register`, { name, email, phone, password }, { withCredentials: true });
       navigate('/login');
     } catch (err) {
       setError(err.response?.data?.error || err.response?.data?.message || err.message || 'Failed to register');
@@ -74,6 +95,54 @@ export default function Register() {
               )}
 
               <form onSubmit={submit} className="flex flex-col gap-6">
+                <div>
+                  <label className="block font-body text-xs text-gray-500 uppercase tracking-[0.35em] mb-2">FULL NAME</label>
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Your full name"
+                    required
+                    className="w-full bg-transparent border-0 border-b border-gray-200 focus:border-amber-600 focus:outline-none py-2 text-sm text-stone-800"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-body text-xs text-gray-500 uppercase tracking-[0.35em] mb-2">PHONE NUMBER</label>
+                  <input
+                    type="text"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="Mobile number"
+                    required
+                    className="w-full bg-transparent border-0 border-b border-gray-200 focus:border-amber-600 focus:outline-none py-2 text-sm text-stone-800"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-body text-xs text-gray-500 uppercase tracking-[0.35em] mb-2">PASSWORD</label>
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Create a password"
+                    required
+                    className="w-full bg-transparent border-0 border-b border-gray-200 focus:border-amber-600 focus:outline-none py-2 text-sm text-stone-800"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-body text-xs text-gray-500 uppercase tracking-[0.35em] mb-2">CONFIRM PASSWORD</label>
+                  <input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Repeat your password"
+                    required
+                    className="w-full bg-transparent border-0 border-b border-gray-200 focus:border-amber-600 focus:outline-none py-2 text-sm text-stone-800"
+                  />
+                </div>
+
                 <div>
                   <label className="block font-body text-xs text-gray-500 uppercase tracking-[0.35em] mb-2" htmlFor="email">EMAIL</label>
                   <input
