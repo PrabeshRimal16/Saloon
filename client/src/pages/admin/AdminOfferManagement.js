@@ -147,17 +147,17 @@ export default function AdminOfferManagement() {
                   <div className="text-[36px] font-bold font-heading text-[#1A1A1A] leading-none mb-1">{s.value}</div>
                   <div className="text-[11px] text-[#6B6B6B] uppercase tracking-widest font-bold">{s.label}</div>
                 </div>
-                <span className="material-symbols-outlined text-[#C9A84C] text-[24px]">{s.icon}</span>
-              </div>
-            ))}
-          </div>
-
-          {/* Toolbar */}
-          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-            <div className="flex items-center gap-3 flex-wrap">
-              <div className="relative">
-                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#C9A84C] text-[20px] pointer-events-none">search</span>
-                <input
+                  {["all", "active", "expired"].map(f => (
+                    <button key={f} onClick={() => setStatusFilter(f)}
+                      className={`px-4 py-2 rounded-full text-[12px] font-bold uppercase tracking-wider transition-all ${
+                        statusFilter === f
+                          ? 'bg-[#C9A84C] text-white shadow-[0_4px_16px_rgba(201,168,76,0.3)]'
+                          : 'bg-white border border-[#EDE8DC] text-[#6B6B6B] hover:border-[#C9A84C] hover:text-[#C9A84C]'
+                      }`}
+                    >
+                      {f === 'all' ? 'All' : f.charAt(0).toUpperCase() + f.slice(1)}
+                    </button>
+                  ))}
                   type="text"
                   placeholder="Search offers..."
                   value={searchTerm}
