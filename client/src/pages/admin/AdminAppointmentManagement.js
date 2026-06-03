@@ -1,13 +1,14 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import AdminSidebar from "../../components/AdminSidebar";
 import AdminHeader from "../../components/AdminHeader";
 
-const AdminAppointmentManagement = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const searchContainerRef = useRef(null);
-  const [filterStatus, setFilterStatus] = useState('All');
-  const [query, setQuery] = useState('');
+export default function AdminAppointmentManagement() {
   const [appointments, setAppointments] = useState([]);
+  const [query, setQuery] = useState('');
+  const [filterStatus, setFilterStatus] = useState('All');
+  const [dateRange, setDateRange] = useState('');
+  const [selectedAppointment, setSelectedAppointment] = useState(null);
+
   useEffect(() => {
     const API_BASE = process.env.REACT_APP_API_URL || '';
     fetch(`${API_BASE}/api/appointments`)
@@ -27,216 +28,255 @@ const AdminAppointmentManagement = () => {
       if (!res.ok) throw new Error('Failed to update');
       const updated = await res.json();
       setAppointments(prev => prev.map(a => a.id === id ? { ...a, status: updated.status } : a));
+      if (selectedAppointment && selectedAppointment.id === id) {
+        setSelectedAppointment({ ...selectedAppointment, status: updated.status });
+      }
     } catch (err) {
       console.error('Update appointment status error', err);
-      alert('Failed to update appointment status');
     }
   };
 
-  // Derived values for UI
-  const stats = appointments.reduce((acc, a) => {
-    acc.total++;
-    const s = (a.status || 'pending').toLowerCase();
-    if (!acc.byStatus[s]) acc.byStatus[s] = 0;
-    acc.byStatus[s]++;
-    return acc;
-  }, { total: 0, byStatus: {} });
-
   const filteredAppointments = appointments.filter(a => {
-    if (filterStatus !== 'All' && (a.status || '').toLowerCase() !== filterStatus.toLowerCase()) return false;
+    if (filterStatus !== 'All' && String(a.status).toLowerCase() !== filterStatus.toLowerCase()) return false;
+    
+    if (dateRange) {
+      const appDate = a.appointment_date ? new Date(a.appointment_date).toISOString().split('T')[0] : '';
+      if (appDate !== dateRange) return false;
+    }
+
     if (!query) return true;
     const q = query.toLowerCase();
-    return (a.customer_name || '').toLowerCase().includes(q) || (a.service_name || '').toLowerCase().includes(q) || (a.email || '').toLowerCase().includes(q);
+    return (a.customer_name || '').toLowerCase().includes(q) || 
+           (a.service_name || '').toLowerCase().includes(q) || 
+           (a.email || '').toLowerCase().includes(q);
   });
 
-  // (UI-only) No behavioral logic changes — styling handled in JSX below
+  const getStatusBadge = (status) => {
+    const s = String(status).toLowerCase();
+    if (s === 'approved') return <span className="status-badge badge-approved">Approved</span>;
+    if (s === 'cancelled') return <span className="status-badge badge-cancelled">Cancelled</span>;
+    return <span className="status-badge badge-pending">Pending</span>;
+  };
 
   return (
-    <div className="app">
-      {/* Inject custom styles */}
-      <style>{`
-        .material-symbols-outlined {
-          font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
-        }
-        .glass-nav {
-          backdrop-filter: blur(30px);
-          -webkit-backdrop-filter: blur(30px);
-        }
-        .luxury-shadow {
-          box-shadow: 0 4px 20px -5px rgba(212, 175, 55, 0.15);
-        }
-        ::-webkit-scrollbar {
-          width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-          background: #f9f9f9;
-        }
-        ::-webkit-scrollbar-thumb {
-          background: #cfc4c5;
-          border-radius: 10px;
-        }
-      `}</style>
-
+    <div className="min-h-screen bg-cream overflow-x-hidden relative">
       <AdminSidebar />
+      <div className="ml-[240px] pt-[80px]">
+        <AdminHeader title="Manage Appointments" />
+        
+        <main className={`p-page animate-fade-in transition-all duration-300 ${selectedAppointment ? 'mr-[400px]' : ''}`}>
+          {/* Top Bar inside Content */}
+          <div className="flex items-center justify-between mb-section-gap">
+            <h2 className="font-heading text-[24px] font-bold text-dark">Appointment Records</h2>
+          </div>
 
-      <AdminHeader title="Appointment Management" />
-
-      {/* Main Content */}
-      <div className="main ml-64 pt-20 px-8 pb-8">
-        <div className="content">
-          {/* Breadcrumb & Title */}
-          <section className="mb-6 border-t-[3px] border-[#1a2035] pt-4">
-            <nav className="flex items-center gap-2 mb-4">
-              <span className="text-xs text-gray-500 font-semibold tracking-wider">Admin</span>
-              <span className="material-symbols-outlined text-sm text-outline">chevron_right</span>
-              <span className="text-xs text-gray-700 font-semibold">Appointments</span>
-            </nav>
-
-            <div className="flex justify-between items-center gap-4 mb-6">
-              <div className="flex items-center gap-4">
-                <button className="inline-flex items-center gap-2 bg-surface-container-lowest border border-outline-variant/20 px-3 py-2 rounded-lg" aria-label="This week">
-                  <span className="material-symbols-outlined text-secondary">calendar_today</span>
-                  <span className="text-sm text-gray-700">This week</span>
-                </button>
-
-                <div className="min-w-[16rem]">
-                  <input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search appointments by name, service, or email" className="w-full px-4 py-2 border rounded-lg text-sm" />
-                </div>
+          {/* White Card: Filters & Table */}
+          <div className="bg-white rounded-card shadow-card overflow-hidden">
+            {/* Filters Row */}
+            <div className="p-6 border-b border-light-border flex flex-wrap gap-4 items-center">
+              <div className="flex-1 min-w-[200px] relative">
+                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-primary">search</span>
+                <input
+                  type="text"
+                  placeholder="Search customer name..."
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  className="input-field pl-10"
+                />
               </div>
-
-              <div className="flex items-center gap-3">
-                <select value={filterStatus} onChange={e=>setFilterStatus(e.target.value)} className="px-3 py-2 border rounded-lg text-sm">
-                  <option>All</option>
-                  <option>pending</option>
-                  <option>approved</option>
-                  <option>cancelled</option>
-                </select>
-                <button onClick={()=>{ setFilterStatus('All'); setQuery(''); }} className="px-3 py-2 border rounded-lg text-sm">Reset</button>
-                <button onClick={()=>alert('Exporting...')} className="px-3 py-2 bg-primary text-on-primary rounded-lg text-sm flex items-center gap-2">
-                  <span className="material-symbols-outlined">download</span>
-                  Export
+              <input 
+                type="date" 
+                value={dateRange}
+                onChange={e => setDateRange(e.target.value)}
+                className="input-field w-[180px]"
+              />
+              <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} className="input-field w-[180px]">
+                <option value="All">All Status</option>
+                <option value="pending">Pending</option>
+                <option value="approved">Approved</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+              {(query || filterStatus !== 'All' || dateRange) && (
+                <button onClick={() => { setQuery(''); setFilterStatus('All'); setDateRange(''); }} className="btn btn-secondary">
+                  Reset
                 </button>
-              </div>
-            </div>
-          </section>
-
-          {/* Quick Stats Row */}
-          <section className="grid grid-cols-3 gap-4 mb-6">
-            <div className="bg-white rounded-lg shadow-sm p-4 border-l-4 border-l-blue-500">
-              <div className="text-xs text-gray-500 font-semibold">Total appointments</div>
-              <div className="text-2xl font-bold mt-2">{stats.total}</div>
-              <div className="text-xs text-gray-400 mt-2">This week</div>
+              )}
             </div>
 
-            <div className="bg-white rounded-lg shadow-sm p-4 border-l-4 border-l-amber-400">
-              <div className="text-xs text-gray-500 font-semibold">Pending</div>
-              <div className="text-2xl font-bold mt-2">{stats.byStatus.pending || 0}</div>
-              <div className="text-xs text-gray-400 mt-2">Needs attention</div>
-            </div>
-
-            <div className="bg-white rounded-lg shadow-sm p-4 border-l-4 border-l-green-500">
-              <div className="text-xs text-gray-500 font-semibold">Approved</div>
-              <div className="text-2xl font-bold mt-2">{stats.byStatus.approved || 0}</div>
-              <div className="text-xs text-gray-400 mt-2">Confirmed</div>
-            </div>
-
-          </section>
-
-          {/* Load appointments on mount */}
-
-          {/* Table Section */}
-          <section className="bg-white border border-outline-variant overflow-hidden rounded-xl shadow-sm">
-            <table className="w-full text-left border-collapse">
-              <thead className="bg-surface-container-low border-b border-outline-variant">
-                <tr>
-                  <th className="px-6 py-4 text-xs text-gray-500 font-semibold tracking-wider">Customer</th>
-                  <th className="px-6 py-4 text-xs text-gray-500 font-semibold tracking-wider">Service</th>
-                  <th className="px-6 py-4 text-xs text-gray-500 font-semibold tracking-wider">Duration</th>
-                  <th className="px-6 py-4 text-xs text-gray-500 font-semibold tracking-wider">Date &amp; time</th>
-                  <th className="px-6 py-4 text-xs text-gray-500 font-semibold tracking-wider">Stylist</th>
-                  <th className="px-6 py-4 text-xs text-gray-500 font-semibold tracking-wider">Status</th>
-                  <th className="px-6 py-4 text-xs text-gray-500 font-semibold tracking-wider text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-outline-variant">
-                {filteredAppointments.map((a) => {
-                  const dt = a.appointment_date ? new Date(a.appointment_date) : null;
-                  const dateStr = dt ? dt.toLocaleDateString() : '';
-                  const timeStr = dt ? dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
-                  return (
-                    <tr key={a.id} className="group hover:bg-gray-50 transition-colors">
-                      <td className="px-6 py-6 text-sm">
-                        <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-bold text-sm">{(a.customer_name || 'C').slice(0,2).toUpperCase()}</div>
-                          <div>
-                            <div className="font-medium text-sm text-primary">{a.customer_name}</div>
-                            <div className="text-xs text-gray-400">{a.phone}</div>
-                            <div className="text-xs text-gray-400">{a.email}</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-6 text-sm">
-                        <div className="font-medium">{a.service_name}</div>
-                        <div className="text-xs text-gray-400">{a.service_description || ''}</div>
-                      </td>
-                      <td className="px-6 py-6 text-sm text-gray-700">{a.service_duration ? `${a.service_duration} min` : '—'}</td>
-                      <td className="px-6 py-6 text-sm text-gray-700">
-                        <div className="font-medium">{dateStr}</div>
-                        <div className="text-xs text-gray-400">{timeStr}</div>
-                      </td>
-                      <td className="px-6 py-6 text-sm text-gray-700">
-                        <div className="font-medium">{a.stylist || '-'}</div>
-                        <div className="text-xs text-gray-400">{a.staff_role || ''}</div>
-                      </td>
-                      <td className="px-6 py-6 text-sm">
-                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${a.status === 'approved' ? 'bg-green-100 text-green-800' : a.status === 'pending' ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800'}`}>{(a.status||'pending')}</span>
-                      </td>
-                      <td className="px-6 py-6 text-right text-sm">
-                        <div className="flex justify-end gap-2 items-center">
-                          <button onClick={() => updateAppointmentStatus(a.id, 'approved')} disabled={a.status === 'approved'} className={`px-3 py-1.5 rounded-lg text-sm ${a.status === 'approved' ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700'}`}>
-                            Approve
-                          </button>
-                          <button onClick={() => updateAppointmentStatus(a.id, 'cancelled')} className="border border-red-200 text-red-500 hover:bg-red-50 rounded-lg px-3 py-1.5 text-sm">Cancel</button>
+            {/* Table */}
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead className="bg-[#FEF9ED] border-b border-light-border">
+                  <tr>
+                    <th className="px-6 py-4 font-body text-label text-grey uppercase tracking-widest">Customer</th>
+                    <th className="px-6 py-4 font-body text-label text-grey uppercase tracking-widest">Service</th>
+                    <th className="px-6 py-4 font-body text-label text-grey uppercase tracking-widest">Date & Time</th>
+                    <th className="px-6 py-4 font-body text-label text-grey uppercase tracking-widest">Phone</th>
+                    <th className="px-6 py-4 font-body text-label text-grey uppercase tracking-widest">Status</th>
+                    <th className="px-6 py-4 font-body text-label text-grey uppercase tracking-widest text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredAppointments.length === 0 ? (
+                    <tr>
+                      <td colSpan="6" className="px-6 py-12 text-center">
+                        <div className="empty-state">
+                          <span className="material-symbols-outlined empty-state-icon">calendar_month</span>
+                          <p className="font-body text-body text-grey">No appointments found.</p>
                         </div>
                       </td>
                     </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-            {/* Pagination */}
-            <div className="px-6 py-4 border-t border-outline-variant flex items-center justify-between">
-              <p className="text-sm text-gray-500">Showing {filteredAppointments.length} appointments</p>
-              <div className="flex items-center gap-3">
-                <button className="px-3 py-1 border rounded-lg disabled:opacity-40" disabled>
-                  <span className="material-symbols-outlined">chevron_left</span>
-                </button>
-                <div className="text-sm text-gray-700">Page 1</div>
-                <button className="px-3 py-1 border rounded-lg">
-                  <span className="material-symbols-outlined">chevron_right</span>
-                </button>
-              </div>
+                  ) : (
+                    filteredAppointments.map((app, index) => {
+                      const bgClass = index % 2 === 0 ? 'bg-white' : 'bg-[#FDFAF4]';
+                      const isSelected = selectedAppointment?.id === app.id;
+                      
+                      return (
+                        <tr 
+                          key={app.id} 
+                          onClick={() => setSelectedAppointment(app)}
+                          className={`${isSelected ? 'bg-[rgba(201,168,76,0.08)] border-l-4 border-l-primary' : bgClass + ' border-l-4 border-transparent'} border-b border-light-border hover:bg-[#FEF9ED] transition-colors cursor-pointer`}
+                        >
+                          <td className="px-6 py-4">
+                            <div className="flex items-center gap-4">
+                              <div className="w-[40px] h-[40px] rounded-full bg-[#E8D9A0] flex items-center justify-center border border-primary shrink-0 text-primary font-bold">
+                                {(app.customer_name || 'C').slice(0, 2).toUpperCase()}
+                              </div>
+                              <div>
+                                <div className="font-body text-[14px] font-bold text-dark">{app.customer_name}</div>
+                                <div className="font-body text-[12px] text-grey">{app.email}</div>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 font-body text-[14px] font-medium text-dark">
+                            {app.service_name || 'General'}
+                          </td>
+                          <td className="px-6 py-4 font-body text-[14px] text-grey">
+                            <div className="font-medium text-dark">{app.appointment_date ? new Date(app.appointment_date).toLocaleDateString() : '—'}</div>
+                            <div>{app.appointment_time || '—'}</div>
+                          </td>
+                          <td className="px-6 py-4 font-body text-[14px] text-grey">
+                            {app.phone || '—'}
+                          </td>
+                          <td className="px-6 py-4">
+                            {getStatusBadge(app.status)}
+                          </td>
+                          <td className="px-6 py-4 text-right">
+                            <div className="flex justify-end gap-2" onClick={e => e.stopPropagation()}>
+                              {String(app.status).toLowerCase() !== 'approved' && (
+                                <button onClick={() => updateAppointmentStatus(app.id, 'approved')} className="btn bg-success text-white hover:bg-[#205b3a] !px-3 !py-1 text-[13px]">
+                                  Approve
+                                </button>
+                              )}
+                              {String(app.status).toLowerCase() !== 'cancelled' && (
+                                <button onClick={() => updateAppointmentStatus(app.id, 'cancelled')} className="btn bg-error text-white hover:bg-[#a02f23] !px-3 !py-1 text-[13px]">
+                                  Cancel
+                                </button>
+                              )}
+                              <button onClick={() => setSelectedAppointment(app)} className="btn btn-secondary !px-3 !py-1 text-[13px]">
+                                View
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
             </div>
-          </section>
-
-          
-
-          <footer className="mt-20 py-8 border-t border-outline-variant flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">
-              © 2023 L'Atelier Admin Suite. All rights reserved.
-            </div>
-            <div className="flex gap-8">
-              <a className="font-label-sm text-label-sm text-on-surface-variant hover:text-secondary uppercase tracking-widest transition-colors" href="#">Privacy Policy</a>
-              <a className="font-label-sm text-label-sm text-on-surface-variant hover:text-secondary uppercase tracking-widest transition-colors" href="#">Terms of Service</a>
-              <a className="font-label-sm text-label-sm text-on-surface-variant hover:text-secondary uppercase tracking-widest transition-colors" href="#">Support</a>
-            </div>
-          </footer>
-        </div>
+          </div>
+        </main>
       </div>
 
-      {/* FAB removed — New Appointment now available in toolbar */}
+      {/* Side Drawer */}
+      <div 
+        className={`fixed top-0 right-0 h-screen w-[400px] bg-white shadow-[-8px_0_32px_rgba(0,0,0,0.1)] z-50 transform transition-transform duration-300 ease-in-out border-l border-light-border ${selectedAppointment ? 'translate-x-0' : 'translate-x-full'}`}
+      >
+        {selectedAppointment && (
+          <div className="flex flex-col h-full">
+            <div className="p-6 border-b border-light-border flex justify-between items-center bg-[#FEF9ED]">
+              <h3 className="font-heading text-[20px] font-bold text-dark">Appointment Details</h3>
+              <button onClick={() => setSelectedAppointment(null)} className="text-grey hover:text-dark">
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+            
+            <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-8">
+              {/* Customer Info */}
+              <div>
+                <h4 className="font-body text-label text-grey uppercase tracking-[0.5px] mb-4">Customer Information</h4>
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-[56px] h-[56px] rounded-full bg-[#E8D9A0] flex items-center justify-center border-2 border-primary text-primary font-bold text-[20px]">
+                    {(selectedAppointment.customer_name || 'C').slice(0, 2).toUpperCase()}
+                  </div>
+                  <div>
+                    <div className="font-body text-[18px] font-bold text-dark">{selectedAppointment.customer_name}</div>
+                    <div className="font-body text-[14px] text-grey">{selectedAppointment.email}</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 text-[14px] text-dark">
+                  <span className="material-symbols-outlined text-primary text-[18px]">call</span>
+                  {selectedAppointment.phone || 'No phone provided'}
+                </div>
+              </div>
+
+              <div className="h-[1px] bg-light-border"></div>
+
+              {/* Service Info */}
+              <div>
+                <h4 className="font-body text-label text-grey uppercase tracking-[0.5px] mb-4">Service Details</h4>
+                <div className="bg-[#FDFAF4] border border-light-border rounded-[8px] p-4">
+                  <div className="font-body text-[16px] font-bold text-dark mb-2">{selectedAppointment.service_name || 'General Service'}</div>
+                  <div className="flex items-center gap-6 mt-4">
+                    <div>
+                      <div className="text-[12px] text-grey uppercase font-bold tracking-widest mb-1">Date</div>
+                      <div className="font-body text-[14px] text-dark font-medium">{selectedAppointment.appointment_date ? new Date(selectedAppointment.appointment_date).toLocaleDateString() : '—'}</div>
+                    </div>
+                    <div>
+                      <div className="text-[12px] text-grey uppercase font-bold tracking-widest mb-1">Time</div>
+                      <div className="font-body text-[14px] text-dark font-medium">{selectedAppointment.appointment_time || '—'}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="h-[1px] bg-light-border"></div>
+
+              {/* Status & Actions */}
+              <div>
+                <h4 className="font-body text-label text-grey uppercase tracking-[0.5px] mb-4">Status & Actions</h4>
+                <div className="mb-6">
+                  {getStatusBadge(selectedAppointment.status)}
+                </div>
+                
+                <div className="flex flex-col gap-3">
+                  {String(selectedAppointment.status).toLowerCase() !== 'approved' && (
+                    <button onClick={() => updateAppointmentStatus(selectedAppointment.id, 'approved')} className="btn bg-success text-white w-full">
+                      <span className="material-symbols-outlined text-[18px]">check_circle</span>
+                      Approve Appointment
+                    </button>
+                  )}
+                  {String(selectedAppointment.status).toLowerCase() !== 'cancelled' && (
+                    <button onClick={() => updateAppointmentStatus(selectedAppointment.id, 'cancelled')} className="btn bg-error text-white w-full">
+                      <span className="material-symbols-outlined text-[18px]">cancel</span>
+                      Cancel Appointment
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+      
+      {/* Drawer Overlay (mobile) */}
+      {selectedAppointment && (
+        <div 
+          className="fixed inset-0 bg-black/20 z-40 lg:hidden"
+          onClick={() => setSelectedAppointment(null)}
+        />
+      )}
     </div>
   );
-};
-
-export default AdminAppointmentManagement;
+}
