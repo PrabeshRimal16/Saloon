@@ -234,7 +234,7 @@ export default function AdminServicesManagement() {
                             {service.duration ? `${service.duration} min` : '—'}
                           </td>
                           <td className="px-6 py-4 text-[14px] font-bold text-[#C9A84C]">
-                            NPR {Number(service.price || 0).toLocaleString()}
+                            ${Number(service.price || 0).toLocaleString()}
                           </td>
                           <td className="px-6 py-4">
                             <label className="flex items-center gap-2 cursor-pointer">
@@ -300,7 +300,7 @@ export default function AdminServicesManagement() {
                     <input type="text" required value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} className={INPUT_CLS} placeholder="e.g., Hair Care" />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-bold text-[#6B6B6B] uppercase tracking-widest mb-1.5">Price (NPR) *</label>
+                    <label className="block text-[11px] font-bold text-[#6B6B6B] uppercase tracking-widest mb-1.5">Price ($) *</label>
                     <input type="number" required min="0" value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} className={INPUT_CLS} placeholder="e.g., 2500" />
                   </div>
                 </div>

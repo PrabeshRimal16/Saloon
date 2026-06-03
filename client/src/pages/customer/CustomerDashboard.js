@@ -129,7 +129,7 @@ export default function CustomerDashboard() {
                     <h3 className="font-heading text-[18px] font-bold text-[#1A1A1A] mb-2">{s.title}</h3>
                     <p className="font-body text-[13px] text-[#6B6B6B] leading-relaxed mb-4">{s.desc}</p>
                     <div className="flex items-center justify-between">
-                      <span className="font-heading text-[20px] font-bold text-[#C9A84C]">NPR {s.price}</span>
+                      <span className="font-heading text-[20px] font-bold text-[#C9A84C]">${s.price}</span>
                       <button onClick={() => navigate('/appointments')} className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#C9A84C] text-white rounded-[6px] text-[13px] font-bold hover:bg-[#b5943b] transition-all">
                         Book Now
                       </button>
@@ -161,7 +161,7 @@ export default function CustomerDashboard() {
                       <h3 className="font-heading text-[18px] font-bold text-[#1A1A1A] mb-2">{s.name}</h3>
                       <p className="font-body text-[13px] text-[#6B6B6B] leading-relaxed mb-4 line-clamp-2">{s.description}</p>
                       <div className="flex items-center justify-between">
-                        <span className="font-heading text-[20px] font-bold text-[#C9A84C]">NPR {s.price}</span>
+                        <span className="font-heading text-[20px] font-bold text-[#C9A84C]">${s.price}</span>
                         <button onClick={() => navigate('/appointments')} className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#C9A84C] text-white rounded-[6px] text-[13px] font-bold hover:bg-[#b5943b] transition-all">
                           Book Now
                         </button>

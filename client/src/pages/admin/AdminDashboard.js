@@ -267,7 +267,7 @@ export default function AdminDashboard() {
               <div className="bg-[#1C1C1E] rounded-[12px] shadow-[0_2px_16px_rgba(0,0,0,0.1)] p-6 h-fit">
                 <div className="text-[11px] font-bold text-[#C9A84C] uppercase tracking-[0.3em] mb-4">Revenue · This Month</div>
                 <div className="text-[38px] font-bold font-['Playfair_Display'] text-white leading-none mb-1">
-                  NPR {revenueThisMonth.toLocaleString()}
+                  ${revenueThisMonth.toLocaleString()}
                 </div>
                 <div className="flex items-center gap-1.5 text-[#2D7A4F] text-[13px] font-medium mt-3">
                   <span className="material-symbols-outlined text-[16px]">trending_up</span>
