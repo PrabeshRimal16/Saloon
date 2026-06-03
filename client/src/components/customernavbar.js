@@ -11,9 +11,7 @@ function CustomerNavbar() {
   const [scrolled, setScrolled] = useState(false);
   const notifRef = useRef(null);
   const avatarRef = useRef(null);
-}
-
-export default React.memo(CustomerNavbar);
+  
   // Scroll shadow
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -221,8 +219,6 @@ export default React.memo(CustomerNavbar);
         </div>
 
         {/* Right: Search + Bell + Divider + Avatar */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          {/* Search */}
           <div className="lux-search-wrap">
             <span className="material-symbols-outlined lux-search-icon">search</span>
             <input className="lux-search" placeholder="Search services..." type="text" />
@@ -288,3 +284,5 @@ export default React.memo(CustomerNavbar);
     </>
   );
 }
+
+export default React.memo(CustomerNavbar);
