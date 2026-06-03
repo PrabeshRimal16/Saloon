@@ -5,6 +5,11 @@ import './styles/admin-animations.css';
 import './styles/responsive.css';
 import initScrollAnimations from './utils/scrollAnimations';
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import CustomerNavbar from './components/CustomerNavbar';
+import CustomerFooter from './components/CustomerFooter';
+import ProtectedRoute from './components/ProtectedRoute';
+import Skeleton from './components/Skeleton';
+
 const Login = lazy(() => import("./pages/Login"));
 const AdminLayout = lazy(() => import('./components/AdminLayout'));
 const CustomerDashboard = lazy(() => import("./pages/customer/CustomerDashboard"));
@@ -15,11 +20,7 @@ const CustomerSetting = lazy(() => import("./pages/customer/CustomerSetting"));
 const CustomerContactus = lazy(() => import("./pages/customer/CustomerContactus"));
 const Register = lazy(() => import("./pages/Register"));
 const CompleteProfile = lazy(() => import("./pages/CompleteProfile"));
-import CustomerNavbar from './components/CustomerNavbar';
-import CustomerFooter from './components/CustomerFooter';
 const NotFound = lazy(() => import('./pages/NotFound'));
-import ProtectedRoute from './components/ProtectedRoute';
-import Skeleton from './components/Skeleton';
 
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
 const AdminServicesManagement = lazy(() => import("./pages/admin/AdminServicesManagement"));

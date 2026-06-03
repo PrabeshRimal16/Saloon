@@ -8,6 +8,10 @@ const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:3000";
 // Start Google Login
 router.get("/google", (req, res, next) => {
   const { action, name, password, phone } = req.query;
+  // If passport strategy not configured, return a helpful error
+  if (!passport._strategy || !passport._strategy('google')) {
+    return res.status(503).send('Google OAuth is not configured on the server. Please set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET.');
+  }
   if (action === "register") {
     req.session.registerData = { name, password, phone };
     // Ensure session is saved before redirecting to Google
@@ -23,7 +27,12 @@ router.get("/google", (req, res, next) => {
 // Google Callback
 router.get(
   "/google/callback",
-  passport.authenticate("google", { failureRedirect: `${CLIENT_URL}/login?error=No%20account%20found.%20Please%20register%20to%20continue.` }),
+  (req, res, next) => {
+    if (!passport._strategy || !passport._strategy('google')) {
+      return res.status(503).send('Google OAuth is not configured on the server.');
+    }
+    return passport.authenticate("google", { failureRedirect: `${CLIENT_URL}/login?error=No%20account%20found.%20Please%20register%20to%20continue.` })(req, res, next);
+  },
   async (req, res) => {
     // If registration data was saved in session, create the user now
     if (req.session && req.session.registerData) {
