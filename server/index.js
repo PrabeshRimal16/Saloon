@@ -20,8 +20,9 @@ const path = require('path');
 const fs = require('fs');
 
 const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:3000";
+const VERCEL_URL = process.env.VERCEL_URL || "https://saloon-lake-sigma.vercel.app";
 const allowedOrigins = Array.from(
-  new Set([CLIENT_URL, "http://localhost:3000", "http://localhost:5173"])
+  new Set([CLIENT_URL, "http://localhost:3000", "http://localhost:5173", VERCEL_URL])
 );
 
 const sessionSecret =
