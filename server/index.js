@@ -5,10 +5,10 @@ const session = require("express-session");
 const pgSession = require('connect-pg-simple')(session);
 const passport = require("./passport");
 const initializeDatabase = require("./db-init");
-
 dotenv.config();
 
 const app = express();
+app.set('trust proxy', 1);
 let compressionMiddleware = null;
 try {
   // compression is optional at runtime; if not installed, warn and continue
