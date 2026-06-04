@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const session = require("express-session");
+const pgSession = require('connect-pg-simple')(session);
 const passport = require("./passport");
 const initializeDatabase = require("./db-init");
 
@@ -46,6 +47,10 @@ app.use(
 if (compressionMiddleware) app.use(compressionMiddleware);
 
 app.use(session({
+  store: new pgSession({
+    pool: require('./db'),
+    tableName: 'session'
+  }),
   secret: sessionSecret,
   resave: false,
   saveUninitialized: false,
