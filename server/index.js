@@ -48,7 +48,12 @@ if (compressionMiddleware) app.use(compressionMiddleware);
 app.use(session({
   secret: sessionSecret,
   resave: false,
-  saveUninitialized: false
+  saveUninitialized: false,
+  cookie: {
+    secure: true,
+    sameSite: 'none',
+    maxAge: 24 * 60 * 60 * 1000
+  }
 }));
 
 // Passport
