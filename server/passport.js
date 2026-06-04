@@ -6,14 +6,15 @@ const pool = require("./db");
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 const SERVER_URL = process.env.SERVER_URL || `http://localhost:${process.env.PORT || 5000}`;
+const GOOGLE_CALLBACK_URL = process.env.GOOGLE_CALLBACK_URL || `${SERVER_URL}/auth/google/callback`;
 
 if (GOOGLE_CLIENT_ID && GOOGLE_CLIENT_SECRET) {
   passport.use(
     new GoogleStrategy(
-      {
+        {
         clientID: GOOGLE_CLIENT_ID,
         clientSecret: GOOGLE_CLIENT_SECRET,
-        callbackURL: `${SERVER_URL}/auth/google/callback`,
+        callbackURL: GOOGLE_CALLBACK_URL,
       },
       async (accessToken, refreshToken, profile, done) => {
         try {
