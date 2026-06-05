@@ -139,3 +139,70 @@ h1, h2, h3, h4, h5, h6 {
 .app-container {
   font-family: 'DM Sans', sans-serif;
 }
+
+/* ── Mobile-friendly base styles ─────────────────────────── */
+/* Improve sizing, prevent horizontal overflow, and provide
+   simple helper utilities for stacking on small screens. */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px; /* base for readable mobile text */
+}
+
+@media (max-width: 640px) {
+  html { font-size: 15px; }
+}
+
+/* Prevent accidental horizontal overflow from micro-layouts */
+html, body { overflow-x: hidden; }
+
+/* Make media elements responsive */
+img, picture, video, canvas, svg {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Simple centered container with horizontal padding for mobile */
+.container {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+@media (min-width: 768px) {
+  .container { padding-left: 24px; padding-right: 24px; }
+}
+
+/* Utility: stack children vertically on small screens */
+.stack-mobile {
+  display: flex;
+  gap: 12px;
+  align-items: stretch;
+}
+@media (max-width: 640px) {
+  .stack-mobile { flex-direction: column; }
+}
+
+/* Form controls and buttons should not exceed their container */
+input, textarea, select, button { max-width: 100%; }
+
+/* Slightly larger, readable default text for body content */
+.text-md { font-size: 15px; line-height: 1.6; }
+@media (min-width: 768px) { .text-md { font-size: 16px; } }
+
+/* Headings scale down a bit on small screens for better fit */
+h1 { font-size: 1.75rem; }
+h2 { font-size: 1.25rem; }
+@media (min-width: 768px) {
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.5rem; }
+}
+
+/* Keep interactive elements comfortably tappable */
+.btn { padding: 0.6rem 1rem; border-radius: 8px; }
+
