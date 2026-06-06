@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const pool = require("../db");
 
+
 // Ensure cancelled_by column exists (safe to run on startup)
 (async () => {
   try {
