@@ -15,6 +15,7 @@ router.get("/", async (req, res) => {
   }
 });
 
+
 // Delete user by id
 router.delete('/:id', async (req, res) => {
   const { id } = req.params;
