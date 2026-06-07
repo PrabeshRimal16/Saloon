@@ -5,6 +5,7 @@ const pool = require("../db");
 
 // Ensure cancelled_by column exists (safe to run on startup)
 (async () => {
+
   try {
     await pool.query("ALTER TABLE appointments ADD COLUMN IF NOT EXISTS cancelled_by TEXT");
   } catch (err) {
@@ -13,6 +14,7 @@ const pool = require("../db");
 })();
 
 // Customer - Book an appointment
+
 router.post("/", async (req, res) => {
   // Debug: log session and user to ensure passport session is restored
   try {
