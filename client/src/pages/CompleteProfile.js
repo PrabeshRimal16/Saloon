@@ -151,7 +151,7 @@ export default function CompleteProfile() {
                     value={form.password}
                     onChange={handleChange}
                     placeholder="Create a password"
-                    style={{ display: 'block', width: '100%', flex: '1 1 auto', minWidth: '0px', border: 'none', outline: 'none', background: 'transparent', padding: '8px 0', fontSize: '0.9375rem', color: '#111827', WebkitAppearance: 'none' }}
+                    style={{ display: 'block', width: '1px', flex: '1 1 auto', minWidth: '0px', border: 'none', outline: 'none', background: 'transparent', padding: '8px 0', fontSize: '0.9375rem', color: '#111827', WebkitAppearance: 'none' }}
                   />
                   <button
                     type="button"
@@ -184,7 +184,7 @@ export default function CompleteProfile() {
                     value={form.confirmPassword}
                     onChange={handleChange}
                     placeholder="Repeat your password"
-                    style={{ display: 'block', width: '100%', flex: '1 1 auto', minWidth: '0px', border: 'none', outline: 'none', background: 'transparent', padding: '8px 0', fontSize: '0.9375rem', color: '#111827', WebkitAppearance: 'none' }}
+                    style={{ display: 'block', width: '1px', flex: '1 1 auto', minWidth: '0px', border: 'none', outline: 'none', background: 'transparent', padding: '8px 0', fontSize: '0.9375rem', color: '#111827', WebkitAppearance: 'none' }}
                   />
                   <button
                     type="button"

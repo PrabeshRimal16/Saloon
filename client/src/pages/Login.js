@@ -121,7 +121,7 @@ export default function Login() {
                       placeholder="Enter your password"
                       autoComplete="current-password"
                       required
-                      style={{ display: 'block', width: '100%', flex: '1 1 auto', minWidth: '0px', border: 'none', outline: 'none', background: 'transparent', padding: '8px 0', fontSize: '0.875rem', color: '#1f2937', WebkitAppearance: 'none' }}
+                      style={{ display: 'block', width: '1px', flex: '1 1 auto', minWidth: '0px', border: 'none', outline: 'none', background: 'transparent', padding: '8px 0', fontSize: '0.875rem', color: '#1f2937', WebkitAppearance: 'none' }}
                     />
                     <button
                       type="button"
