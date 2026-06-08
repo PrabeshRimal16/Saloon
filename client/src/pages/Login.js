@@ -100,35 +100,33 @@ export default function Login() {
                     id="email"
                     name="email"
                     type="email"
-                    autoComplete="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full bg-transparent border-0 border-b border-gray-200 focus:border-amber-600 focus:outline-none py-2 text-sm text-stone-800"
                     placeholder="you@domain.com"
                     required
+                    style={{width:'100%', borderTop:'none', borderLeft:'none', borderRight:'none', borderBottom:'1px solid #e5e7eb', outline:'none', background:'transparent', padding:'8px 0', fontSize:'14px', color:'#1f2937', boxShadow:'none', display:'block'}}
                   />
                 </div>
 
                 <div>
                   <label className="block font-body text-xs text-gray-500 uppercase tracking-[0.35em] mb-2" htmlFor="password">Password</label>
-                  <div className="flex items-center border-b-2 border-gray-200">
+                  <div style={{ display: 'flex', alignItems: 'center', borderBottom: '1px solid #e5e7eb' }}>
                     <input
                       id="password"
                       name="password"
                       type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="grow border-0 focus:ring-0 outline-none bg-transparent py-2 text-sm text-stone-800 placeholder-gray-400"
-                        style={{ minWidth: 0, boxShadow: 'none' }}
-                        placeholder="Enter your password"
-                        autoComplete="new-password"
+                      placeholder="Enter your password"
+                      autoComplete="new-password"
                       required
+                      style={{flex:'1 1 0%', width:'0px', border:'none', outline:'none', background:'transparent', padding:'8px 0', fontSize:'14px', color:'#1f2937', boxShadow:'none'}}
                     />
                     <button
                       type="button"
                       tabIndex={-1}
                       onClick={() => setShowPassword((s) => !s)}
-                      className="shrink-0 p-1 text-gray-400 hover:text-amber-600"
+                      style={{flex:'none', border:'none', outline:'none', background:'transparent', cursor:'pointer', color:'#6b7280', padding:'4px', display:'flex', alignItems:'center'}}
                     >
                       {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
