@@ -52,9 +52,7 @@ function AdminSidebar() {
       {mobileOpen && <div className="fixed inset-0 bg-black/40 z-40 md:hidden" onClick={() => setMobileOpen(false)} />}
 
       <aside
-        className={`fixed top-0 left-0 h-screen bg-[#1A1A1A] flex flex-col z-50 transform transition-transform duration-300 admin-sidebar
-          ${mobileOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0
-          ${collapsed ? 'md:w-[64px] w-[64px] is-collapsed' : 'md:w-[220px] w-[260px]'}`}
+        className={`fixed top-0 left-0 h-screen bg-[#1A1A1A] flex flex-col z-50 transform transition-transform duration-300 admin-sidebar ${mobileOpen ? 'translate-x-0 w-[260px]' : '-translate-x-full'} md:translate-x-0 ${collapsed ? 'md:w-[64px]' : 'md:w-[220px]'}`}
       >
         {/* Mobile close row */}
         <div className="md:hidden flex items-center justify-between px-3 pt-3 pb-3">
