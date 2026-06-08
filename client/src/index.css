@@ -191,6 +191,16 @@ img, picture, video, canvas, svg {
 /* Form controls and buttons should not exceed their container */
 input, textarea, select, button { max-width: 100%; }
 
+/* ── Browser autofill reset (prevent yellow box and forced styles) ── */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+  -webkit-text-fill-color: #1f2937 !important;
+  border: none !important;
+  outline: none !important;
+}
+
 /* Slightly larger, readable default text for body content */
 .text-md { font-size: 15px; line-height: 1.6; }
 @media (min-width: 768px) { .text-md { font-size: 16px; } }

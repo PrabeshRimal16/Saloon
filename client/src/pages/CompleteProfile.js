@@ -150,8 +150,8 @@ export default function CompleteProfile() {
                     type={showPassword ? 'text' : 'password'}
                     value={form.password}
                     onChange={handleChange}
-                    className="grow border-none outline-none bg-transparent py-2 text-sm text-stone-800 placeholder-gray-400"
-                    style={{ minWidth: 0 }}
+                    className="grow border-0 focus:ring-0 outline-none bg-transparent py-2 text-sm text-stone-800 placeholder-gray-400"
+                    style={{ minWidth: 0, boxShadow: 'none' }}
                     placeholder="Create a password"
                   />
                   <button
@@ -184,8 +184,8 @@ export default function CompleteProfile() {
                     type={showConfirm ? 'text' : 'password'}
                     value={form.confirmPassword}
                     onChange={handleChange}
-                    className="grow border-none outline-none bg-transparent py-2 text-sm text-stone-800 placeholder-gray-400"
-                    style={{ minWidth: 0 }}
+                    className="grow border-0 focus:ring-0 outline-none bg-transparent py-2 text-sm text-stone-800 placeholder-gray-400"
+                    style={{ minWidth: 0, boxShadow: 'none' }}
                     placeholder="Repeat your password"
                   />
                   <button

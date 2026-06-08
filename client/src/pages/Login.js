@@ -118,10 +118,10 @@ export default function Login() {
                       type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="grow border-none outline-none bg-transparent py-2 text-sm text-stone-800 placeholder-gray-400"
-                      style={{ minWidth: 0 }}
-                      placeholder="Enter your password"
-                      autoComplete="current-password"
+                      className="grow border-0 focus:ring-0 outline-none bg-transparent py-2 text-sm text-stone-800 placeholder-gray-400"
+                        style={{ minWidth: 0, boxShadow: 'none' }}
+                        placeholder="Enter your password"
+                        autoComplete="new-password"
                       required
                     />
                     <button
