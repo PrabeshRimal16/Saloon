@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
-import { Eye, EyeOff } from "lucide-react";
 
 export default function Login() {
   const { refreshUser, loginWithGoogle, apiBaseUrl } = useAuth();
@@ -14,7 +13,6 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     const err = searchParams.get('error');
@@ -114,21 +112,13 @@ export default function Login() {
                   <input
                     id="password"
                     name="password"
-                    type={showPassword ? "text" : "password"}
+                    type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter your password"
                     autoComplete="new-password"
                     required
                   />
-                  <button
-                    type="button"
-                    aria-label={showPassword ? 'Hide password' : 'Show password'}
-                    aria-pressed={showPassword}
-                    onClick={() => setShowPassword((s) => !s)}
-                  >
-                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
                 </div>
 
                   <div className="text-right mt-2">

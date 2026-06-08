@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Eye, EyeOff } from "lucide-react";
+// password visibility icons removed to avoid overlap issues
 
 export default function CompleteProfile() {
   const [searchParams] = useSearchParams();
@@ -15,9 +15,6 @@ export default function CompleteProfile() {
   const [form, setForm] = useState({ name: nameParam, password: "", confirmPassword: "", phone: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
   const [avatarError, setAvatarError] = useState(false);
   const API_BASE = process.env.REACT_APP_API_URL || '';
 
@@ -148,19 +145,11 @@ export default function CompleteProfile() {
                 <div className="password-wrapper">
                     <input
                       name="password"
-                      type={showPassword ? 'text' : 'password'}
+                      type={'password'}
                       value={form.password}
                       onChange={handleChange}
                       placeholder="Create a password"
                     />
-                    <button
-                      type="button"
-                      aria-label={showPassword ? 'Hide password' : 'Show password'}
-                      aria-pressed={showPassword}
-                      onClick={() => setShowPassword(!showPassword)}
-                    >
-                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                    </button>
                 </div>
 
                 <div className="mt-2">
@@ -180,19 +169,11 @@ export default function CompleteProfile() {
                 <div className="password-wrapper">
                     <input
                       name="confirmPassword"
-                      type={showConfirm ? 'text' : 'password'}
+                      type={'password'}
                       value={form.confirmPassword}
                       onChange={handleChange}
                       placeholder="Repeat your password"
                     />
-                    <button
-                      type="button"
-                      aria-label={showConfirm ? 'Hide password' : 'Show password'}
-                      aria-pressed={showConfirm}
-                      onClick={() => setShowConfirm(!showConfirm)}
-                    >
-                      {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
-                    </button>
                 </div>
                 {form.confirmPassword && (
                   <p className={`text-xs mt-1 text-right font-medium ${form.password === form.confirmPassword ? 'text-green-500' : 'text-red-400'}`}>
