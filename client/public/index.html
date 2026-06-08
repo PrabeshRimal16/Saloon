@@ -32,6 +32,18 @@
 </head>
 
 <body>
+  <script>
+    // Runtime API base: when served on production host, set API base so built JS can call correct backend without rebuild.
+    (function(){
+      try {
+        var prodHost = 'www.thesalonatreston.com';
+        var altHost = 'thesalonatreston.com';
+        if (location.hostname === prodHost || location.hostname === altHost) {
+          window.__API_BASE__ = 'https://api.thesalonatreston.com';
+        }
+      } catch (e) { /* ignore */ }
+    })();
+  </script>
   <noscript>You need to enable JavaScript to run this app.</noscript>
   <div id="root"></div>
   <!--
