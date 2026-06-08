@@ -111,14 +111,14 @@ export default function Login() {
 
                 <div>
                   <label className="block font-body text-xs text-gray-500 uppercase tracking-[0.35em] mb-2" htmlFor="password">Password</label>
-                  <div style={{ display: 'flex', alignItems: 'center', borderBottom: '1px solid #E5E7EB', paddingBottom: '6px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', borderBottom: '1px solid #E5E7EB', paddingBottom: '6px' }}>
                     <input
                       id="password"
                       name="password"
                       type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      style={{ flex: 1, border: 'none', outline: 'none', padding: '6px 0', fontSize: '0.875rem', background: 'transparent', color: '#1f2937' }}
+                      style={{ flexGrow: 1, flexShrink: 1, minWidth: 0, border: 'none', outline: 'none', paddingTop: '8px', paddingBottom: '8px', fontSize: '0.875rem', background: 'transparent', color: '#1f2937' }}
                       placeholder="Enter your password"
                       autoComplete="current-password"
                       required
@@ -127,7 +127,7 @@ export default function Login() {
                       type="button"
                       tabIndex={-1}
                       onClick={() => setShowPassword((s) => !s)}
-                      style={{ background: 'transparent', border: 'none', color: '#6b7280', cursor: 'pointer', padding: '4px', marginLeft: '8px' }}
+                      style={{ flexShrink: 0, background: 'transparent', border: 'none', color: '#6b7280', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center', marginLeft: '8px' }}
                     >
                       {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>

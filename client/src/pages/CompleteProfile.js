@@ -144,16 +144,16 @@ export default function CompleteProfile() {
 
               <div>
                 <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">Create Password <span className="text-amber-500">*</span></label>
-                <div style={{ display: 'flex', alignItems: 'center', borderBottom: '1px solid #E5E7EB', paddingBottom: '6px' }}>
+                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', borderBottom: '1px solid #E5E7EB', paddingBottom: '6px' }}>
                   <input
                     name="password"
                     type={showPassword ? 'text' : 'password'}
                     value={form.password}
                     onChange={handleChange}
-                    style={{ flex: 1, border: 'none', outline: 'none', padding: '8px 0', fontSize: '0.9375rem', background: 'transparent', color: '#111827' }}
+                    style={{ flexGrow: 1, flexShrink: 1, minWidth: 0, border: 'none', outline: 'none', padding: '8px 0', fontSize: '0.9375rem', background: 'transparent', color: '#111827' }}
                     placeholder="Create a password"
                   />
-                  <button type="button" tabIndex={-1} onClick={() => setShowPassword(!showPassword)} style={{ background: 'transparent', border: 'none', color: '#6b7280', cursor: 'pointer', padding: '4px', marginLeft: '8px' }}>
+                  <button type="button" tabIndex={-1} onClick={() => setShowPassword(!showPassword)} style={{ flexShrink: 0, background: 'transparent', border: 'none', color: '#6b7280', cursor: 'pointer', padding: '4px', marginLeft: '8px', display: 'flex', alignItems: 'center' }}>
                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
@@ -172,16 +172,16 @@ export default function CompleteProfile() {
 
               <div>
                 <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">Confirm Password <span className="text-amber-500">*</span></label>
-                <div style={{ display: 'flex', alignItems: 'center', borderBottom: '1px solid #E5E7EB', paddingBottom: '6px' }}>
+                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', borderBottom: '1px solid #E5E7EB', paddingBottom: '6px' }}>
                   <input
                     name="confirmPassword"
                     type={showConfirm ? 'text' : 'password'}
                     value={form.confirmPassword}
                     onChange={handleChange}
-                    style={{ flex: 1, border: 'none', outline: 'none', padding: '8px 0', fontSize: '0.9375rem', background: 'transparent', color: '#111827' }}
+                    style={{ flexGrow: 1, flexShrink: 1, minWidth: 0, border: 'none', outline: 'none', padding: '8px 0', fontSize: '0.9375rem', background: 'transparent', color: '#111827' }}
                     placeholder="Repeat your password"
                   />
-                  <button type="button" tabIndex={-1} onClick={() => setShowConfirm(!showConfirm)} style={{ background: 'transparent', border: 'none', color: '#6b7280', cursor: 'pointer', padding: '4px', marginLeft: '8px' }}>
+                  <button type="button" tabIndex={-1} onClick={() => setShowConfirm(!showConfirm)} style={{ flexShrink: 0, background: 'transparent', border: 'none', color: '#6b7280', cursor: 'pointer', padding: '4px', marginLeft: '8px', display: 'flex', alignItems: 'center' }}>
                     {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
