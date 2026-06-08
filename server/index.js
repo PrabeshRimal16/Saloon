@@ -63,8 +63,13 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: {
+    // For cross-site cookies (frontend on a different host) we require:
+    // - secure: true (HTTPS only)
+    // - sameSite: 'none'
+    // - httpOnly: true (not readable from JS)
     secure: true,
     sameSite: 'none',
+    httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000
   }
 }));
