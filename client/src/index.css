@@ -208,6 +208,7 @@ input:-webkit-autofill:focus {
   align-items: center !important;
   border-bottom: 1px solid #e5e7eb !important;
   width: 100% !important;
+  position: relative !important;
 }
 .password-wrapper input {
   flex: 1 1 0% !important;
@@ -228,6 +229,11 @@ input:-webkit-autofill:focus {
   border: none !important;
   outline: none !important;
   margin-left: 8px !important;
+  position: absolute !important;
+  right: 8px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  padding: 4px !important;
 }
 
 /* Slightly larger, readable default text for body content */
