@@ -64,7 +64,7 @@ const AppRoutes = () => {
         <Route path="users" element={<AdminUserManagement />} />
         <Route path="settings" element={<AdminSetting />} />
       </Route>
-      <Route path="/" element={authReady ? (isLoggedIn && !isAdmin ? <ProtectedRoute><CustomerLayout /></ProtectedRoute> : (isLoggedIn ? <Navigate to="/admin" /> : <Navigate to="/login" />)) : <div />}>
+      <Route path="/" element={authReady ? (isLoggedIn && !isAdmin ? <CustomerLayout /> : (isLoggedIn ? <Navigate to="/admin" /> : <Navigate to="/login" />)) : <div />}>
         <Route index element={<CustomerDashboard />} />
         <Route path="services" element={<CustomerServices />} />
         <Route path="offers" element={<CustomerOffers />} />
