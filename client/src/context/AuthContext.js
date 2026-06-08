@@ -25,7 +25,8 @@ export const AuthProvider = ({ children }) => {
 			const response = await fetch(`${API_BASE_URL}/auth/me`, {
 				method: "GET",
 				credentials: "include",
-				headers: { Accept: "application/json" },
+				cache: 'no-store',
+				headers: { Accept: "application/json", "Cache-Control": "no-cache", Pragma: "no-cache" },
 			});
 
 			if (!response.ok) {
