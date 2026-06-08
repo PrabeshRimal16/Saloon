@@ -73,11 +73,20 @@ function AdminHeader({ title }) {
     return () => window.removeEventListener('adminSidebarToggle', onToggle);
   }, []);
 
+  const openMobileSidebar = () => {
+    try { window.dispatchEvent(new CustomEvent('adminMobileToggle', { detail: true })); } catch (err) { window.dispatchEvent(new Event('adminMobileToggle')); }
+  };
+
   return (
-    <header style={{ left: 'var(--admin-left,220px)' }} className="fixed top-0 right-0 z-40 bg-white border-b border-[#EDE8DC] h-[80px] flex items-center px-8 transition-all duration-300">
+    <header className="fixed top-0 left-0 md:left-[var(--admin-left,220px)] right-0 z-40 bg-white border-b border-[#EDE8DC] h-[80px] flex items-center px-4 md:px-8 transition-all duration-300">
       <div className="flex items-center justify-between w-full">
-        <div>
-          <h1 className="font-heading text-[20px] font-bold text-dark">{title || 'Admin'}</h1>
+        <div className="flex items-center gap-4">
+          <button onClick={openMobileSidebar} className="md:hidden w-10 h-10 rounded-full flex items-center justify-center text-[#1A1A1A] hover:bg-[#F5F5F5] transition-colors" aria-label="Open menu">
+            <span className="material-symbols-outlined">menu</span>
+          </button>
+          <div>
+            <h1 className="font-heading text-[20px] font-bold text-dark">{title || 'Admin'}</h1>
+          </div>
         </div>
 
         <div className="flex items-center gap-6">
