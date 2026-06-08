@@ -111,21 +111,22 @@ export default function Login() {
 
                 <div>
                   <label className="block font-body text-xs text-gray-500 uppercase tracking-[0.35em] mb-2" htmlFor="password">Password</label>
-                  <div className="relative">
+                  <div className="flex items-center border-b border-gray-200 focus-within:border-amber-600">
                     <input
                       id="password"
                       name="password"
                       type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="w-full bg-transparent border-0 border-b border-gray-200 focus:border-amber-600 focus:outline-none py-2 pr-10 text-sm text-stone-800"
+                      className="flex-1 border-0 outline-none py-2 text-sm text-stone-800 bg-transparent"
                       placeholder="Enter your password"
                       autoComplete="current-password"
                       required
                     />
                     <button
                       type="button"
-                      className="absolute right-0 bottom-2 text-[#777] hover:text-amber-600 transition-colors focus:outline-none"
+                      tabIndex={-1}
+                      className="text-[#777] hover:text-amber-600 transition-colors focus:outline-none"
                       onClick={() => setShowPassword((s) => !s)}
                     >
                       {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
