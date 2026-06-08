@@ -144,16 +144,16 @@ export default function CompleteProfile() {
 
               <div>
                 <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">Create Password <span className="text-amber-500">*</span></label>
-                <div className="relative flex items-end border-b-2 border-gray-200 focus-within:border-amber-600 transition-colors">
+                <div className="flex items-center border-b border-gray-200 focus-within:border-amber-600">
                   <input
                     name="password"
                     type={showPassword ? 'text' : 'password'}
                     value={form.password}
                     onChange={handleChange}
-                    className="flex-1 border-0 outline-none py-3 pr-10 text-gray-800 bg-transparent"
+                    className="flex-1 border-0 outline-none py-3 text-gray-800 bg-transparent"
                     placeholder="Create a password"
                   />
-                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-0 bottom-2 text-gray-400">
+                  <button type="button" tabIndex={-1} onClick={() => setShowPassword(!showPassword)} className="text-gray-400">
                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
@@ -172,16 +172,16 @@ export default function CompleteProfile() {
 
               <div>
                 <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">Confirm Password <span className="text-amber-500">*</span></label>
-                <div className="relative flex items-end border-b-2 border-gray-200 focus-within:border-amber-600 transition-colors">
+                <div className="flex items-center border-b border-gray-200 focus-within:border-amber-600">
                   <input
                     name="confirmPassword"
                     type={showConfirm ? 'text' : 'password'}
                     value={form.confirmPassword}
                     onChange={handleChange}
-                    className="flex-1 border-0 outline-none py-3 pr-10 text-gray-800 bg-transparent"
+                    className="flex-1 border-0 outline-none py-3 text-gray-800 bg-transparent"
                     placeholder="Repeat your password"
                   />
-                  <button type="button" onClick={() => setShowConfirm(!showConfirm)} className="absolute right-0 bottom-2 text-gray-400">
+                  <button type="button" tabIndex={-1} onClick={() => setShowConfirm(!showConfirm)} className="text-gray-400">
                     {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
