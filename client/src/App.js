@@ -5,13 +5,14 @@ import './styles/admin-animations.css';
 import './styles/responsive.css';
 import initScrollAnimations from './utils/scrollAnimations';
 import { AuthProvider, useAuth } from "./context/AuthContext";
-import CustomerNavbar from './components/CustomerNavbar';
+// CustomerNavbar is now rendered inside CustomerLayout
 import CustomerFooter from './components/CustomerFooter';
 import ProtectedRoute from './components/ProtectedRoute';
 import Skeleton from './components/Skeleton';
 
 const Login = lazy(() => import("./pages/Login"));
 const AdminLayout = lazy(() => import('./components/AdminLayout'));
+const CustomerLayout = lazy(() => import('./components/CustomerLayout'));
 const CustomerDashboard = lazy(() => import("./pages/customer/CustomerDashboard"));
 const CustomerServices = lazy(() => import("./pages/customer/CustomerServices"));
 const CustomerOffers = lazy(() => import("./pages/customer/CustomerOffers"));
@@ -47,8 +48,7 @@ const AppRoutes = () => {
 
   return (
     <div className="route-wrapper">
-      {/* Nav and footer are mounted outside the route switch so they don't unmount on navigation */}
-      {!hideLayout && !location.pathname.startsWith('/admin') && <CustomerNavbar />}
+      {/* Nav and footer are mounted outside the route switch so they don't unmount on navigation. CustomerNavbar is rendered inside CustomerLayout to avoid duplication. */}
       <div className="page-fade">
       <Suspense fallback={<Skeleton /> }>
       <Routes>
@@ -64,34 +64,15 @@ const AppRoutes = () => {
         <Route path="users" element={<AdminUserManagement />} />
         <Route path="settings" element={<AdminSetting />} />
       </Route>
-      <Route
-        path="/customer"
-        element={authReady ? (isLoggedIn && !isAdmin ? <CustomerDashboard /> : (isLoggedIn ? <Navigate to="/admin" /> : <Navigate to="/login" />)) : <div />}
-      />
-      <Route
-        path="/services"
-        element={<CustomerServices />}
-      />
-      <Route
-        path="/offers"
-        element={<CustomerOffers />}
-      />
-      <Route
-        path="/appointments"
-        element={<CustomerAppointment />}
-      />
-      <Route
-        path="/contact"
-        element={<CustomerContactus />}
-      />
-      <Route
-        path="/settings"
-        element={<CustomerSetting />}
-      />
-      <Route
-        path="/"
-        element={authReady ? (isLoggedIn && !isAdmin ? <CustomerDashboard /> : (isLoggedIn ? <Navigate to="/admin" /> : <Navigate to="/login" />)) : <div />}
-      />
+      <Route path="/" element={authReady ? (isLoggedIn && !isAdmin ? <ProtectedRoute><CustomerLayout /></ProtectedRoute> : (isLoggedIn ? <Navigate to="/admin" /> : <Navigate to="/login" />)) : <div />}>
+        <Route index element={<CustomerDashboard />} />
+        <Route path="services" element={<CustomerServices />} />
+        <Route path="offers" element={<CustomerOffers />} />
+        <Route path="appointments" element={<CustomerAppointment />} />
+        <Route path="contact" element={<CustomerContactus />} />
+        <Route path="settings" element={<CustomerSetting />} />
+      </Route>
+      {/* root is handled by the customer layout above */}
       <Route path="*" element={<NotFound />} />
       <Route 
       path="/register" 
