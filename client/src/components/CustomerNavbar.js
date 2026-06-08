@@ -2,64 +2,6 @@ import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, NavLink } from 'react-router-dom';
 
-function CustomerNavbar() {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
-  const [notifications, setNotifications] = useState([]);
-  const [showNotifications, setShowNotifications] = useState(false);
-  const [showAvatar, setShowAvatar] = useState(false);
-  const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const notifRef = useRef(null);
-  const avatarRef = useRef(null);
-  
-  // Scroll shadow
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
-  // Fetch notifications (memoized)
-  const fetchNotifications = useCallback(async () => {
-    if (!user?.id) return;
-    const API_BASE = process.env.REACT_APP_API_URL || '';
-    try {
-      const res = await fetch(`${API_BASE}/api/notifications/customer/${user.id}`);
-      const data = await res.json();
-      setNotifications(data);
-    } catch (_) {}
-  }, [user]);
-
-  useEffect(() => {
-    fetchNotifications();
-    const iv = setInterval(fetchNotifications, 10000);
-    return () => clearInterval(iv);
-  }, [fetchNotifications]);
-
-  // Close dropdowns on outside click
-  useEffect(() => {
-    const handler = (e) => {
-      if (notifRef.current && !notifRef.current.contains(e.target)) setShowNotifications(false);
-      if (avatarRef.current && !avatarRef.current.contains(e.target)) setShowAvatar(false);
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, []);
-
-  const navLinks = useMemo(() => ([
-    { name: 'Home', path: '/' },
-    { name: 'Our Services', path: '/services' },
-    { name: 'My Appointments', path: '/appointments' },
-    { name: 'Offers', path: '/offers' },
-    { name: 'About Us', path: '/contact' },
-  ]), []);
-
-  const initials = (user?.name || user?.email || 'U').charAt(0).toUpperCase();
-  const avatar = user?.avatar_url || user?.photo || user?.avatar;
-
-  return (
-    <>
       <style>{`
         .lux-nav {
           position: fixed; top: 0; left: 0; width: 100%; z-index: 100;
@@ -103,25 +45,9 @@ function CustomerNavbar() {
           font-size: 18px; color: #AAAAAA; pointer-events: none;
         }
         .lux-search {
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <button
-                            className="lux-hamburger"
-                            onClick={() => {
-                              setShowMobileMenu(v => {
-                                const next = !v;
-                                try { window.dispatchEvent(new CustomEvent('customerMobileToggle', { detail: next })); } catch (err) { try { window.dispatchEvent(new Event('customerMobileToggle')); } catch (e) {} }
-                                return next;
-                              });
-                            }}
-                            aria-label="Menu"
-                          >
-                            <span className="material-symbols-outlined">menu</span>
-                          </button>
-                  <div className="lux-search-wrap">
           background: #F8F7F5; border: 1.5px solid transparent;
           border-radius: 50px; padding: 0 16px 0 36px;
           font-size: 13px; color: #1C1C1E;
-                </div>
           font-family: 'DM Sans', sans-serif;
           transition: all 0.2s; outline: none;
         }
@@ -167,6 +93,53 @@ function CustomerNavbar() {
         }
 
         /* Avatar */
+        .lux-avatar-wrap { position: relative; }
+        .lux-avatar-btn {
+          width: 36px; height: 36px; border-radius: 50%;
+          border: 2px solid #B8960C; cursor: pointer;
+          overflow: hidden; display: flex; align-items: center; justify-content: center;
+          background: #FEF9ED; transition: box-shadow 0.2s;
+        }
+        .lux-avatar-btn:hover { box-shadow: 0 0 0 3px rgba(184,150,12,0.2); }
+        .lux-avatar-initials { font-size: 14px; font-weight: 600; color: #B8960C; font-family: 'Cormorant Garamond', serif; }
+
+        /* Avatar dropdown */
+        .lux-avatar-drop {
+          position: absolute; top: calc(100% + 10px); right: 0;
+          width: 200px; background: white;
+          border: 1px solid #E8E0D5; border-radius: 12px;
+          box-shadow: 0 12px 40px rgba(0,0,0,0.12); z-index: 200;
+          overflow: hidden;
+        }
+        .lux-avatar-drop-item {
+          width: 100%; padding: 12px 18px; text-align: left;
+          font-size: 13px; font-weight: 500;
+          background: none; border: none; cursor: pointer;
+          display: flex; align-items: center; gap: 10px; color: #1C1C1E;
+          transition: background 0.15s; font-family: 'DM Sans', sans-serif;
+        }
+        .lux-avatar-drop-item:hover { background: #F8F7F5; }
+        .lux-avatar-drop-item.danger { color: #C0392B; }
+        .lux-avatar-drop-item.danger:hover { background: #FFF5F5; }
+
+        /* Logout icon btn (fallback) */
+        .lux-logout-btn {
+          width: 36px; height: 36px; border-radius: 50%;
+          background: transparent; border: 1.5px solid #E8E0D5;
+          cursor: pointer; display: flex; align-items: center; justify-content: center;
+          transition: all 0.2s; color: #6B6B6B;
+          position: relative;
+        }
+        .lux-logout-btn:hover { border-color: #C0392B; color: #C0392B; background: #FFF5F5; }
+        .lux-logout-btn .tooltip {
+          position: absolute; top: calc(100% + 6px); left: 50%;
+          transform: translateX(-50%); background: #1C1C1E;
+          color: white; font-size: 11px; padding: 4px 8px;
+          border-radius: 4px; white-space: nowrap; pointer-events: none;
+          opacity: 0; transition: opacity 0.15s;
+        }
+        .lux-logout-btn:hover .tooltip { opacity: 1; }
+      `}</style>
         .lux-avatar-wrap { position: relative; }
         .lux-avatar-btn {
           width: 36px; height: 36px; border-radius: 50%;
