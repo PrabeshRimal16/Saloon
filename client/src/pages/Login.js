@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
-// removed show/hide icon — no icons needed
 import { useAuth } from "../context/AuthContext";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function Login() {
   const { refreshUser, loginWithGoogle, apiBaseUrl } = useAuth();
@@ -14,6 +14,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     const err = searchParams.get('error');
@@ -109,18 +110,26 @@ export default function Login() {
 
                 <div>
                   <label className="block font-body text-xs text-gray-500 uppercase tracking-[0.35em] mb-2" htmlFor="password">Password</label>
-                  <div className="password-wrapper">
-                    <input
-                      id="password"
-                      name="password"
-                      type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="Enter your password"
-                      autoComplete="new-password"
-                      required
-                    />
-                  </div>
+                <div className="password-wrapper">
+                  <input
+                    id="password"
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Enter your password"
+                    autoComplete="new-password"
+                    required
+                  />
+                  <button
+                    type="button"
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    aria-pressed={showPassword}
+                    onClick={() => setShowPassword((s) => !s)}
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
 
                   <div className="text-right mt-2">
                     <a href="#" onClick={(e) => { e.preventDefault(); navigate('/complete-profile'); }} className="text-xs text-amber-600 hover:underline">Forgot?</a>

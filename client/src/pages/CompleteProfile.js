@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate, useSearchParams } from "react-router-dom";
-// removed show/hide icons — inputs remain password-only
+import { Eye, EyeOff } from "lucide-react";
 
 export default function CompleteProfile() {
   const [searchParams] = useSearchParams();
@@ -16,6 +16,8 @@ export default function CompleteProfile() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [avatarError, setAvatarError] = useState(false);
   const API_BASE = process.env.REACT_APP_API_URL || '';
 
@@ -144,13 +146,21 @@ export default function CompleteProfile() {
               <div>
                 <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">Create Password <span className="text-amber-500">*</span></label>
                 <div className="password-wrapper">
-                  <input
-                    name="password"
-                    type={'password'}
-                    value={form.password}
-                    onChange={handleChange}
-                    placeholder="Create a password"
-                  />
+                    <input
+                      name="password"
+                      type={showPassword ? 'text' : 'password'}
+                      value={form.password}
+                      onChange={handleChange}
+                      placeholder="Create a password"
+                    />
+                    <button
+                      type="button"
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                      aria-pressed={showPassword}
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
                 </div>
 
                 <div className="mt-2">
@@ -168,13 +178,21 @@ export default function CompleteProfile() {
               <div>
                 <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">Confirm Password <span className="text-amber-500">*</span></label>
                 <div className="password-wrapper">
-                  <input
-                    name="confirmPassword"
-                    type={'password'}
-                    value={form.confirmPassword}
-                    onChange={handleChange}
-                    placeholder="Repeat your password"
-                  />
+                    <input
+                      name="confirmPassword"
+                      type={showConfirm ? 'text' : 'password'}
+                      value={form.confirmPassword}
+                      onChange={handleChange}
+                      placeholder="Repeat your password"
+                    />
+                    <button
+                      type="button"
+                      aria-label={showConfirm ? 'Hide password' : 'Show password'}
+                      aria-pressed={showConfirm}
+                      onClick={() => setShowConfirm(!showConfirm)}
+                    >
+                      {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
                 </div>
                 {form.confirmPassword && (
                   <p className={`text-xs mt-1 text-right font-medium ${form.password === form.confirmPassword ? 'text-green-500' : 'text-red-400'}`}>
