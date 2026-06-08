@@ -210,9 +210,9 @@ input:-webkit-autofill:focus {
   width: 100% !important;
 }
 .password-wrapper input {
-  flex: 1 1 auto !important;
+  flex: 1 1 0% !important;
   min-width: 0 !important;
-  width: 100% !important;
+  width: auto !important;
   border: none !important;
   outline: none !important;
   box-shadow: none !important;
