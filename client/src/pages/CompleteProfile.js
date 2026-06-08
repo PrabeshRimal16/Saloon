@@ -144,20 +144,47 @@ export default function CompleteProfile() {
 
               <div>
                 <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">Create Password <span className="text-amber-500">*</span></label>
-                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', borderBottom: '1px solid #E5E7EB', width: '100%', boxSizing: 'border-box' }}>
+                <div style={{ position: 'relative', borderBottom: '1px solid #E5E7EB', paddingBottom: '6px' }}>
                   <input
                     name="password"
                     type={showPassword ? 'text' : 'password'}
                     value={form.password}
                     onChange={handleChange}
                     placeholder="Create a password"
-                    style={{ display: 'block', width: '1px', flex: '1 1 auto', minWidth: '0px', border: 'none', outline: 'none', background: 'transparent', padding: '8px 0', fontSize: '0.9375rem', color: '#111827', WebkitAppearance: 'none' }}
+                    style={{
+                      position: 'absolute',
+                      left: 0,
+                      right: '38px',
+                      top: 0,
+                      bottom: 0,
+                      border: 'none',
+                      outline: 'none',
+                      background: 'transparent',
+                      padding: '8px 0',
+                      fontSize: '0.9375rem',
+                      color: '#111827',
+                      WebkitAppearance: 'none',
+                      width: 'calc(100% - 38px)'
+                    }}
                   />
                   <button
                     type="button"
                     tabIndex={-1}
                     onClick={() => setShowPassword(!showPassword)}
-                    style={{ flex: '0 0 auto', background: 'transparent', border: 'none', outline: 'none', cursor: 'pointer', color: '#6b7280', padding: '4px', lineHeight: 1, display: 'flex', alignItems: 'center' }}
+                    style={{
+                      position: 'absolute',
+                      right: 0,
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      background: 'transparent',
+                      border: 'none',
+                      outline: 'none',
+                      cursor: 'pointer',
+                      color: '#6b7280',
+                      padding: '4px',
+                      display: 'flex',
+                      alignItems: 'center'
+                    }}
                   >
                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
@@ -177,20 +204,47 @@ export default function CompleteProfile() {
 
               <div>
                 <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">Confirm Password <span className="text-amber-500">*</span></label>
-                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', borderBottom: '1px solid #E5E7EB', width: '100%', boxSizing: 'border-box' }}>
+                <div style={{ position: 'relative', borderBottom: '1px solid #E5E7EB', paddingBottom: '6px' }}>
                   <input
                     name="confirmPassword"
                     type={showConfirm ? 'text' : 'password'}
                     value={form.confirmPassword}
                     onChange={handleChange}
                     placeholder="Repeat your password"
-                    style={{ display: 'block', width: '1px', flex: '1 1 auto', minWidth: '0px', border: 'none', outline: 'none', background: 'transparent', padding: '8px 0', fontSize: '0.9375rem', color: '#111827', WebkitAppearance: 'none' }}
+                    style={{
+                      position: 'absolute',
+                      left: 0,
+                      right: '38px',
+                      top: 0,
+                      bottom: 0,
+                      border: 'none',
+                      outline: 'none',
+                      background: 'transparent',
+                      padding: '8px 0',
+                      fontSize: '0.9375rem',
+                      color: '#111827',
+                      WebkitAppearance: 'none',
+                      width: 'calc(100% - 38px)'
+                    }}
                   />
                   <button
                     type="button"
                     tabIndex={-1}
                     onClick={() => setShowConfirm(!showConfirm)}
-                    style={{ flex: '0 0 auto', background: 'transparent', border: 'none', outline: 'none', cursor: 'pointer', color: '#6b7280', padding: '4px', lineHeight: 1, display: 'flex', alignItems: 'center' }}
+                    style={{
+                      position: 'absolute',
+                      right: 0,
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      background: 'transparent',
+                      border: 'none',
+                      outline: 'none',
+                      cursor: 'pointer',
+                      color: '#6b7280',
+                      padding: '4px',
+                      display: 'flex',
+                      alignItems: 'center'
+                    }}
                   >
                     {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>

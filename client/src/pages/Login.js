@@ -111,7 +111,7 @@ export default function Login() {
 
                 <div>
                   <label className="block font-body text-xs text-gray-500 uppercase tracking-[0.35em] mb-2" htmlFor="password">Password</label>
-                  <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', borderBottom: '1px solid #E5E7EB', width: '100%', boxSizing: 'border-box' }}>
+                  <div style={{ position: 'relative', borderBottom: '1px solid #E5E7EB', paddingBottom: '6px' }}>
                     <input
                       id="password"
                       name="password"
@@ -121,13 +121,40 @@ export default function Login() {
                       placeholder="Enter your password"
                       autoComplete="current-password"
                       required
-                      style={{ display: 'block', width: '1px', flex: '1 1 auto', minWidth: '0px', border: 'none', outline: 'none', background: 'transparent', padding: '8px 0', fontSize: '0.875rem', color: '#1f2937', WebkitAppearance: 'none' }}
+                      style={{
+                        position: 'absolute',
+                        left: 0,
+                        right: '38px',
+                        top: 0,
+                        bottom: 0,
+                        border: 'none',
+                        outline: 'none',
+                        background: 'transparent',
+                        padding: '8px 0',
+                        fontSize: '0.875rem',
+                        color: '#1f2937',
+                        WebkitAppearance: 'none',
+                        width: 'calc(100% - 38px)'
+                      }}
                     />
                     <button
                       type="button"
                       tabIndex={-1}
                       onClick={() => setShowPassword((s) => !s)}
-                      style={{ flex: '0 0 auto', background: 'transparent', border: 'none', outline: 'none', cursor: 'pointer', color: '#6b7280', padding: '4px', lineHeight: 1, display: 'flex', alignItems: 'center' }}
+                      style={{
+                        position: 'absolute',
+                        right: 0,
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        background: 'transparent',
+                        border: 'none',
+                        outline: 'none',
+                        cursor: 'pointer',
+                        color: '#6b7280',
+                        padding: '4px',
+                        display: 'flex',
+                        alignItems: 'center'
+                      }}
                     >
                       {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
