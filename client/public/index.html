@@ -44,6 +44,22 @@
       } catch (e) { /* ignore */ }
     })();
   </script>
+  <!-- Quick runtime hotfix: if a logged-in user visits / or /customer, reload once to ensure latest bundle is used (avoids stale cached JS). -->
+  <script>
+    (function(){
+      try {
+        var API = window.__API_BASE__ || '';
+        if (!API) return;
+        var path = location.pathname || '/';
+        if (!(path === '/' || path.indexOf('/customer') === 0)) return;
+        if (sessionStorage.getItem('authReloaded')) return;
+        fetch(API + '/auth/me', { credentials: 'include', cache: 'no-store' })
+          .then(function(r){ if (!r.ok) throw new Error('not-ok'); return r.json(); })
+          .then(function(json){ if (json && json.id) { sessionStorage.setItem('authReloaded', '1'); location.reload(); } })
+          .catch(function(){ /* ignore */ });
+      } catch (e) { /* ignore */ }
+    })();
+  </script>
   <noscript>You need to enable JavaScript to run this app.</noscript>
   <div id="root"></div>
   <!--
