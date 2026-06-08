@@ -21,13 +21,19 @@ export const AuthProvider = ({ children }) => {
 		setLoading(true);
 		setError(null);
 
+		const controller = new AbortController();
+		const timeoutId = setTimeout(() => controller.abort(), 8000);
+
 		try {
 			const response = await fetch(`${API_BASE_URL}/auth/me`, {
 				method: "GET",
 				credentials: "include",
 				cache: 'no-store',
+				signal: controller.signal,
 				headers: { Accept: "application/json", "Cache-Control": "no-cache", Pragma: "no-cache" },
 			});
+
+			clearTimeout(timeoutId);
 
 			if (!response.ok) {
 				throw new Error(`Failed to fetch /auth/me (HTTP ${response.status})`);
@@ -39,8 +45,12 @@ export const AuthProvider = ({ children }) => {
 			}
 			setUser(data);
 		} catch (err) {
+			if (err.name === 'AbortError') {
+				setError(new Error('Auth fetch timeout'));
+			} else {
+				setError(err);
+			}
 			setUser(null);
-			setError(err);
 		} finally {
 			setLoading(false);
 		}

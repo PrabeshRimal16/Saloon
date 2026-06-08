@@ -86,6 +86,11 @@ app.use("/api/offers", require("./routes/offers"));
 app.use("/api/users", require("./routes/users"));
 app.use("/api/notifications", require("./routes/notifications"));
 
+// Health endpoint to keep the service awake for uptime monitors
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok' });
+});
+
 const PORT = process.env.PORT || 5000;
 
 // Initialize database and start server
