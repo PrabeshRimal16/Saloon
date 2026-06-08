@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+/*import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, NavLink } from 'react-router-dom';
 
@@ -151,3 +151,4 @@ function CustomerNavbar() {
 }
 
 export default React.memo(CustomerNavbar);
+*/
