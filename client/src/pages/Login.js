@@ -111,23 +111,23 @@ export default function Login() {
 
                 <div>
                   <label className="block font-body text-xs text-gray-500 uppercase tracking-[0.35em] mb-2" htmlFor="password">Password</label>
-                  <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', borderBottom: '1px solid #E5E7EB', paddingBottom: '6px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', borderBottom: '1px solid #E5E7EB', width: '100%', boxSizing: 'border-box' }}>
                     <input
                       id="password"
                       name="password"
                       type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      style={{ flexGrow: 1, flexShrink: 1, minWidth: 0, border: 'none', outline: 'none', paddingTop: '8px', paddingBottom: '8px', fontSize: '0.875rem', background: 'transparent', color: '#1f2937' }}
                       placeholder="Enter your password"
                       autoComplete="current-password"
                       required
+                      style={{ display: 'block', width: '100%', flex: '1 1 auto', minWidth: '0px', border: 'none', outline: 'none', background: 'transparent', padding: '8px 0', fontSize: '0.875rem', color: '#1f2937', WebkitAppearance: 'none' }}
                     />
                     <button
                       type="button"
                       tabIndex={-1}
                       onClick={() => setShowPassword((s) => !s)}
-                      style={{ flexShrink: 0, background: 'transparent', border: 'none', color: '#6b7280', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center', marginLeft: '8px' }}
+                      style={{ flex: '0 0 auto', background: 'transparent', border: 'none', outline: 'none', cursor: 'pointer', color: '#6b7280', padding: '4px', lineHeight: 1, display: 'flex', alignItems: 'center' }}
                     >
                       {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
