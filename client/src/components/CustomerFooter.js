@@ -1,6 +1,16 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
+
+const NAV_LINKS = [
+  { label: 'Home',         path: '/' },
+  { label: 'Services',     path: '/services' },
+  { label: 'Appointments', path: '/appointments' },
+  { label: 'Offers',       path: '/offers' },
+  { label: 'Contact',      path: '/contact' },
+];
 
 const CustomerFooter = () => {
+  const navigate = useNavigate();
   return (
     <>
       <style>{`
@@ -92,8 +102,15 @@ const CustomerFooter = () => {
           <div>
             <span className="lux-footer-col-title">Explore</span>
             <ul className="lux-footer-links">
-              {['Home', 'Services', 'Appointments', 'Offers', 'Contact'].map(l => (
-                <li key={l}><button className="lux-footer-link">{l}</button></li>
+              {NAV_LINKS.map(({ label, path }) => (
+                <li key={label}>
+                  <button
+                    className="lux-footer-link"
+                    onClick={() => navigate(path)}
+                  >
+                    {label}
+                  </button>
+                </li>
               ))}
             </ul>
           </div>
