@@ -201,6 +201,33 @@ input:-webkit-autofill:focus {
   outline: none !important;
 }
 
+/* ── Password wrapper override (force correct flex behaviour, override Tailwind reset) ── */
+.password-wrapper {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  border-bottom: 1px solid #e5e7eb !important;
+  width: 100% !important;
+}
+.password-wrapper input {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  width: 100% !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  padding: 8px 0 !important;
+  font-size: 14px !important;
+}
+.password-wrapper button {
+  flex-shrink: 0 !important;
+  flex-grow: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+}
+
 /* Slightly larger, readable default text for body content */
 .text-md { font-size: 15px; line-height: 1.6; }
 @media (min-width: 768px) { .text-md { font-size: 16px; } }

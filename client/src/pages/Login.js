@@ -110,7 +110,7 @@ export default function Login() {
 
                 <div>
                   <label className="block font-body text-xs text-gray-500 uppercase tracking-[0.35em] mb-2" htmlFor="password">Password</label>
-                  <div style={{ display: 'flex', alignItems: 'center', borderBottom: '1px solid #e5e7eb' }}>
+                  <div className="password-wrapper">
                     <input
                       id="password"
                       name="password"
@@ -120,13 +120,11 @@ export default function Login() {
                       placeholder="Enter your password"
                       autoComplete="new-password"
                       required
-                      style={{flex:'1 1 0%', width:'0px', border:'none', outline:'none', background:'transparent', padding:'8px 0', fontSize:'14px', color:'#1f2937', boxShadow:'none'}}
                     />
                     <button
                       type="button"
                       tabIndex={-1}
                       onClick={() => setShowPassword((s) => !s)}
-                      style={{flex:'none', border:'none', outline:'none', background:'transparent', cursor:'pointer', color:'#6b7280', padding:'4px', display:'flex', alignItems:'center'}}
                     >
                       {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>

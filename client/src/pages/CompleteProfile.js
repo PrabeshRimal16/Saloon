@@ -144,20 +144,18 @@ export default function CompleteProfile() {
 
               <div>
                 <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">Create Password <span className="text-amber-500">*</span></label>
-                <div style={{ display: 'flex', alignItems: 'center', borderBottom: '1px solid #e5e7eb' }}>
+                <div className="password-wrapper">
                   <input
                     name="password"
                     type={showPassword ? 'text' : 'password'}
                     value={form.password}
                     onChange={handleChange}
                     placeholder="Create a password"
-                    style={{flex:'1 1 0%', width:'0px', border:'none', outline:'none', background:'transparent', padding:'8px 0', fontSize:'14px', color:'#1f2937', boxShadow:'none'}}
                   />
                   <button
                     type="button"
                     tabIndex={-1}
                     onClick={() => setShowPassword(!showPassword)}
-                    style={{flex:'none', border:'none', outline:'none', background:'transparent', cursor:'pointer', color:'#6b7280', padding:'4px', display:'flex', alignItems:'center'}}
                   >
                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
@@ -177,20 +175,18 @@ export default function CompleteProfile() {
 
               <div>
                 <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">Confirm Password <span className="text-amber-500">*</span></label>
-                <div style={{ display: 'flex', alignItems: 'center', borderBottom: '1px solid #e5e7eb' }}>
+                <div className="password-wrapper">
                   <input
                     name="confirmPassword"
                     type={showConfirm ? 'text' : 'password'}
                     value={form.confirmPassword}
                     onChange={handleChange}
                     placeholder="Repeat your password"
-                    style={{flex:'1 1 0%', width:'0px', border:'none', outline:'none', background:'transparent', padding:'8px 0', fontSize:'14px', color:'#1f2937', boxShadow:'none'}}
                   />
                   <button
                     type="button"
                     tabIndex={-1}
                     onClick={() => setShowConfirm(!showConfirm)}
-                    style={{flex:'none', border:'none', outline:'none', background:'transparent', cursor:'pointer', color:'#6b7280', padding:'4px', display:'flex', alignItems:'center'}}
                   >
                     {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
