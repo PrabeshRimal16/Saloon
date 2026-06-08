@@ -43,7 +43,7 @@ const AppRoutes = () => {
 
   const isLoggedIn = Boolean(user);
   const isAdmin = user?.role === "admin";
-  const defaultAuthedPath = isAdmin ? "/admin" : "/customer";
+  const defaultAuthedPath = isAdmin ? "/admin" : "/";
   const authReady = !loading;
 
   return (
@@ -56,7 +56,7 @@ const AppRoutes = () => {
         path="/login"
         element={authReady ? (!isLoggedIn ? <Login /> : <Navigate to={defaultAuthedPath} />) : <div />}
       />
-      <Route path="/admin" element={authReady ? (isAdmin ? <ProtectedRoute><AdminLayout /></ProtectedRoute> : (isLoggedIn ? <Navigate to="/customer" /> : <Navigate to="/login" />)) : <div />}>
+      <Route path="/admin" element={authReady ? (isAdmin ? <ProtectedRoute><AdminLayout /></ProtectedRoute> : (isLoggedIn ? <Navigate to="/" /> : <Navigate to="/login" />)) : <div />}>
         <Route index element={<AdminDashboard />} />
         <Route path="services" element={<AdminServicesManagement />} />
         <Route path="appointments" element={<AdminAppointmentManagement />} />

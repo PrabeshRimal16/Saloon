@@ -32,7 +32,7 @@ export default function Login() {
 
       await refreshUser();
       const role = res.data?.role || "customer";
-      navigate(role === "admin" ? "/admin" : "/customer");
+      navigate(role === "admin" ? "/admin" : "/");
     } catch (err) {
       setError(err.response?.data?.message || err.response?.data?.error || "Invalid credentials");
     } finally {
