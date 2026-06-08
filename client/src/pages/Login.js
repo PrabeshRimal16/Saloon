@@ -111,50 +111,24 @@ export default function Login() {
 
                 <div>
                   <label className="block font-body text-xs text-gray-500 uppercase tracking-[0.35em] mb-2" htmlFor="password">Password</label>
-                  <div style={{ position: 'relative', borderBottom: '1px solid #E5E7EB', paddingBottom: '6px' }}>
+                  <div className="flex items-center border-b-2 border-gray-200">
                     <input
                       id="password"
                       name="password"
                       type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
+                      className="grow border-none outline-none bg-transparent py-2 text-sm text-stone-800 placeholder-gray-400"
+                      style={{ minWidth: 0 }}
                       placeholder="Enter your password"
                       autoComplete="current-password"
                       required
-                      style={{
-                        position: 'absolute',
-                        left: 0,
-                        right: '38px',
-                        top: 0,
-                        bottom: 0,
-                        border: 'none',
-                        outline: 'none',
-                        background: 'transparent',
-                        padding: '8px 0',
-                        fontSize: '0.875rem',
-                        color: '#1f2937',
-                        WebkitAppearance: 'none',
-                        width: 'calc(100% - 38px)'
-                      }}
                     />
                     <button
                       type="button"
                       tabIndex={-1}
                       onClick={() => setShowPassword((s) => !s)}
-                      style={{
-                        position: 'absolute',
-                        right: 0,
-                        top: '50%',
-                        transform: 'translateY(-50%)',
-                        background: 'transparent',
-                        border: 'none',
-                        outline: 'none',
-                        cursor: 'pointer',
-                        color: '#6b7280',
-                        padding: '4px',
-                        display: 'flex',
-                        alignItems: 'center'
-                      }}
+                      className="shrink-0 p-1 text-gray-400 hover:text-amber-600"
                     >
                       {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
