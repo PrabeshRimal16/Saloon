@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
-import { Eye, EyeOff } from "lucide-react";
+// removed show/hide icon — no icons needed
 import { useAuth } from "../context/AuthContext";
 
 export default function Login() {
@@ -12,7 +12,6 @@ export default function Login() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -114,20 +113,13 @@ export default function Login() {
                     <input
                       id="password"
                       name="password"
-                      type={showPassword ? "text" : "password"}
+                      type="password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Enter your password"
                       autoComplete="new-password"
                       required
                     />
-                    <button
-                      type="button"
-                      tabIndex={-1}
-                      onClick={() => setShowPassword((s) => !s)}
-                    >
-                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                    </button>
                   </div>
 
                   <div className="text-right mt-2">
