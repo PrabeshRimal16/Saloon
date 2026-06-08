@@ -9,9 +9,9 @@ import "./styles/ui-overrides.css";
 // suppress console output in production builds
 if (process.env.NODE_ENV === 'production') {
 	// keep no-ops minimal and fast
-	console.log = () => {};
-	console.error = () => {};
-	console.warn = () => {};
+	//console.log = () => {};
+	//console.error = () => {};
+	//console.warn = () => {};
 }
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
