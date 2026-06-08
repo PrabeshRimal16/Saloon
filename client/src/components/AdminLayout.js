@@ -4,6 +4,7 @@ import AdminSidebar from './AdminSidebar';
 import AdminHeader from './AdminHeader';
 import { AdminProvider } from '../context/AdminContext';
 
+
 function AdminLayout() {
   useEffect(() => {
     const collapsed = localStorage.getItem('admin_sidebar_collapsed') === '1';
