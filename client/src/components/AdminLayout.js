@@ -18,10 +18,10 @@ function AdminLayout() {
   }, []);
   return (
     <AdminProvider>
-      <div>
+      <div className="min-h-screen">
         <AdminSidebar />
         <AdminHeader />
-        <main className="admin-content pt-[80px]" style={{ minHeight: 'calc(100vh - 80px)' }}>
+        <main className="admin-content pt-[80px] transition-all duration-300 md:ml-[var(--admin-left,220px)]" style={{ minHeight: 'calc(100vh - 80px)' }}>
           <Outlet />
         </main>
       </div>
