@@ -217,7 +217,8 @@ input:-webkit-autofill:focus {
   outline: none !important;
   box-shadow: none !important;
   background: transparent !important;
-  padding: 8px 0 !important;
+  padding: 8px 0 8px 0 !important;
+  padding-right: 40px !important;
   font-size: 14px !important;
 }
 .password-wrapper button {
@@ -226,6 +227,7 @@ input:-webkit-autofill:focus {
   background: transparent !important;
   border: none !important;
   outline: none !important;
+  margin-left: 8px !important;
 }
 
 /* Slightly larger, readable default text for body content */
