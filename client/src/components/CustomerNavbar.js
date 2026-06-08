@@ -104,9 +104,19 @@ function CustomerNavbar() {
         }
         .lux-search {
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <button className="lux-hamburger" onClick={() => setShowMobileMenu(v => !v)} aria-label="Menu">
-                    <span className="material-symbols-outlined">menu</span>
-                  </button>
+                          <button
+                            className="lux-hamburger"
+                            onClick={() => {
+                              setShowMobileMenu(v => {
+                                const next = !v;
+                                try { window.dispatchEvent(new CustomEvent('customerMobileToggle', { detail: next })); } catch (err) { try { window.dispatchEvent(new Event('customerMobileToggle')); } catch (e) {} }
+                                return next;
+                              });
+                            }}
+                            aria-label="Menu"
+                          >
+                            <span className="material-symbols-outlined">menu</span>
+                          </button>
                   <div className="lux-search-wrap">
           background: #F8F7F5; border: 1.5px solid transparent;
           border-radius: 50px; padding: 0 16px 0 36px;
