@@ -135,7 +135,7 @@ export default function AdminOfferManagement() {
         <div className="p-8 animate-fade-in">
           {/* Stats Row */}
           <div className="font-body text-[11px] text-[#C9A84C] uppercase tracking-widest mb-3">Overview</div>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             {[
               { label: 'Total Offers', value: stats.total, icon: 'local_offer', border: 'border-[#C9A84C]' },
               { label: 'Active', value: stats.active, icon: 'check_circle', border: 'border-[#2D7A4F]' },

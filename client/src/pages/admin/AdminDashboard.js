@@ -55,36 +55,40 @@ function ChartCard({ title, subtitle, badgeText, data, labels, maxVal, currentId
             <div key={i} className="w-full border-t border-dashed border-[#F0F0F0]" />
           ))}
         </div>
-        {/* Bars */}
-        <div className="relative h-full flex items-end justify-around gap-2 px-2">
-          {data.map((val, idx) => {
-            const pct = maxVal > 0 ? (val / maxVal) * 100 : 0;
-            const isCurrent = currentIdxStr !== undefined && String(labels[idx]) === String(currentIdxStr);
-            const hasData = val > 0;
-            const barBg = hasData
-              ? (isCurrent ? 'bg-[#A8882A]' : 'bg-[#C9A84C]')
-              : 'bg-[#EEEEEE]';
-            const labelColor = isCurrent ? 'text-[#C9A84C]' : 'text-[#AAAAAA]';
+        {/* Bars - horizontally scrollable on small screens */}
+        <div className="relative h-full">
+          <div className="h-full overflow-x-auto">
+            <div className="h-full flex items-end gap-2 px-2" style={{ minWidth: `${Math.max(labels.length * 48, 320)}px` }}>
+              {data.map((val, idx) => {
+                const pct = maxVal > 0 ? (val / maxVal) * 100 : 0;
+                const isCurrent = currentIdxStr !== undefined && String(labels[idx]) === String(currentIdxStr);
+                const hasData = val > 0;
+                const barBg = hasData
+                  ? (isCurrent ? 'bg-[#A8882A]' : 'bg-[#C9A84C]')
+                  : 'bg-[#EEEEEE]';
+                const labelColor = isCurrent ? 'text-[#C9A84C]' : 'text-[#AAAAAA]';
 
-            return (
-              <div key={idx} className="flex flex-col items-center justify-end flex-1 h-full group relative">
-                <div className="relative w-full flex flex-col items-center justify-end" style={{ height: '100%' }}>
-                  {hasData && (
-                    <span className="text-[11px] font-bold text-[#1A1A1A] mb-1">{val}</span>
-                  )}
-                  <div
-                    className={`w-full max-w-[32px] rounded-t-[6px] transition-all duration-500 ${barBg}`}
-                    style={{ height: `${Math.max(pct, hasData ? 6 : 3)}%` }}
-                  />
-                  {/* Tooltip on hover */}
-                  <div className="absolute bottom-[calc(100%+4px)] left-1/2 -translate-x-1/2 px-2 py-1 bg-[#C9A84C] text-white text-[11px] font-bold rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10 shadow-md">
-                    {val} {val === 1 ? 'Booking' : 'Bookings'}
+                return (
+                  <div key={idx} className="flex flex-col items-center justify-end h-full group relative">
+                    <div className="relative flex flex-col items-center justify-end" style={{ height: '100%' }}>
+                      {hasData && (
+                        <span className="text-[11px] font-bold text-[#1A1A1A] mb-1">{val}</span>
+                      )}
+                      <div
+                        className={`w-[32px] rounded-t-[6px] transition-all duration-500 ${barBg}`}
+                        style={{ height: `${Math.max(pct, hasData ? 6 : 3)}%` }}
+                      />
+                      {/* Tooltip on hover */}
+                      <div className="absolute bottom-[calc(100%+4px)] left-1/2 -translate-x-1/2 px-2 py-1 bg-[#C9A84C] text-white text-[11px] font-bold rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10 shadow-md">
+                        {val} {val === 1 ? 'Booking' : 'Bookings'}
+                      </div>
+                    </div>
+                    <div className={`text-[11px] font-bold ${labelColor} uppercase tracking-wider mt-2`}>{labels[idx]}</div>
                   </div>
-                </div>
-                <div className={`text-[11px] font-bold ${labelColor} uppercase tracking-wider mt-2`}>{labels[idx]}</div>
-              </div>
-            );
-          })}
+                );
+              })}
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -218,7 +222,7 @@ export default function AdminDashboard() {
           </div>
 
           {/* Stats Grid */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             <StatCard icon="content_cut" label="Total Services" value={servicesCount} loading={loading} />
             <StatCard icon="calendar_month" label="Total Bookings" value={totalAppointments} loading={loading} />
             <StatCard icon="pending_actions" label="Pending" value={pendingCount} sub={pendingCount > 0 ? "Needs attention" : undefined} loading={loading} />
