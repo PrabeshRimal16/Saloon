@@ -67,7 +67,7 @@ router.get(
       return res.redirect(`${CLIENT_URL}/complete-profile?${params}`);
     }
 
-    const redirectPath = req.user?.role === "admin" ? "/admin" : "/customer";
+    const redirectPath = req.user?.role === "admin" ? "/admin" : "/";
     res.redirect(`${CLIENT_URL}${redirectPath}`);
   }
 );
