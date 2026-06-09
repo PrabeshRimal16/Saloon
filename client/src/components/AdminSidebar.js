@@ -71,9 +71,9 @@ function AdminSidebar() {
       <aside
         style={{ transition: 'width 0.28s ease, transform 0.28s ease' }}
         className={[
-          'fixed top-0 left-0 h-screen bg-[#1A1A1A] flex flex-col z-50 admin-sidebar',
+          'fixed top-0 left-0 h-screen bg-[#1A1A1A] flex flex-col z-50 admin-sidebar pt-4',
           'transform',
-          mobileOpen ? 'translate-x-0 w-[260px]' : '-translate-x-full md:translate-x-0',
+          mobileOpen ? 'translate-x-0 w-[280px]' : '-translate-x-full md:translate-x-0',
           collapsed ? 'md:w-[64px]' : 'md:w-[220px]',
         ].join(' ')}
       >
@@ -118,37 +118,33 @@ function AdminSidebar() {
         </div>
 
         {/* ── NAV LINKS ── */}
-        <nav className="flex-1 overflow-y-auto overflow-x-hidden py-3">
-          <ul className="flex flex-col gap-[2px]">
+        <nav className="flex-1 overflow-y-auto overflow-x-hidden">
+          <ul className="flex flex-col gap-2">
             {navItems.map((item, idx) => (
-              <li
-                key={item.to}
-                className={`nav-item stagger-item ${collapsed ? 'collapsed' : ''}`}
-                style={{ animationDelay: `${idx * 0.05}s` }}
-              >
+              <li key={item.to} className="nav-item stagger-item" style={{ animationDelay: `${idx * 0.05}s` }}>
                 <NavLink
                   to={item.to}
                   end={item.end}
                   onClick={() => setMobileOpen(false)}
-                  className={({ isActive }) => [
-                    'relative flex items-center py-[11px] transition-all duration-200 border-l-[3px] group',
-                    collapsed ? 'justify-center px-0 w-full' : 'gap-3 px-6',
-                    isActive
-                      ? 'active border-[#C9A84C] text-white'
-                      : 'border-transparent text-[#AAAAAA] hover:text-white',
-                  ].join(' ')}
+                  className={({ isActive }) => {
+                    let cls = 'relative flex items-center w-full px-[24px] py-[14px] gap-[14px] text-[15px] font-medium transition-all duration-200 group border-l-4 md:border-l-[3px]';
+                    if (collapsed && !isMobile) cls += ' md:justify-center md:px-0 md:gap-0';
+                    if (isActive) cls += ' bg-[#FEF9ED] text-[#C9A84C] border-[#C9A84C]';
+                    else cls += ' text-[#AAAAAA] hover:text-white';
+                    return cls;
+                  }}
                 >
                   <div className="active-border" />
                   <div className="hover-bg" />
 
-                  {/* Icon — always shown */}
-                  <span className="material-symbols-outlined text-[20px] shrink-0">
+                  {/* Icon — fixed size */}
+                  <span className="material-symbols-outlined w-[20px] h-[20px] text-[20px] flex items-center justify-center shrink-0">
                     {item.icon}
                   </span>
 
-                  {/* Label — conditionally rendered (not just hidden) */}
+                  {/* Label — conditionally rendered */}
                   {showText && (
-                    <span className="text-[14px] font-medium whitespace-nowrap">
+                    <span className="whitespace-nowrap truncate">
                       {item.label}
                     </span>
                   )}
@@ -164,7 +160,7 @@ function AdminSidebar() {
         </nav>
 
         {/* ── USER PROFILE ── */}
-        <div className="shrink-0 p-3 border-t border-[rgba(255,255,255,0.05)]">
+        <div className="shrink-0 px-6 py-4 border-t border-[rgba(255,255,255,0.1)]">
           <div className={`flex items-center ${collapsed && !isMobile ? 'justify-center' : 'gap-3'}`}>
             {loading ? (
               <div className="w-9 h-9 rounded-full bg-[#333] animate-pulse shrink-0" />
@@ -199,7 +195,7 @@ function AdminSidebar() {
         </div>
 
         {/* ── LOGOUT ── */}
-        <div className="shrink-0 px-3 pb-4 pt-1">
+        <div className="shrink-0 px-6 py-4">
           <button
             onClick={handleLogout}
             aria-label="Logout"
