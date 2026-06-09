@@ -7,6 +7,7 @@ function AdminSidebar() {
   const { logout, user, loading } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
 
   useEffect(() => {
     const v = localStorage.getItem('admin_sidebar_collapsed') === '1';
@@ -19,6 +20,15 @@ function AdminSidebar() {
     window.addEventListener('adminMobileToggle', onMobileToggle);
     return () => window.removeEventListener('adminMobileToggle', onMobileToggle);
   }, []);
+
+  // Track screen size so collapsed state never hides text on mobile
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize, { passive: true });
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const showText = !collapsed || isMobile;
 
   const toggleCollapse = () => {
     setCollapsed((s) => {
@@ -83,7 +93,7 @@ function AdminSidebar() {
         {/* ── DESKTOP HEADER ── */}
         <div className="hidden md:flex items-center h-[64px] shrink-0 border-b border-[rgba(255,255,255,0.06)]">
           {/* Brand name — only when expanded */}
-          {!collapsed && (
+          {showText && (
             <div className="flex-1 pl-5 overflow-hidden">
               <span className="text-white text-[13px] font-semibold uppercase tracking-widest whitespace-nowrap">
                 The Salon At Reston
@@ -137,14 +147,14 @@ function AdminSidebar() {
                   </span>
 
                   {/* Label — conditionally rendered (not just hidden) */}
-                  {!collapsed && (
+                  {showText && (
                     <span className="text-[14px] font-medium whitespace-nowrap">
                       {item.label}
                     </span>
                   )}
 
-                  {/* Tooltip on hover when collapsed */}
-                  {collapsed && (
+                  {/* Tooltip on hover when collapsed (desktop only) */}
+                  {collapsed && !isMobile && (
                     <div className="collapsed-tooltip">{item.label}</div>
                   )}
                 </NavLink>
@@ -155,7 +165,7 @@ function AdminSidebar() {
 
         {/* ── USER PROFILE ── */}
         <div className="shrink-0 p-3 border-t border-[rgba(255,255,255,0.05)]">
-          <div className={`flex items-center ${collapsed ? 'justify-center' : 'gap-3'}`}>
+          <div className={`flex items-center ${collapsed && !isMobile ? 'justify-center' : 'gap-3'}`}>
             {loading ? (
               <div className="w-9 h-9 rounded-full bg-[#333] animate-pulse shrink-0" />
             ) : (
@@ -175,7 +185,7 @@ function AdminSidebar() {
                 )}
 
                 {/* Name + role — only when expanded */}
-                {!collapsed && (
+                {showText && (
                   <div className="flex flex-col min-w-0">
                     <span className="text-white text-[13px] font-bold truncate leading-tight">
                       {user?.name || user?.displayName || user?.email || 'Administrator'}
@@ -196,12 +206,12 @@ function AdminSidebar() {
             className={[
               'w-full flex items-center gap-2 px-3 py-2 rounded-lg',
               'text-[#C0392B] hover:bg-[rgba(192,57,43,0.06)] transition-colors',
-              collapsed ? 'justify-center' : '',
+              collapsed && !isMobile ? 'justify-center' : '',
             ].join(' ')}
           >
             <span className="material-symbols-outlined text-[18px] shrink-0">logout</span>
             {/* Logout text — only when expanded */}
-            {!collapsed && (
+            {showText && (
               <span className="text-[13px] font-medium">Logout</span>
             )}
           </button>
