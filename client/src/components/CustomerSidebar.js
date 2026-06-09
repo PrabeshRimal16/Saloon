@@ -6,6 +6,17 @@ function CustomerSidebar() {
   const { logout, user, loading } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
+
+  // Track screen size so collapsed state never hides text on mobile
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', onResize, { passive: true });
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
+  // On mobile: always show text (ignore collapsed). On desktop: respect collapsed.
+  const showText = !collapsed || isMobile;
 
   // Restore saved collapse state on mount
   useEffect(() => {
@@ -86,11 +97,11 @@ function CustomerSidebar() {
           className={[
             'shrink-0 flex items-center h-[64px]',
             'border-b border-[#E8E0D5]',
-            collapsed ? 'justify-center px-0' : 'justify-between px-4',
+            !showText ? 'justify-center px-0' : 'justify-between px-4',
           ].join(' ')}
         >
-          {/* Brand logo — hidden when collapsed */}
-          {!collapsed && (
+          {/* Brand logo — hidden when collapsed on desktop */}
+          {showText && (
             <span
               style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontStyle: 'italic' }}
               className="text-[#B8960C] text-[18px] font-semibold whitespace-nowrap overflow-hidden"
@@ -139,7 +150,7 @@ function CustomerSidebar() {
                     isActive
                       ? 'bg-[#FEF9ED] text-[#B8960C] border-l-[3px] border-[#B8960C] pl-[9px]'
                       : 'text-[#4A4A4A] border-l-[3px] border-transparent hover:bg-[#FEF9ED] hover:text-[#B8960C]',
-                    collapsed ? 'md:justify-center md:px-0 md:pl-0' : '',
+                    !showText ? 'md:justify-center md:px-0 md:pl-0' : '',
                   ].join(' ')}
                 >
                   <span
@@ -152,22 +163,17 @@ function CustomerSidebar() {
                     {item.icon}
                   </span>
 
-                  {/* Label fades out when collapsed */}
-                  <span
-                    className="text-[14px] font-medium whitespace-nowrap overflow-hidden transition-all duration-200"
-                    style={{
-                      maxWidth: collapsed ? '0px' : '160px',
-                      opacity: collapsed ? 0 : 1,
-                      display: 'block',
-                    }}
-                  >
-                    {item.label}
-                  </span>
+                  {/* Label — always shown on mobile, hidden when collapsed on desktop */}
+                  {showText && (
+                    <span className="text-[14px] font-medium whitespace-nowrap">
+                      {item.label}
+                    </span>
+                  )}
 
-                  {/* Tooltip when collapsed (desktop only) */}
-                  {collapsed && (
+                  {/* Tooltip — only on desktop when collapsed */}
+                  {collapsed && !isMobile && (
                     <div
-                      className="hidden md:block absolute left-[56px] top-1/2 -translate-y-1/2
+                      className="absolute left-[56px] top-1/2 -translate-y-1/2
                         bg-[#1A1A1A] text-white text-[12px] font-semibold px-3 py-1.5
                         rounded-lg whitespace-nowrap pointer-events-none
                         opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0
@@ -184,7 +190,7 @@ function CustomerSidebar() {
 
         {/* ── USER PROFILE ── */}
         <div className="shrink-0 px-3 py-3 border-t border-[#E8E0D5]">
-          <div className={`flex items-center gap-3 ${collapsed ? 'md:justify-center' : ''}`}>
+          <div className={`flex items-center gap-3 ${!showText ? 'md:justify-center' : ''}`}>
             {loading ? (
               <div className="w-9 h-9 rounded-full bg-[#F0EBE0] animate-pulse shrink-0" />
             ) : (
@@ -201,7 +207,7 @@ function CustomerSidebar() {
                     {avatarText}
                   </div>
                 )}
-                {!collapsed && (
+                {showText && (
                   <div className="flex flex-col min-w-0">
                     <span className="text-[#1A1A1A] text-[13px] font-bold truncate leading-tight">
                       {user?.name || user?.displayName || user?.email || 'Customer'}
@@ -222,11 +228,11 @@ function CustomerSidebar() {
             className={[
               'w-full flex items-center gap-2 px-3 py-2 rounded-lg',
               'text-[#C0392B] hover:bg-red-50 transition-colors',
-              collapsed ? 'md:justify-center' : '',
+              !showText ? 'md:justify-center' : '',
             ].join(' ')}
           >
             <span className="material-symbols-outlined text-[18px] shrink-0">logout</span>
-            {!collapsed && (
+            {showText && (
               <span className="text-[13px] font-medium">Logout</span>
             )}
           </button>
