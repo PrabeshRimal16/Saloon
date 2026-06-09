@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { Phone } from 'lucide-react';
 
 function CustomerSidebar() {
   const { logout, user, loading } = useAuth();
@@ -153,15 +154,19 @@ function CustomerSidebar() {
                     !showText ? 'md:justify-center md:px-0 md:pl-0' : '',
                   ].join(' ')}
                 >
-                  <span
-                    className={[
-                      'material-symbols-outlined text-[20px] shrink-0',
-                      'transition-colors duration-200',
-                    ].join(' ')}
-                    style={{ color: 'inherit' }}
-                  >
-                    {item.icon}
-                  </span>
+                        {item.to === '/contact' ? (
+                          <Phone size={20} style={{ color: 'inherit' }} className="shrink-0" />
+                        ) : (
+                          <span
+                            className={[
+                              'material-symbols-outlined text-[20px] shrink-0',
+                              'transition-colors duration-200',
+                            ].join(' ')}
+                            style={{ color: 'inherit' }}
+                          >
+                            {item.icon}
+                          </span>
+                        )}
 
                   {/* Label — always shown on mobile, hidden when collapsed on desktop */}
                   {showText && (

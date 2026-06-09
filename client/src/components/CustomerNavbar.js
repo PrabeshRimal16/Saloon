@@ -92,7 +92,7 @@ function CustomerNavbar() {
           <button
             className="hamburger"
             aria-label="Open menu"
-            onClick={() => window.dispatchEvent(new CustomEvent('customerMobileToggle', { detail: true }))}
+            onClick={() => window.dispatchEvent(new CustomEvent('customerMobileToggle'))}
           >
             <span className="material-symbols-outlined" style={{ fontSize: 22 }}>menu</span>
           </button>
