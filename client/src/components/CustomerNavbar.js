@@ -59,9 +59,12 @@ function CustomerNavbar() {
   return (
     <>
       <style>{`
-        .nav { position:fixed; top:0; left:0; right:0; z-index:1000; height:72px; display:flex; align-items:center; justify-content:space-between; padding:0 20px; background:rgba(255,255,255,0.98); border-bottom:1px solid #E8E0D5; transition:box-shadow .22s ease; font-family: 'DM Sans', sans-serif; }
+        .nav { position:fixed; top:0; left:0; right:0; z-index:1000; height:72px; display:flex; align-items:center; justify-content:space-between; padding:0 20px; background:rgba(255,255,255,0.98); border-bottom:1px solid #E8E0D5; transition:left .28s ease, box-shadow .22s ease; font-family: 'DM Sans', sans-serif; }
+        @media (min-width:769px){ .nav { left: var(--customer-left, 220px); } }
         .nav.scrolled { box-shadow: 0 8px 32px rgba(0,0,0,0.08); }
-        .nav-left { display:flex; align-items:center; gap:18px; }
+        .nav-left { display:flex; align-items:center; gap:14px; }
+        .hamburger { width:36px; height:36px; border-radius:8px; display:none; align-items:center; justify-content:center; background:#F8F7F5; border:0; cursor:pointer; color:#1C1C1E; }
+        .hamburger:hover { background:#FEF9ED; color:#B8960C; }
         .logo { font-family: 'Cormorant Garamond', Georgia, serif; font-style:italic; color:#B8960C; font-size:20px; background:none; border:0; cursor:pointer; }
         .links { display:flex; gap:8px; align-items:center; }
         .link { padding:0 12px; height:72px; display:flex; align-items:center; color:#1C1C1E; text-decoration:none; font-size:13px; color:#6B6B6B; border-bottom:2px solid transparent; transition: color .15s, border-color .15s; }
@@ -80,11 +83,19 @@ function CustomerNavbar() {
         .avatar-drop { position:absolute; top:calc(100% + 10px); right:0; width:200px; background:#fff; border:1px solid #E8E0D5; border-radius:10px; box-shadow:0 12px 40px rgba(0,0,0,0.12); z-index:1200; }
         .avatar-item { width:100%; padding:10px 12px; text-align:left; background:none; border:0; cursor:pointer; display:flex; gap:8px; align-items:center; color:#1C1C1E; }
         .avatar-item.danger { color:#C0392B; }
-        @media (max-width:768px){ .links{ display:none; } .nav{ padding:0 12px; } }
+        @media (max-width:768px){ .links{ display:none; } .nav{ padding:0 12px; } .hamburger{ display:inline-flex; } }
       `}</style>
 
       <nav className={`nav${scrolled ? ' scrolled' : ''}`}>
         <div className="nav-left">
+          {/* Hamburger — mobile only, opens sidebar overlay */}
+          <button
+            className="hamburger"
+            aria-label="Open menu"
+            onClick={() => window.dispatchEvent(new CustomEvent('customerMobileToggle', { detail: true }))}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 22 }}>menu</span>
+          </button>
           <button className="logo" onClick={() => navigate('/')}>The Salon At Reston</button>
           <div className="links">
             {navLinks.map((l) => (
