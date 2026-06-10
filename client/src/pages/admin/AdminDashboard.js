@@ -15,8 +15,6 @@ function formatTime(timeStr) {
   const h12 = h % 12 || 12;
   return `${h12}:${parts[1]} ${ampm}`;
 }
-
-
 function StatCard({ icon, label, value, sub, loading }) {
   return (
     <div className="bg-white rounded-[12px] border-l-[4px] border-[#C9A84C] shadow-[0_2px_16px_rgba(0,0,0,0.07)] p-6 flex items-start justify-between hover:shadow-[0_6px_24px_rgba(0,0,0,0.1)] hover:-translate-y-0.5 transition-all duration-200">

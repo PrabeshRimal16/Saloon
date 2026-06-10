@@ -217,8 +217,8 @@ export default function AdminAppointmentManagement() {
                   key={s}
                   onClick={() => setFilterStatus(s)}
                   className={`px-4 py-1.5 rounded-full text-[12px] font-bold transition-all capitalize ${filterStatus === s
-                      ? "bg-[#C9A84C] text-white shadow-sm"
-                      : "text-[#6B6B6B] hover:text-[#1A1A1A]"
+                    ? "bg-[#C9A84C] text-white shadow-sm"
+                    : "text-[#6B6B6B] hover:text-[#1A1A1A]"
                     }`}
                 >
                   {s === "All" ? "All" : s}
@@ -329,8 +329,8 @@ export default function AdminAppointmentManagement() {
                           key={app.id}
                           onClick={() => setSelectedAppointment(app)}
                           className={`table-row border-b border-[#EDE8DC] hover:bg-[#FEF9ED] transition-colors cursor-pointer border-l-4 ${isSelected
-                              ? 'bg-[rgba(201,168,76,0.06)] border-l-[#C9A84C]'
-                              : rowBg + ' border-l-transparent'
+                            ? 'bg-[rgba(201,168,76,0.06)] border-l-[#C9A84C]'
+                            : rowBg + ' border-l-transparent'
                             }`}
                           style={{ animationDelay: `${index * 0.04}s` }}
                         >

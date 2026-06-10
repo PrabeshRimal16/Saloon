@@ -11,7 +11,6 @@ export default function AdminOfferManagement() {
   const [formData, setFormData] = useState({
     title: "", description: "", discount_percent: "", valid_until: "", image: null, image_url: "",
   });
-
   const [toast, setToast] = useState(null);
 
   const API_BASE = process.env.REACT_APP_API_URL || "";
@@ -170,8 +169,8 @@ export default function AdminOfferManagement() {
                 {["all", "active", "expired"].map(f => (
                   <button key={f} onClick={() => setStatusFilter(f)}
                     className={`px-4 py-2 rounded-full text-[12px] font-bold uppercase tracking-wider transition-all ${statusFilter === f
-                        ? 'bg-[#C9A84C] text-white shadow-[0_4px_16px_rgba(201,168,76,0.3)]'
-                        : 'bg-white border border-[#EDE8DC] text-[#6B6B6B] hover:border-[#C9A84C] hover:text-[#C9A84C]'
+                      ? 'bg-[#C9A84C] text-white shadow-[0_4px_16px_rgba(201,168,76,0.3)]'
+                      : 'bg-white border border-[#EDE8DC] text-[#6B6B6B] hover:border-[#C9A84C] hover:text-[#C9A84C]'
                       }`}
                   >
                     {f === 'all' ? 'All' : f.charAt(0).toUpperCase() + f.slice(1)}
