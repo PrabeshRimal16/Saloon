@@ -16,6 +16,7 @@ function formatTime(timeStr) {
   return `${h12}:${parts[1]} ${ampm}`;
 }
 
+
 function StatCard({ icon, label, value, sub, loading }) {
   return (
     <div className="bg-white rounded-[12px] border-l-[4px] border-[#C9A84C] shadow-[0_2px_16px_rgba(0,0,0,0.07)] p-6 flex items-start justify-between hover:shadow-[0_6px_24px_rgba(0,0,0,0.1)] hover:-translate-y-0.5 transition-all duration-200">
@@ -100,8 +101,8 @@ function StatusBadge({ status }) {
   const cfg = s === 'approved'
     ? { bg: 'bg-[#EAF5EF]', text: 'text-[#2D7A4F]', label: 'Approved', dot: 'bg-[#2D7A4F]' }
     : s === 'cancelled'
-    ? { bg: 'bg-[#FDEDED]', text: 'text-[#C0392B]', label: 'Cancelled', dot: 'bg-[#C0392B]' }
-    : { bg: 'bg-[#FEF9ED]', text: 'text-[#C9A84C]', label: 'Pending', dot: 'bg-[#C9A84C]' };
+      ? { bg: 'bg-[#FDEDED]', text: 'text-[#C0392B]', label: 'Cancelled', dot: 'bg-[#C0392B]' }
+      : { bg: 'bg-[#FEF9ED]', text: 'text-[#C9A84C]', label: 'Pending', dot: 'bg-[#C9A84C]' };
   return (
     <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider ${cfg.bg} ${cfg.text}`}>
       <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
@@ -158,11 +159,11 @@ export default function AdminDashboard() {
   const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
   const weeklyCounts = [0, 0, 0, 0, 0, 0, 0];
   const now = new Date();
-  
+
   // Monthly Data
   const monthLabels = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
   const monthlyCounts = new Array(12).fill(0);
-  
+
   // Yearly Data
   const yearlyMap = {};
 
@@ -174,12 +175,12 @@ export default function AdminDashboard() {
       if (diff >= 0 && diff < 7) {
         weeklyCounts[(d.getDay() + 6) % 7] += 1;
       }
-      
+
       // Monthly
       if (d.getFullYear() === now.getFullYear()) {
         monthlyCounts[d.getMonth()] += 1;
       }
-      
+
       // Yearly
       const y = d.getFullYear();
       yearlyMap[y] = (yearlyMap[y] || 0) + 1;
@@ -206,8 +207,8 @@ export default function AdminDashboard() {
 
   return (
     <>
-    <div className="min-h-screen bg-[#F4F4F6]">
-      <main className="p-8 animate-[fadeIn_0.3s_ease-in]">
+      <div className="min-h-screen bg-[#F4F4F6]">
+        <main className="p-8 animate-[fadeIn_0.3s_ease-in]">
 
           {/* Greeting */}
           <div className="flex items-center justify-between mb-8">
@@ -232,7 +233,7 @@ export default function AdminDashboard() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-8">
             {/* Left Column: Stacked Charts */}
             <div className="lg:col-span-2 flex flex-col gap-4">
-              <ChartCard 
+              <ChartCard
                 title="Weekly Bookings"
                 subtitle="Last 7 days activity"
                 badgeText={`${weeklyCounts.reduce((a, b) => a + b, 0)} this week`}
@@ -241,8 +242,8 @@ export default function AdminDashboard() {
                 maxVal={maxWeekly}
                 currentIdxStr={currentDayStr}
               />
-              
-              <ChartCard 
+
+              <ChartCard
                 title="Monthly Bookings"
                 subtitle="This year's activity"
                 badgeText={`${monthlyCounts.reduce((a, b) => a + b, 0)} this year`}
@@ -251,8 +252,8 @@ export default function AdminDashboard() {
                 maxVal={maxMonthly}
                 currentIdxStr={currentMonthStr}
               />
-              
-              <ChartCard 
+
+              <ChartCard
                 title="Yearly Bookings"
                 subtitle="All time activity"
                 badgeText={`${yearlyCounts.reduce((a, b) => a + b, 0)} all time`}

@@ -11,6 +11,7 @@ export default function AdminOfferManagement() {
   const [formData, setFormData] = useState({
     title: "", description: "", discount_percent: "", valid_until: "", image: null, image_url: "",
   });
+
   const [toast, setToast] = useState(null);
 
   const API_BASE = process.env.REACT_APP_API_URL || "";
@@ -168,11 +169,10 @@ export default function AdminOfferManagement() {
               <div className="flex gap-2">
                 {["all", "active", "expired"].map(f => (
                   <button key={f} onClick={() => setStatusFilter(f)}
-                    className={`px-4 py-2 rounded-full text-[12px] font-bold uppercase tracking-wider transition-all ${
-                      statusFilter === f
+                    className={`px-4 py-2 rounded-full text-[12px] font-bold uppercase tracking-wider transition-all ${statusFilter === f
                         ? 'bg-[#C9A84C] text-white shadow-[0_4px_16px_rgba(201,168,76,0.3)]'
                         : 'bg-white border border-[#EDE8DC] text-[#6B6B6B] hover:border-[#C9A84C] hover:text-[#C9A84C]'
-                    }`}
+                      }`}
                   >
                     {f === 'all' ? 'All' : f.charAt(0).toUpperCase() + f.slice(1)}
                   </button>
@@ -213,7 +213,7 @@ export default function AdminOfferManagement() {
                     {/* Image / Placeholder */}
                     <div className="h-44 bg-gradient-to-br from-[#FEF9ED] to-[#E8D9A0] relative flex items-center justify-center overflow-hidden">
                       {imgSrc ? (
-                        <img src={imgSrc} alt={offer.title || 'Offer image'} className="w-full h-full object-cover" loading="lazy" onError={(e)=>{e.currentTarget.onerror=null;e.currentTarget.src='/placeholder.png';}} />
+                        <img src={imgSrc} alt={offer.title || 'Offer image'} className="w-full h-full object-cover" loading="lazy" onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/placeholder.png'; }} />
                       ) : (
                         <span className="material-symbols-outlined text-[#C9A84C] text-[64px] opacity-40">local_offer</span>
                       )}
@@ -277,26 +277,26 @@ export default function AdminOfferManagement() {
               <form onSubmit={handleSaveOffer} className="p-6 flex flex-col gap-4">
                 <div>
                   <label className="block text-[11px] font-bold text-[#6B6B6B] uppercase tracking-widest mb-1.5">Offer Title *</label>
-                  <input type="text" required value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})}
+                  <input type="text" required value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })}
                     className="w-full bg-white border-[1.5px] border-[#EDE8DC] rounded-[8px] px-4 py-2.5 text-[14px] outline-none transition-all focus:border-[#C9A84C] focus:shadow-[0_0_0_3px_rgba(201,168,76,0.15)]"
                     placeholder="e.g., Summer Glow Package" />
                 </div>
                 <div>
                   <label className="block text-[11px] font-bold text-[#6B6B6B] uppercase tracking-widest mb-1.5">Description *</label>
-                  <textarea required rows={3} value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})}
+                  <textarea required rows={3} value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })}
                     className="w-full bg-white border-[1.5px] border-[#EDE8DC] rounded-[8px] px-4 py-2.5 text-[14px] outline-none transition-all focus:border-[#C9A84C] focus:shadow-[0_0_0_3px_rgba(201,168,76,0.15)] resize-none"
                     placeholder="Describe your offer..." />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-[11px] font-bold text-[#6B6B6B] uppercase tracking-widest mb-1.5">Discount % *</label>
-                    <input type="number" required min="0" max="100" value={formData.discount_percent} onChange={e => setFormData({...formData, discount_percent: e.target.value})}
+                    <input type="number" required min="0" max="100" value={formData.discount_percent} onChange={e => setFormData({ ...formData, discount_percent: e.target.value })}
                       className="w-full bg-white border-[1.5px] border-[#EDE8DC] rounded-[8px] px-4 py-2.5 text-[14px] outline-none transition-all focus:border-[#C9A84C] focus:shadow-[0_0_0_3px_rgba(201,168,76,0.15)]"
                       placeholder="20" />
                   </div>
                   <div>
                     <label className="block text-[11px] font-bold text-[#6B6B6B] uppercase tracking-widest mb-1.5">Valid Until *</label>
-                    <input type="date" required value={formData.valid_until} onChange={e => setFormData({...formData, valid_until: e.target.value})}
+                    <input type="date" required value={formData.valid_until} onChange={e => setFormData({ ...formData, valid_until: e.target.value })}
                       className="w-full bg-white border-[1.5px] border-[#EDE8DC] rounded-[8px] px-4 py-2.5 text-[14px] outline-none transition-all focus:border-[#C9A84C] focus:shadow-[0_0_0_3px_rgba(201,168,76,0.15)]" />
                   </div>
                 </div>
@@ -305,7 +305,7 @@ export default function AdminOfferManagement() {
                   <label className="block text-[11px] font-bold text-[#6B6B6B] uppercase tracking-widest mb-1.5">Offer Image</label>
                   <div className="relative border-2 border-dashed border-[#C9A84C] bg-[#FEF9ED] rounded-[8px] h-36 flex flex-col items-center justify-center overflow-hidden cursor-pointer hover:bg-[rgba(201,168,76,0.08)] transition-colors">
                     <input type="file" accept="image/*" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                      onChange={e => setFormData({...formData, image: e.target.files?.[0] || null})} />
+                      onChange={e => setFormData({ ...formData, image: e.target.files?.[0] || null })} />
                     {offerImagePreview ? (
                       <img src={offerImagePreview} alt="Preview" className="w-full h-full object-cover absolute inset-0" />
                     ) : (

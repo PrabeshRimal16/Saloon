@@ -77,7 +77,7 @@ export default function AdminAppointmentManagement() {
       if (!res.ok) throw new Error("Failed to update");
       const updated = await res.json();
       // refresh context cache
-      try { await fetchAppointments({ force: true }); } catch (_) {}
+      try { await fetchAppointments({ force: true }); } catch (_) { }
       if (selectedAppointment?.id === id) {
         setSelectedAppointment((prev) => ({ ...prev, status: updated.status }));
       }
@@ -120,19 +120,18 @@ export default function AdminAppointmentManagement() {
 
   return (
     <>
-    <div className="min-h-screen bg-[#F4F4F6]">
-      <main
-        className={`p-8 transition-all duration-300 ${
-          selectedAppointment ? 'mr-[420px]' : ''
-        }`}
-      >
+      <div className="min-h-screen bg-[#F4F4F6]">
+        <main
+          className={`p-8 transition-all duration-300 ${selectedAppointment ? 'mr-[420px]' : ''
+            }`}
+        >
           {/* Page intro */}
           <div className="flex items-center justify-between mb-8">
             <div>
               <div className="text-[11px] font-bold text-[#C9A84C] uppercase tracking-[0.35em] mb-1">
                 Management
               </div>
-                <p className="text-[#6B6B6B] text-[14px]">
+              <p className="text-[#6B6B6B] text-[14px]">
                 {localAppointments.length} total · {stats.pending} pending action
               </p>
             </div>
@@ -217,11 +216,10 @@ export default function AdminAppointmentManagement() {
                 <button
                   key={s}
                   onClick={() => setFilterStatus(s)}
-                  className={`px-4 py-1.5 rounded-full text-[12px] font-bold transition-all capitalize ${
-                    filterStatus === s
+                  className={`px-4 py-1.5 rounded-full text-[12px] font-bold transition-all capitalize ${filterStatus === s
                       ? "bg-[#C9A84C] text-white shadow-sm"
                       : "text-[#6B6B6B] hover:text-[#1A1A1A]"
-                  }`}
+                    }`}
                 >
                   {s === "All" ? "All" : s}
                 </button>
@@ -272,9 +270,8 @@ export default function AdminAppointmentManagement() {
                       <th
                         key={col.h}
                         style={{ width: col.w }}
-                        className={`px-6 py-4 text-[11px] font-bold text-[#6B6B6B] uppercase tracking-widest ${
-                          i === 5 ? 'text-right' : ''
-                        } align-middle whitespace-nowrap`}
+                        className={`px-6 py-4 text-[11px] font-bold text-[#6B6B6B] uppercase tracking-widest ${i === 5 ? 'text-right' : ''
+                          } align-middle whitespace-nowrap`}
                       >
                         {col.h}
                       </th>
@@ -331,11 +328,10 @@ export default function AdminAppointmentManagement() {
                         <tr
                           key={app.id}
                           onClick={() => setSelectedAppointment(app)}
-                          className={`table-row border-b border-[#EDE8DC] hover:bg-[#FEF9ED] transition-colors cursor-pointer border-l-4 ${
-                            isSelected
+                          className={`table-row border-b border-[#EDE8DC] hover:bg-[#FEF9ED] transition-colors cursor-pointer border-l-4 ${isSelected
                               ? 'bg-[rgba(201,168,76,0.06)] border-l-[#C9A84C]'
                               : rowBg + ' border-l-transparent'
-                          }`}
+                            }`}
                           style={{ animationDelay: `${index * 0.04}s` }}
                         >
                           <td className="px-6 py-4 align-middle whitespace-nowrap">
@@ -367,12 +363,12 @@ export default function AdminAppointmentManagement() {
                             <div className="font-medium text-[14px] text-[#1A1A1A]">
                               {app.appointment_date
                                 ? new Date(
-                                    app.appointment_date
-                                  ).toLocaleDateString("en-US", {
-                                    month: "short",
-                                    day: "numeric",
-                                    year: "numeric",
-                                  })
+                                  app.appointment_date
+                                ).toLocaleDateString("en-US", {
+                                  month: "short",
+                                  day: "numeric",
+                                  year: "numeric",
+                                })
                                 : "—"}
                             </div>
                             {app.appointment_time ? (
@@ -525,12 +521,12 @@ export default function AdminAppointmentManagement() {
                     <div className="text-[14px] font-bold text-[#1A1A1A]">
                       {selectedAppointment.appointment_date
                         ? new Date(
-                            selectedAppointment.appointment_date
-                          ).toLocaleDateString("en-US", {
-                            weekday: "short",
-                            month: "short",
-                            day: "numeric",
-                          })
+                          selectedAppointment.appointment_date
+                        ).toLocaleDateString("en-US", {
+                          weekday: "short",
+                          month: "short",
+                          day: "numeric",
+                        })
                         : "—"}
                     </div>
                   </div>
@@ -564,34 +560,34 @@ export default function AdminAppointmentManagement() {
                 <div className="flex flex-col gap-2.5">
                   {String(selectedAppointment.status).toLowerCase() !==
                     "approved" && (
-                    <button
-                      disabled={updatingId === selectedAppointment.id}
-                      onClick={() =>
-                        updateStatus(selectedAppointment.id, "approved")
-                      }
-                      className="w-full flex items-center justify-center gap-2 py-3 bg-[#2D7A4F] text-white rounded-[8px] text-[14px] font-bold hover:bg-[#205b3a] transition-all disabled:opacity-50 shadow-[0_4px_12px_rgba(45,122,79,0.3)]"
-                    >
-                      <span className="material-symbols-outlined text-[18px]">
-                        check_circle
-                      </span>
-                      Approve Appointment
-                    </button>
-                  )}
+                      <button
+                        disabled={updatingId === selectedAppointment.id}
+                        onClick={() =>
+                          updateStatus(selectedAppointment.id, "approved")
+                        }
+                        className="w-full flex items-center justify-center gap-2 py-3 bg-[#2D7A4F] text-white rounded-[8px] text-[14px] font-bold hover:bg-[#205b3a] transition-all disabled:opacity-50 shadow-[0_4px_12px_rgba(45,122,79,0.3)]"
+                      >
+                        <span className="material-symbols-outlined text-[18px]">
+                          check_circle
+                        </span>
+                        Approve Appointment
+                      </button>
+                    )}
                   {String(selectedAppointment.status).toLowerCase() !==
                     "cancelled" && (
-                    <button
-                      disabled={updatingId === selectedAppointment.id}
-                      onClick={() =>
-                        updateStatus(selectedAppointment.id, "cancelled")
-                      }
-                      className="w-full flex items-center justify-center gap-2 py-3 bg-white border border-[#FBBAB7] text-[#C0392B] rounded-[8px] text-[14px] font-bold hover:bg-[#FDEDED] transition-all disabled:opacity-50"
-                    >
-                      <span className="material-symbols-outlined text-[18px]">
-                        cancel
-                      </span>
-                      Cancel Appointment
-                    </button>
-                  )}
+                      <button
+                        disabled={updatingId === selectedAppointment.id}
+                        onClick={() =>
+                          updateStatus(selectedAppointment.id, "cancelled")
+                        }
+                        className="w-full flex items-center justify-center gap-2 py-3 bg-white border border-[#FBBAB7] text-[#C0392B] rounded-[8px] text-[14px] font-bold hover:bg-[#FDEDED] transition-all disabled:opacity-50"
+                      >
+                        <span className="material-symbols-outlined text-[18px]">
+                          cancel
+                        </span>
+                        Cancel Appointment
+                      </button>
+                    )}
                 </div>
               </div>
             </div>

@@ -172,7 +172,7 @@ export default function AdminServicesManagement() {
                           <div className="flex items-center gap-4">
                             <label className="w-[52px] h-[52px] rounded-[10px] bg-[#FEF9ED] border border-[#E8D9A0] flex items-center justify-center overflow-hidden cursor-pointer relative shrink-0 group hover:border-[#C9A84C] transition-colors">
                               {img
-                                ? <img src={img} alt={service.name || 'Service image'} className="w-full h-full object-cover" loading="lazy" onError={(e)=>{e.currentTarget.onerror=null;e.currentTarget.src='/placeholder.png';}} />
+                                ? <img src={img} alt={service.name || 'Service image'} className="w-full h-full object-cover" loading="lazy" onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/placeholder.png'; }} />
                                 : <span className="material-symbols-outlined text-[#C9A84C] text-[24px]">content_cut</span>
                               }
                               <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
@@ -253,34 +253,34 @@ export default function AdminServicesManagement() {
               <form onSubmit={handleCreateOrUpdate} className="p-6 flex flex-col gap-4 max-h-[75vh] overflow-y-auto">
                 <div>
                   <label className="block text-[11px] font-bold text-[#6B6B6B] uppercase tracking-widest mb-1.5">Service Name *</label>
-                  <input type="text" required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className={INPUT_CLS} placeholder="e.g., Luxury Hair Sculpting" />
+                  <input type="text" required value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} className={INPUT_CLS} placeholder="e.g., Luxury Hair Sculpting" />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-[11px] font-bold text-[#6B6B6B] uppercase tracking-widest mb-1.5">Category *</label>
-                    <input type="text" required value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} className={INPUT_CLS} placeholder="e.g., Hair Care" />
+                    <input type="text" required value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value })} className={INPUT_CLS} placeholder="e.g., Hair Care" />
                   </div>
                   <div>
                     <label className="block text-[11px] font-bold text-[#6B6B6B] uppercase tracking-widest mb-1.5">Price ($) *</label>
-                    <input type="number" required min="0" value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} className={INPUT_CLS} placeholder="e.g., 2500" />
+                    <input type="number" required min="0" value={formData.price} onChange={e => setFormData({ ...formData, price: e.target.value })} className={INPUT_CLS} placeholder="e.g., 2500" />
                   </div>
                 </div>
 
                 <div>
                   <label className="block text-[11px] font-bold text-[#6B6B6B] uppercase tracking-widest mb-1.5">Duration (minutes)</label>
-                  <input type="number" min="0" value={formData.duration} onChange={e => setFormData({...formData, duration: e.target.value})} className={INPUT_CLS} placeholder="e.g., 60" />
+                  <input type="number" min="0" value={formData.duration} onChange={e => setFormData({ ...formData, duration: e.target.value })} className={INPUT_CLS} placeholder="e.g., 60" />
                 </div>
 
                 <div>
                   <label className="block text-[11px] font-bold text-[#6B6B6B] uppercase tracking-widest mb-1.5">Description *</label>
-                  <textarea required rows={3} value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className={INPUT_CLS + ' resize-none'} placeholder="Describe what the service includes..." />
+                  <textarea required rows={3} value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} className={INPUT_CLS + ' resize-none'} placeholder="Describe what the service includes..." />
                 </div>
 
                 <div>
                   <label className="block text-[11px] font-bold text-[#6B6B6B] uppercase tracking-widest mb-1.5">Service Image</label>
                   <div className="relative border-2 border-dashed border-[#C9A84C] bg-[#FEF9ED] rounded-[8px] h-32 flex flex-col items-center justify-center overflow-hidden cursor-pointer hover:bg-[rgba(201,168,76,0.08)] transition-colors">
-                    <input type="file" accept="image/*" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onChange={e => setFormData({...formData, image: e.target.files[0]})} />
+                    <input type="file" accept="image/*" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onChange={e => setFormData({ ...formData, image: e.target.files[0] })} />
                     {formData.image
                       ? <><img src={URL.createObjectURL(formData.image)} alt="preview" className="absolute inset-0 w-full h-full object-cover" /><div className="absolute inset-0 bg-black/20 flex items-center justify-center"><span className="text-white text-[12px] font-bold bg-black/50 px-2 py-1 rounded">Change Image</span></div></>
                       : editingService?.imageUrl || editingService?.image_url
@@ -293,7 +293,7 @@ export default function AdminServicesManagement() {
                 <div className="flex items-center gap-3 pt-2">
                   <label className="flex items-center gap-2 cursor-pointer">
                     <div className="relative">
-                      <input type="checkbox" className="sr-only" checked={formData.active} onChange={e => setFormData({...formData, active: e.target.checked})} />
+                      <input type="checkbox" className="sr-only" checked={formData.active} onChange={e => setFormData({ ...formData, active: e.target.checked })} />
                       <div className={`w-10 h-5 rounded-full transition-colors ${formData.active ? 'bg-[#C9A84C]' : 'bg-[#E0E0E0]'}`} />
                       <div className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${formData.active ? 'translate-x-5' : ''}`} />
                     </div>
@@ -343,4 +343,3 @@ export default function AdminServicesManagement() {
     </div>
   );
 }
- 
