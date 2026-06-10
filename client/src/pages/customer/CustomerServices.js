@@ -3,6 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import CustomerNavbar from '../../components/CustomerNavbar';
 import ConfirmModal from '../../components/ConfirmModal';
 
+
 const CSS = `
   .svc-page { background: #FFFFFF; min-height: 100vh; font-family: 'DM Sans', sans-serif; }
 
@@ -98,7 +99,7 @@ export default function CustomerServices() {
 
   useEffect(() => {
     const API_BASE = process.env.REACT_APP_API_URL || '';
-    fetch(`${API_BASE}/api/services`).then(r => r.json()).then(setServices).catch(() => {});
+    fetch(`${API_BASE}/api/services`).then(r => r.json()).then(setServices).catch(() => { });
   }, []);
 
   const filtered = services.filter(s => {
@@ -221,26 +222,26 @@ export default function CustomerServices() {
           <div className="sig-banner">
             <div className="sig-inner">
               <div>
-                <p style={{ fontFamily:'DM Sans,sans-serif', fontSize:11, fontWeight:600, letterSpacing:'4px', textTransform:'uppercase', color:'#B8960C', marginBottom:14 }}>Unparalleled Luxury</p>
-                <h2 style={{ fontFamily:'Cormorant Garamond,Georgia,serif', fontSize:44, fontWeight:400, color:'white', margin:'0 0 20px', lineHeight:1.15 }}>The Signature Salon Experience</h2>
-                <p style={{ fontFamily:'DM Sans,sans-serif', fontSize:15, color:'rgba(255,255,255,0.65)', marginBottom:32, lineHeight:1.75 }}>Every appointment includes a complimentary consultation, artisanal teas or champagne, and access to our private relaxation lounge.</p>
-                {['Complimentary Scalp Analysis','Personal Style Portfolio','Post-Treatment Maintenance Plan'].map(item => (
-                  <div key={item} style={{ display:'flex', alignItems:'center', gap:12, marginBottom:14 }}>
-                    <span className="material-symbols-outlined" style={{ fontSize:18, color:'#B8960C' }}>check_circle</span>
-                    <span style={{ fontFamily:'DM Sans,sans-serif', fontSize:14, color:'rgba(255,255,255,0.85)', fontWeight:500 }}>{item}</span>
+                <p style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 11, fontWeight: 600, letterSpacing: '4px', textTransform: 'uppercase', color: '#B8960C', marginBottom: 14 }}>Unparalleled Luxury</p>
+                <h2 style={{ fontFamily: 'Cormorant Garamond,Georgia,serif', fontSize: 44, fontWeight: 400, color: 'white', margin: '0 0 20px', lineHeight: 1.15 }}>The Signature Salon Experience</h2>
+                <p style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 15, color: 'rgba(255,255,255,0.65)', marginBottom: 32, lineHeight: 1.75 }}>Every appointment includes a complimentary consultation, artisanal teas or champagne, and access to our private relaxation lounge.</p>
+                {['Complimentary Scalp Analysis', 'Personal Style Portfolio', 'Post-Treatment Maintenance Plan'].map(item => (
+                  <div key={item} style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: 18, color: '#B8960C' }}>check_circle</span>
+                    <span style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 14, color: 'rgba(255,255,255,0.85)', fontWeight: 500 }}>{item}</span>
                   </div>
                 ))}
               </div>
-              <div style={{ position:'relative' }}>
-                <div style={{ borderRadius:12, overflow:'hidden', border:'4px solid rgba(184,150,12,0.25)', aspectRatio:'1' }}>
-                  <img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=800&q=80" alt="Salon" style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+              <div style={{ position: 'relative' }}>
+                <div style={{ borderRadius: 12, overflow: 'hidden', border: '4px solid rgba(184,150,12,0.25)', aspectRatio: '1' }}>
+                  <img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=800&q=80" alt="Salon" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 </div>
               </div>
             </div>
           </div>
         </main>
 
-        
+
       </div>
 
       {/* Booking Modal */}

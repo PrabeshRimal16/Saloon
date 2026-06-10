@@ -3,6 +3,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import CustomerNavbar from '../../components/CustomerNavbar';
 
+
 const CSS = `
   .hero-section { min-height: 90vh; position: relative; overflow: hidden; display: flex; align-items: center; }
   .hero-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
@@ -92,10 +93,10 @@ export default function CustomerDashboard() {
 
   useEffect(() => {
     const API_BASE = process.env.REACT_APP_API_URL || '';
-    fetch(`${API_BASE}/api/services`).then(r => r.json()).then(d => setServices(d.slice(0, 3))).catch(() => {});
+    fetch(`${API_BASE}/api/services`).then(r => r.json()).then(d => setServices(d.slice(0, 3))).catch(() => { });
     fetch(`${API_BASE}/api/offers`).then(r => r.json())
       .then(d => setOffers(d.filter(o => !o.valid_until || new Date(o.valid_until) > new Date()).slice(0, 5)))
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   const firstName = user?.name?.split(' ')[0] || 'Guest';
@@ -115,7 +116,7 @@ export default function CustomerDashboard() {
 
         {/* ── Hero ── */}
         <section className="hero-section">
-          <img className="hero-img" src="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=2000&q=85" alt="Luxury Salon" loading="lazy" onError={(e)=>{e.currentTarget.onerror=null;e.currentTarget.src='/placeholder.png';}} />
+          <img className="hero-img" src="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=2000&q=85" alt="Luxury Salon" loading="lazy" onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/placeholder.png'; }} />
           <div className="hero-overlay" />
           <div className="hero-content">
             <div className="hero-eyebrow">
@@ -141,7 +142,7 @@ export default function CustomerDashboard() {
         {/* ── Features Strip ── */}
         <div className="features-strip">
           <div className="features-inner">
-            {[{icon:'verified',text:'Certified Stylists'},{icon:'spa',text:'Luxury Products'},{icon:'schedule',text:'Flexible Booking'},{icon:'star',text:'Premium Service'}].map(f => (
+            {[{ icon: 'verified', text: 'Certified Stylists' }, { icon: 'spa', text: 'Luxury Products' }, { icon: 'schedule', text: 'Flexible Booking' }, { icon: 'star', text: 'Premium Service' }].map(f => (
               <div key={f.text} className="feature-item">
                 <span className="material-symbols-outlined feature-icon">{f.icon}</span>
                 <span className="feature-text">{f.text}</span>
@@ -158,8 +159,8 @@ export default function CustomerDashboard() {
                 <p className="section-eyebrow">Our Expertise</p>
                 <h2 className="section-h2" style={{ margin: 0 }}>Featured Services</h2>
               </div>
-              <button onClick={() => navigate('/services')} style={{ display:'flex', alignItems:'center', gap:6, background:'none', border:'none', cursor:'pointer', fontFamily:'DM Sans,sans-serif', fontSize:13, fontWeight:600, color:'#B8960C', textTransform:'uppercase', letterSpacing:'1px', transition:'gap 0.2s' }}>
-                View All <span className="material-symbols-outlined" style={{ fontSize:18 }}>arrow_forward</span>
+              <button onClick={() => navigate('/services')} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'DM Sans,sans-serif', fontSize: 13, fontWeight: 600, color: '#B8960C', textTransform: 'uppercase', letterSpacing: '1px', transition: 'gap 0.2s' }}>
+                View All <span className="material-symbols-outlined" style={{ fontSize: 18 }}>arrow_forward</span>
               </button>
             </div>
 
@@ -206,8 +207,8 @@ export default function CustomerDashboard() {
                   <p className="section-eyebrow">Exclusive Deals</p>
                   <h2 className="section-h2" style={{ margin: 0 }}>Active Offers</h2>
                 </div>
-                <button onClick={() => navigate('/offers')} style={{ display:'flex', alignItems:'center', gap:6, background:'none', border:'none', cursor:'pointer', fontFamily:'DM Sans,sans-serif', fontSize:13, fontWeight:600, color:'#B8960C', textTransform:'uppercase', letterSpacing:'1px' }}>
-                  See All <span className="material-symbols-outlined" style={{ fontSize:18 }}>arrow_forward</span>
+                <button onClick={() => navigate('/offers')} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'DM Sans,sans-serif', fontSize: 13, fontWeight: 600, color: '#B8960C', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                  See All <span className="material-symbols-outlined" style={{ fontSize: 18 }}>arrow_forward</span>
                 </button>
               </div>
               <div className="offers-row">
@@ -216,16 +217,16 @@ export default function CustomerDashboard() {
                   const img = offer.image_url ? (offer.image_url.startsWith('/') ? `${API_BASE}${offer.image_url}` : offer.image_url) : null;
                   return (
                     <div key={offer.id} className="offer-card">
-                      <div style={{ background: 'linear-gradient(145deg,#2A2A2A,#1C1C1E)', display:'flex', alignItems:'center', justifyContent:'center', position:'relative', overflow:'hidden' }}>
-                        {img ? <img src={img} alt={offer.title} style={{ width:'100%', height:'auto', display: 'block' }} /> : <span className="material-symbols-outlined" style={{ fontSize:40, color:'rgba(184,150,12,0.5)', padding:'40px 0' }}>local_offer</span>}
+                      <div style={{ background: 'linear-gradient(145deg,#2A2A2A,#1C1C1E)', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
+                        {img ? <img src={img} alt={offer.title} style={{ width: '100%', height: 'auto', display: 'block' }} /> : <span className="material-symbols-outlined" style={{ fontSize: 40, color: 'rgba(184,150,12,0.5)', padding: '40px 0' }}>local_offer</span>}
                         {offer.discount_percent > 0 && (
-                          <div style={{ position:'absolute', top:10, left:10, background:'#B8960C', color:'white', fontFamily:'DM Sans,sans-serif', fontSize:13, fontWeight:700, padding:'3px 12px', borderRadius:50 }}>{offer.discount_percent}% OFF</div>
+                          <div style={{ position: 'absolute', top: 10, left: 10, background: '#B8960C', color: 'white', fontFamily: 'DM Sans,sans-serif', fontSize: 13, fontWeight: 700, padding: '3px 12px', borderRadius: 50 }}>{offer.discount_percent}% OFF</div>
                         )}
                       </div>
                       <div style={{ padding: '16px 18px' }}>
-                        <h3 style={{ fontFamily:'Cormorant Garamond,Georgia,serif', fontSize:17, fontWeight:600, color:'#1C1C1E', margin:'0 0 6px' }}>{offer.title}</h3>
-                        <p style={{ fontFamily:'DM Sans,sans-serif', fontSize:12, color:'#6B6B6B', margin:'0 0 10px', display:'-webkit-box', WebkitLineClamp:2, WebkitBoxOrient:'vertical', overflow:'hidden' }}>{offer.description}</p>
-                        {offer.valid_until && <div style={{ fontFamily:'DM Sans,sans-serif', fontSize:11, color:'#AAAAAA', display:'flex', alignItems:'center', gap:4 }}><span className="material-symbols-outlined" style={{ fontSize:14, color:'#B8960C' }}>event</span>Until {new Date(offer.valid_until).toLocaleDateString('en-US',{month:'short',day:'numeric'})}</div>}
+                        <h3 style={{ fontFamily: 'Cormorant Garamond,Georgia,serif', fontSize: 17, fontWeight: 600, color: '#1C1C1E', margin: '0 0 6px' }}>{offer.title}</h3>
+                        <p style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 12, color: '#6B6B6B', margin: '0 0 10px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{offer.description}</p>
+                        {offer.valid_until && <div style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 11, color: '#AAAAAA', display: 'flex', alignItems: 'center', gap: 4 }}><span className="material-symbols-outlined" style={{ fontSize: 14, color: '#B8960C' }}>event</span>Until {new Date(offer.valid_until).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</div>}
                       </div>
                     </div>
                   );
@@ -240,13 +241,13 @@ export default function CustomerDashboard() {
           <div className="section-wrap">
             <div className="cta-banner">
               <div className="cta-glow" />
-              <div style={{ position:'relative', zIndex:1 }}>
-                <p style={{ fontFamily:'DM Sans,sans-serif', fontSize:11, fontWeight:600, letterSpacing:'4px', textTransform:'uppercase', color:'#B8960C', margin:'0 0 10px' }}>Manage</p>
-                <h2 style={{ fontFamily:'Cormorant Garamond,Georgia,serif', fontSize:40, fontWeight:400, color:'white', margin:'0 0 8px' }}>Your Appointments</h2>
-                <p style={{ fontFamily:'DM Sans,sans-serif', fontSize:14, color:'rgba(255,255,255,0.6)', margin:0 }}>View, manage and track all your upcoming and past bookings.</p>
+              <div style={{ position: 'relative', zIndex: 1 }}>
+                <p style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 11, fontWeight: 600, letterSpacing: '4px', textTransform: 'uppercase', color: '#B8960C', margin: '0 0 10px' }}>Manage</p>
+                <h2 style={{ fontFamily: 'Cormorant Garamond,Georgia,serif', fontSize: 40, fontWeight: 400, color: 'white', margin: '0 0 8px' }}>Your Appointments</h2>
+                <p style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 14, color: 'rgba(255,255,255,0.6)', margin: 0 }}>View, manage and track all your upcoming and past bookings.</p>
               </div>
-              <button className="btn-pill-gold" style={{ position:'relative', zIndex:1, flexShrink:0 }} onClick={() => navigate('/appointments')}>
-                <span className="material-symbols-outlined" style={{ fontSize:18 }}>calendar_month</span>
+              <button className="btn-pill-gold" style={{ position: 'relative', zIndex: 1, flexShrink: 0 }} onClick={() => navigate('/appointments')}>
+                <span className="material-symbols-outlined" style={{ fontSize: 18 }}>calendar_month</span>
                 My Appointments
               </button>
             </div>
@@ -255,7 +256,7 @@ export default function CustomerDashboard() {
 
       </main>
 
-        
+
     </div>
   );
 }

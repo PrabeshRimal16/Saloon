@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import ConfirmModal from '../../components/ConfirmModal';
 import { useNavigate } from 'react-router-dom';
 
+
 const CSS = `
   .appt-page { background: #FFFFFF; min-height: 100vh; font-family: 'DM Sans', sans-serif; }
 
@@ -84,10 +85,10 @@ const CSS = `
 
 const getStatusConfig = (status) => {
   switch (status?.toLowerCase()) {
-    case 'approved':  return { cls: 'badge badge-approved', label: 'Approved',  icon: 'check_circle', accentColor: '#2D7A4F' };
-    case 'pending':   return { cls: 'badge badge-pending',  label: 'Pending',   icon: 'schedule',    accentColor: '#B8960C' };
-    case 'cancelled': return { cls: 'badge badge-cancelled',label: 'Cancelled', icon: 'cancel',      accentColor: '#C0392B' };
-    default:          return { cls: 'badge badge-default',  label: 'Unknown',   icon: 'help',        accentColor: '#AAAAAA' };
+    case 'approved': return { cls: 'badge badge-approved', label: 'Approved', icon: 'check_circle', accentColor: '#2D7A4F' };
+    case 'pending': return { cls: 'badge badge-pending', label: 'Pending', icon: 'schedule', accentColor: '#B8960C' };
+    case 'cancelled': return { cls: 'badge badge-cancelled', label: 'Cancelled', icon: 'cancel', accentColor: '#C0392B' };
+    default: return { cls: 'badge badge-default', label: 'Unknown', icon: 'help', accentColor: '#AAAAAA' };
   }
 };
 
@@ -228,14 +229,14 @@ const AppointmentsPage = () => {
                   <tbody>
                     {loading ? (
                       <tr><td colSpan={5} className="table-empty">
-                        <div style={{ width:36, height:36, border:'2px solid #B8960C', borderTopColor:'transparent', borderRadius:'50%', animation:'spin 0.8s linear infinite', margin:'0 auto 12px' }} />
+                        <div style={{ width: 36, height: 36, border: '2px solid #B8960C', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 12px' }} />
                         Loading your appointments...
                       </td></tr>
                     ) : appointments.length === 0 ? (
                       <tr><td colSpan={5} className="table-empty">
-                        <span className="material-symbols-outlined" style={{ fontSize:48, color:'rgba(184,150,12,0.35)', display:'block', marginBottom:12 }}>calendar_month</span>
-                        <p style={{ fontFamily:'Cormorant Garamond,serif', fontSize:20, marginBottom:6 }}>No appointments booked yet</p>
-                        <p style={{ fontSize:13 }}>Book your first luxury session above</p>
+                        <span className="material-symbols-outlined" style={{ fontSize: 48, color: 'rgba(184,150,12,0.35)', display: 'block', marginBottom: 12 }}>calendar_month</span>
+                        <p style={{ fontFamily: 'Cormorant Garamond,serif', fontSize: 20, marginBottom: 6 }}>No appointments booked yet</p>
+                        <p style={{ fontSize: 13 }}>Book your first luxury session above</p>
                       </td></tr>
                     ) : appointments.map((a, idx) => {
                       const status = getStatusConfig(a.status);
@@ -243,29 +244,29 @@ const AppointmentsPage = () => {
                       return (
                         <tr key={a.id} style={{ opacity: isCancelled ? 0.6 : 1 }}>
                           <td>
-                            <div style={{ display:'flex', alignItems:'center', gap:14 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
                               <div className="svc-thumb">
                                 <span className="material-symbols-outlined mat-icon">content_cut</span>
                               </div>
                               <div>
-                                <div style={{ fontFamily:'Cormorant Garamond,serif', fontSize:17, fontWeight:600, color:'#1C1C1E' }}>{a.serviceName}</div>
-                                {a.duration && <div style={{ fontSize:12, color:'#AAAAAA', marginTop:2 }}>{a.duration}</div>}
+                                <div style={{ fontFamily: 'Cormorant Garamond,serif', fontSize: 17, fontWeight: 600, color: '#1C1C1E' }}>{a.serviceName}</div>
+                                {a.duration && <div style={{ fontSize: 12, color: '#AAAAAA', marginTop: 2 }}>{a.duration}</div>}
                               </div>
                             </div>
                           </td>
                           <td>
-                            <div style={{ fontSize:14, fontWeight:500, color:'#1C1C1E' }}>{a.date || '—'}</div>
+                            <div style={{ fontSize: 14, fontWeight: 500, color: '#1C1C1E' }}>{a.date || '—'}</div>
                             {a.time
-                              ? <div style={{ fontSize:12, color:'#AAAAAA', marginTop:2 }}>{a.time}</div>
-                              : <div style={{ fontSize:12, color:'#CCCCCC', marginTop:2, fontStyle:'italic' }}>Time not set</div>
+                              ? <div style={{ fontSize: 12, color: '#AAAAAA', marginTop: 2 }}>{a.time}</div>
+                              : <div style={{ fontSize: 12, color: '#CCCCCC', marginTop: 2, fontStyle: 'italic' }}>Time not set</div>
                             }
                           </td>
-                          <td style={{ fontSize:14, color:'#6B6B6B' }}>{a.duration || '—'}</td>
+                          <td style={{ fontSize: 14, color: '#6B6B6B' }}>{a.duration || '—'}</td>
                           <td><span className={status.cls}>{status.label}</span></td>
-                          <td style={{ textAlign:'right' }}>
+                          <td style={{ textAlign: 'right' }}>
                             {!isCancelled
                               ? <button className="btn-cancel-row" onClick={() => handleCancel(a.id)}>Cancel</button>
-                              : <span style={{ fontSize:12, color:'#CCCCCC' }}>Cancelled</span>
+                              : <span style={{ fontSize: 12, color: '#CCCCCC' }}>Cancelled</span>
                             }
                           </td>
                         </tr>
@@ -281,16 +282,16 @@ const AppointmentsPage = () => {
               <div className="pagination">
                 <span className="pagination-info">Showing {appointments.length} appointment{appointments.length !== 1 ? 's' : ''}</span>
                 <div className="pagination-btns">
-                  <button className="pag-btn" disabled><span className="material-symbols-outlined" style={{ fontSize:18 }}>chevron_left</span></button>
+                  <button className="pag-btn" disabled><span className="material-symbols-outlined" style={{ fontSize: 18 }}>chevron_left</span></button>
                   <button className="pag-btn active">1</button>
-                  <button className="pag-btn" disabled><span className="material-symbols-outlined" style={{ fontSize:18 }}>chevron_right</span></button>
+                  <button className="pag-btn" disabled><span className="material-symbols-outlined" style={{ fontSize: 18 }}>chevron_right</span></button>
                 </div>
               </div>
             )}
           </div>
         </main>
 
-        
+
       </div>
       <ConfirmModal
         isOpen={confirmOpen}
