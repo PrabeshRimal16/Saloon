@@ -7,6 +7,7 @@ export default function CompleteProfile() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
+
   const nameParam = searchParams.get("name") || "";
   const email = searchParams.get("email") || "";
   const avatar_url = searchParams.get("avatar_url") || "";
@@ -99,13 +100,13 @@ export default function CompleteProfile() {
 
             <div className="relative w-20 h-20 mx-auto mb-6">
               {avatar_url && !avatarError ? (
-                  <img
-                    src={avatar_url}
-                    alt={form.name || 'Profile avatar'}
-                    loading="lazy"
-                    className="w-20 h-20 rounded-full object-cover ring-4 ring-amber-100"
-                    onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/placeholder.png'; }}
-                  />
+                <img
+                  src={avatar_url}
+                  alt={form.name || 'Profile avatar'}
+                  loading="lazy"
+                  className="w-20 h-20 rounded-full object-cover ring-4 ring-amber-100"
+                  onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/placeholder.png'; }}
+                />
               ) : (
                 <div className="w-20 h-20 rounded-full bg-amber-100 flex items-center justify-center text-2xl font-serif text-amber-700">
                   {(form.name || nameParam)?.charAt(0)?.toUpperCase() || 'U'}
@@ -143,37 +144,35 @@ export default function CompleteProfile() {
               <div>
                 <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">Create Password <span className="text-amber-500">*</span></label>
                 <div className="password-wrapper">
-                    <input
-                      name="password"
-                      type={'password'}
-                      value={form.password}
-                      onChange={handleChange}
-                      placeholder="Create a password"
-                    />
+                  <input
+                    name="password"
+                    type={'password'}
+                    value={form.password}
+                    onChange={handleChange}
+                    placeholder="Create a password"
+                  />
                 </div>
 
                 <div className="mt-2">
                   <div className="h-1 w-full bg-gray-100 rounded-full overflow-hidden">
-                    <div className={`h-full rounded-full transition-all duration-300 ${
-                      strength.label === 'WEAK' ? 'w-1/3 bg-red-400' : strength.label === 'MEDIUM' ? 'w-2/3 bg-amber-400' : 'w-full bg-green-500'
-                    }`} />
+                    <div className={`h-full rounded-full transition-all duration-300 ${strength.label === 'WEAK' ? 'w-1/3 bg-red-400' : strength.label === 'MEDIUM' ? 'w-2/3 bg-amber-400' : 'w-full bg-green-500'
+                      }`} />
                   </div>
-                  <p className={`text-xs mt-1 text-right font-medium tracking-widest ${
-                    strength.label === 'WEAK' ? 'text-red-400' : strength.label === 'MEDIUM' ? 'text-amber-500' : 'text-green-500'
-                  }`}>{strength.label}</p>
+                  <p className={`text-xs mt-1 text-right font-medium tracking-widest ${strength.label === 'WEAK' ? 'text-red-400' : strength.label === 'MEDIUM' ? 'text-amber-500' : 'text-green-500'
+                    }`}>{strength.label}</p>
                 </div>
               </div>
 
               <div>
                 <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">Confirm Password <span className="text-amber-500">*</span></label>
                 <div className="password-wrapper">
-                    <input
-                      name="confirmPassword"
-                      type={'password'}
-                      value={form.confirmPassword}
-                      onChange={handleChange}
-                      placeholder="Repeat your password"
-                    />
+                  <input
+                    name="confirmPassword"
+                    type={'password'}
+                    value={form.confirmPassword}
+                    onChange={handleChange}
+                    placeholder="Repeat your password"
+                  />
                 </div>
                 {form.confirmPassword && (
                   <p className={`text-xs mt-1 text-right font-medium ${form.password === form.confirmPassword ? 'text-green-500' : 'text-red-400'}`}>
