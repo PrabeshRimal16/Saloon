@@ -4,7 +4,7 @@ import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 
-export default function Login() {
+export default function Login({ adminOnly = false }) {
   const { refreshUser, loginWithGoogle, apiBaseUrl } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -32,7 +32,14 @@ export default function Login() {
 
       await refreshUser();
       const role = res.data?.role || "customer";
-      navigate(role === "admin" ? "/admin" : "/");
+      if (role === "admin") {
+        navigate("/admin");
+      } else if (adminOnly) {
+        // Non-admin tried to log in via admin login page
+        setError("Access denied. This login is for administrators only.");
+      } else {
+        navigate("/");
+      }
     } catch (err) {
       setError(err.response?.data?.message || err.response?.data?.error || "Invalid credentials");
     } finally {
@@ -82,7 +89,11 @@ export default function Login() {
               <div className="text-center mb-6">
                 <h1 className="font-serif text-2xl tracking-[0.3em] text-stone-800">The Salon at Reston</h1>
                 <div className="h-[2px] bg-amber-400 w-12 mx-auto mt-4 mb-2" />
-                <p className="text-gray-400 text-sm mt-2 mb-6">Welcome back — sign in to manage your bookings.</p>
+                <p className="text-gray-400 text-sm mt-2 mb-6">
+                  {adminOnly
+                    ? 'Administrator access only — enter your admin credentials.'
+                    : 'Welcome back — sign in to manage your bookings.'}
+                </p>
               </div>
 
               {error && (
@@ -122,7 +133,7 @@ export default function Login() {
                 </div>
 
                   <div className="text-right mt-2">
-                    <a href="#" onClick={(e) => { e.preventDefault(); navigate('/complete-profile'); }} className="text-xs text-amber-600 hover:underline">Forgot?</a>
+                    <span className="text-xs text-gray-400">Contact admin to reset password</span>
                   </div>
                 </div>
 
@@ -141,12 +152,14 @@ export default function Login() {
                   <span>Continue with Google</span>
                 </button>
 
-                <div className="mt-4 text-center text-sm text-gray-500">
-                  Don't have an account?{' '}
-                  <button onClick={() => navigate('/register')} className="text-amber-700 font-semibold hover:underline ml-1">
-                    Register
-                  </button>
-                </div>
+                {!adminOnly && (
+                  <div className="mt-4 text-center text-sm text-gray-500">
+                    Don't have an account?{' '}
+                    <button onClick={() => navigate('/register')} className="text-amber-700 font-semibold hover:underline ml-1">
+                      Register
+                    </button>
+                  </div>
+                )}
 
                 <div className="text-center mt-8">
                   <div className="text-[10px] tracking-[0.4em] text-gray-300 uppercase">© 2026 The Salon at Reston</div>
