@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
 import { Phone } from 'lucide-react';
 
 function CustomerSidebar() {
-  const { logout, user, loading } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
@@ -27,7 +25,6 @@ function CustomerSidebar() {
       document.documentElement.style.setProperty('--customer-left', v ? '64px' : '220px');
     } catch (e) {}
 
-    // Listen for mobile toggle from hamburger (if any external trigger needed)
     const onMobileToggle = (e) => {
       setMobileOpen(typeof e.detail === 'boolean' ? e.detail : prev => !prev);
     };
@@ -52,21 +49,8 @@ function CustomerSidebar() {
     { to: '/services',     label: 'Services',     icon: 'content_cut' },
     { to: '/appointments', label: 'Appointments', icon: 'calendar_month' },
     { to: '/offers',       label: 'Offers',       icon: 'local_offer' },
-    { to: '/contact',      label: 'Contact',      icon: 'support_agent' },
-    { to: '/settings',     label: 'Settings',     icon: 'settings' },
+    { to: '/contact',      label: 'Contact',      icon: 'phone' },
   ];
-
-  const handleLogout = (e) => {
-    e.preventDefault();
-    try { logout && logout(); } catch (err) {}
-  };
-
-  const avatarText = user
-    ? user.name
-      ? user.name.split(' ').map(p => p[0]).slice(0, 2).join('').toUpperCase()
-      : (user.email?.[0] || 'U').toUpperCase()
-    : 'U';
-  const avatarSrc = user?.avatar_url || user?.photo || user?.avatar || user?.avatarUrl || user?.picture;
 
   return (
     <>
@@ -81,14 +65,11 @@ function CustomerSidebar() {
       <aside
         style={{ transition: 'width 0.28s ease, transform 0.28s ease' }}
         className={[
-          // base
           'fixed top-0 left-0 h-screen flex flex-col z-50',
           'bg-white border-r border-[#E8E0D5]',
           'shadow-[2px_0_16px_rgba(0,0,0,0.06)]',
-          // mobile: slide off-screen by default, slide in when open
           'transform',
           mobileOpen ? 'translate-x-0 w-[260px]' : '-translate-x-full md:translate-x-0',
-          // desktop width
           collapsed ? 'md:w-[64px]' : 'md:w-[220px]',
         ].join(' ')}
       >
@@ -101,7 +82,6 @@ function CustomerSidebar() {
             !showText ? 'justify-center px-0' : 'justify-between px-4',
           ].join(' ')}
         >
-          {/* Brand logo — hidden when collapsed on desktop */}
           {showText && (
             <span
               style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontStyle: 'italic' }}
@@ -111,7 +91,7 @@ function CustomerSidebar() {
             </span>
           )}
 
-          {/* Desktop collapse / expand toggle — always visible */}
+          {/* Desktop collapse / expand toggle */}
           <button
             onClick={toggleCollapse}
             aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
@@ -154,28 +134,24 @@ function CustomerSidebar() {
                     !showText ? 'md:justify-center md:px-0 md:pl-0' : '',
                   ].join(' ')}
                 >
-                        {item.to === '/contact' ? (
-                          <Phone size={20} style={{ color: 'inherit' }} className="shrink-0" />
-                        ) : (
-                          <span
-                            className={[
-                              'material-symbols-outlined text-[20px] shrink-0',
-                              'transition-colors duration-200',
-                            ].join(' ')}
-                            style={{ color: 'inherit' }}
-                          >
-                            {item.icon}
-                          </span>
-                        )}
+                  {item.to === '/contact' ? (
+                    <Phone size={20} style={{ color: 'inherit' }} className="shrink-0" />
+                  ) : (
+                    <span
+                      className="material-symbols-outlined text-[20px] shrink-0 transition-colors duration-200"
+                      style={{ color: 'inherit' }}
+                    >
+                      {item.icon}
+                    </span>
+                  )}
 
-                  {/* Label — always shown on mobile, hidden when collapsed on desktop */}
                   {showText && (
                     <span className="text-[14px] font-medium whitespace-nowrap">
                       {item.label}
                     </span>
                   )}
 
-                  {/* Tooltip — only on desktop when collapsed */}
+                  {/* Tooltip when collapsed on desktop */}
                   {collapsed && !isMobile && (
                     <div
                       className="absolute left-[56px] top-1/2 -translate-y-1/2
@@ -193,55 +169,30 @@ function CustomerSidebar() {
           </ul>
         </nav>
 
-        {/* ── USER PROFILE ── */}
-        <div className="shrink-0 px-3 py-3 border-t border-[#E8E0D5]">
-          <div className={`flex items-center gap-3 ${!showText ? 'md:justify-center' : ''}`}>
-            {loading ? (
-              <div className="w-9 h-9 rounded-full bg-[#F0EBE0] animate-pulse shrink-0" />
-            ) : (
-              <>
-                {avatarSrc ? (
-                  <img
-                    src={avatarSrc}
-                    alt={user?.name || user?.email}
-                    className="w-9 h-9 rounded-full object-cover border-2 border-[#B8960C] shrink-0"
-                    onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.style.display = 'none'; }}
-                  />
-                ) : (
-                  <div className="w-9 h-9 rounded-full bg-[#FEF9ED] border-2 border-[#B8960C] flex items-center justify-center text-[13px] font-bold text-[#B8960C] shrink-0">
-                    {avatarText}
-                  </div>
-                )}
-                {showText && (
-                  <div className="flex flex-col min-w-0">
-                    <span className="text-[#1A1A1A] text-[13px] font-bold truncate leading-tight">
-                      {user?.name || user?.displayName || user?.email || 'Customer'}
-                    </span>
-                    <span className="text-[#6B6B6B] text-[11px] leading-tight">Customer</span>
-                  </div>
-                )}
-              </>
-            )}
-          </div>
+        {/* ── SALON INFO (replaces user profile) ── */}
+        <div className="shrink-0 px-4 py-4 border-t border-[#E8E0D5]">
+          {showText ? (
+            <div className="text-center">
+              <p style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic' }}
+                 className="text-[#B8960C] text-[13px] font-semibold mb-1">
+                The Salon at Reston
+              </p>
+              <p className="text-[#AAAAAA] text-[11px]">Luxury beauty services</p>
+              <a
+                href="tel:+1234567890"
+                className="mt-2 inline-flex items-center gap-1 text-[11px] text-[#6B6B6B] hover:text-[#B8960C] transition-colors"
+              >
+                <span className="material-symbols-outlined text-[14px]">call</span>
+                Book by phone
+              </a>
+            </div>
+          ) : (
+            <div className="flex justify-center">
+              <span className="material-symbols-outlined text-[20px] text-[#B8960C]">storefront</span>
+            </div>
+          )}
         </div>
 
-        {/* ── LOGOUT ── */}
-        <div className="shrink-0 px-3 pb-4 pt-1">
-          <button
-            onClick={handleLogout}
-            aria-label="Logout"
-            className={[
-              'w-full flex items-center gap-2 px-3 py-2 rounded-lg',
-              'text-[#C0392B] hover:bg-red-50 transition-colors',
-              !showText ? 'md:justify-center' : '',
-            ].join(' ')}
-          >
-            <span className="material-symbols-outlined text-[18px] shrink-0">logout</span>
-            {showText && (
-              <span className="text-[13px] font-medium">Logout</span>
-            )}
-          </button>
-        </div>
       </aside>
     </>
   );
