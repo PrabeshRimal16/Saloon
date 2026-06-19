@@ -4,12 +4,18 @@ import { useAuth } from '../context/AuthContext';
 
 export default function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
+
   if (loading) return (
-    <div className="flex items-center justify-center h-64">
-      <div className="animate-spin w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full" />
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '64px' }}>
+      <div style={{ width: 32, height: 32, border: '4px solid #B8960C', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
     </div>
   );
-  if (!user) return <Navigate to="/login" replace />;
+
+  // Not logged in → go to admin login page
+  if (!user) return <Navigate to="/admin-login" replace />;
+
+  // Logged in but not admin → back to home
   if (user.role !== 'admin') return <Navigate to="/" replace />;
+
   return children;
 }

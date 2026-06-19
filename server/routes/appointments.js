@@ -2,82 +2,142 @@ const express = require("express");
 const router = express.Router();
 const pool = require("../db");
 
-
-// Ensure cancelled_by column exists (safe to run on startup)
+// ─── Database migrations (safe to run on every startup) ───────────────────────
 (async () => {
-
   try {
-    await pool.query("ALTER TABLE appointments ADD COLUMN IF NOT EXISTS cancelled_by TEXT");
+    // Make user_id optional so guest bookings don't need an account
+    await pool.query("ALTER TABLE appointments ALTER COLUMN user_id DROP NOT NULL");
   } catch (err) {
-    console.error('Failed to ensure cancelled_by column exists:', err.message);
+    // Postgres throws if already nullable — ignore that specific error
+    if (!err.message.includes('already')) {
+      console.error('Migration: ALTER COLUMN user_id DROP NOT NULL —', err.message);
+    }
+  }
+
+  const guestCols = [
+    "ALTER TABLE appointments ADD COLUMN IF NOT EXISTS cancelled_by  TEXT",
+    "ALTER TABLE appointments ADD COLUMN IF NOT EXISTS guest_name    TEXT",
+    "ALTER TABLE appointments ADD COLUMN IF NOT EXISTS guest_email   TEXT",
+    "ALTER TABLE appointments ADD COLUMN IF NOT EXISTS guest_phone   TEXT",
+  ];
+
+  for (const sql of guestCols) {
+    try {
+      await pool.query(sql);
+    } catch (err) {
+      console.error('Migration column error:', err.message);
+    }
   }
 })();
 
-// Customer - Book an appointment
-
+// ─── POST / — Guest booking (no login required) ───────────────────────────────
 router.post("/", async (req, res) => {
-  // Debug: log session and user to ensure passport session is restored
-  try {
-    console.log('POST /api/appointments - req.user:', req.user);
-    console.log('POST /api/appointments - req.sessionID:', req.sessionID);
-  } catch (e) { console.error('Error logging session/user', e && e.message); }
+  const {
+    name, email, phone,          // guest fields
+    service_id,
+    appointment_date,
+    appointment_time,
+  } = req.body;
 
-  const { user_id: bodyUserId, service_id, appointment_date, appointment_time, phone } = req.body;
-  // Prefer authenticated user from session when available
-  const userId = (req.user && (req.user.id || req.user.user_id || req.user.google_id)) ? (req.user.id || req.user.user_id) : bodyUserId;
+  if (!service_id || !appointment_date || !appointment_time) {
+    return res.status(400).json({ error: "service_id, appointment_date, and appointment_time are required." });
+  }
 
-  if (!userId) {
-    return res.status(401).json({ error: 'Not authenticated' });
+  if (!name || !email) {
+    return res.status(400).json({ error: "Guest name and email are required." });
   }
 
   try {
     const result = await pool.query(
-      "INSERT INTO appointments (user_id, service_id, appointment_date, appointment_time, phone) VALUES ($1, $2, $3, $4, $5) RETURNING *",
-      [userId, service_id, appointment_date, appointment_time, phone]
+      `INSERT INTO appointments
+         (user_id, service_id, appointment_date, appointment_time,
+          guest_name, guest_email, guest_phone)
+       VALUES (NULL, $1, $2, $3, $4, $5, $6)
+       RETURNING *`,
+      [service_id, appointment_date, appointment_time, name, email, phone || null]
     );
-    // Notify admins of new booking
+
+    const booked = result.rows[0];
+
+    // Notify admins of new guest booking
     try {
       const notificationsRouter = require('./notifications');
-      notificationsRouter.createNotification({ type: 'appointment', message: `New booking (ID ${result.rows[0].id}) by user ${user_id}`, userId: null });
-    } catch (e) { console.error('Notify admins error', e.message); }
-    res.json(result.rows[0]);
+      notificationsRouter.createNotification({
+        type: 'appointment',
+        message: `New guest booking (ID ${booked.id}) by ${name} <${email}>`,
+        userId: null,
+      });
+    } catch (e) {
+      console.error('Notify admins error:', e.message);
+    }
+
+    res.json(booked);
   } catch (err) {
+    console.error('POST /api/appointments error:', err);
     res.status(500).json({ error: err.message });
   }
 });
 
-// Customer - View their own appointments
+// ─── GET /my/:user_id — Logged-in user's own appointments (kept for compat.) ──
 router.get("/my/:user_id", async (req, res) => {
   try {
-    console.log(`GET /api/appointments/my/${req.params.user_id} - req.user:`, req.user ? (req.user.id || req.user.email) : null);
-    console.log(`GET /api/appointments/my/${req.params.user_id} - sessionID:`, req.sessionID);
-  } catch (e) { /* ignore logging errors */ }
-  try {
     const result = await pool.query(
-      "SELECT a.*, s.name as service_name, s.price, s.duration as service_duration FROM appointments a JOIN services s ON a.service_id = s.id WHERE a.user_id = $1",
+      `SELECT a.*, s.name AS service_name, s.price, s.duration AS service_duration
+       FROM appointments a
+       JOIN services s ON a.service_id = s.id
+       WHERE a.user_id = $1`,
       [req.params.user_id]
     );
     res.json(result.rows);
   } catch (err) {
-    console.error(`/api/appointments/my/${req.params.user_id} error`, err);
+    console.error(`GET /api/appointments/my/${req.params.user_id} error:`, err);
     res.status(500).json({ error: err.message });
   }
 });
 
-// Admin - View all appointments (exclude appointments cancelled by the customer)
-router.get("/", async (req, res) => {
+// ─── GET /by-email/:email — Guest lookup by email ─────────────────────────────
+router.get("/by-email/:email", async (req, res) => {
   try {
     const result = await pool.query(
-      "SELECT a.*, s.name as service_name, s.duration as service_duration, s.price as service_price, u.name as customer_name, u.email FROM appointments a JOIN services s ON a.service_id = s.id JOIN users u ON a.user_id = u.id WHERE COALESCE(a.cancelled_by, '') <> 'user' ORDER BY a.appointment_date DESC"
+      `SELECT a.*, s.name AS service_name, s.price, s.duration AS service_duration
+       FROM appointments a
+       JOIN services s ON a.service_id = s.id
+       WHERE LOWER(a.guest_email) = LOWER($1)
+       ORDER BY a.appointment_date DESC`,
+      [req.params.email]
     );
     res.json(result.rows);
   } catch (err) {
-    console.error('GET /api/appointments error', err);
+    console.error(`GET /api/appointments/by-email error:`, err);
     res.status(500).json({ error: err.message });
   }
 });
 
-// Admin/User - Update appointment (approve/cancel). If a customer cancels, client should send { cancelled_by: 'user' }
+// ─── GET / — Admin: all appointments (guest + registered users) ───────────────
+router.get("/", async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT
+         a.*,
+         s.name          AS service_name,
+         s.duration      AS service_duration,
+         s.price         AS service_price,
+         COALESCE(u.name,  a.guest_name)  AS customer_name,
+         COALESCE(u.email, a.guest_email) AS email
+       FROM appointments a
+       JOIN  services s ON a.service_id = s.id
+       LEFT JOIN users u ON a.user_id   = u.id
+       WHERE COALESCE(a.cancelled_by, '') <> 'user'
+       ORDER BY a.appointment_date DESC`
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error('GET /api/appointments error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ─── PUT /:id — Update appointment (approve / cancel) ────────────────────────
 router.put("/:id", async (req, res) => {
   const { status, cancelled_by } = req.body;
   try {
@@ -96,17 +156,23 @@ router.put("/:id", async (req, res) => {
 
     const updated = result.rows[0];
 
-    // If approved, notify the user
+    // Notify the user if their booking was approved (only for registered users)
     try {
-      if (updated && String(updated.status).toLowerCase() === 'approved') {
+      if (updated && String(updated.status).toLowerCase() === 'approved' && updated.user_id) {
         const notificationsRouter = require('./notifications');
-        notificationsRouter.createNotification({ type: 'appointment_update', message: `Your booking (ID ${updated.id}) has been approved.`, userId: String(updated.user_id) });
+        notificationsRouter.createNotification({
+          type: 'appointment_update',
+          message: `Your booking (ID ${updated.id}) has been approved.`,
+          userId: String(updated.user_id),
+        });
       }
-    } catch (e) { console.error('Notify user error', e.message); }
+    } catch (e) {
+      console.error('Notify user error:', e.message);
+    }
 
     res.json(updated);
   } catch (err) {
-    console.error(`PUT /api/appointments/${req.params.id} error`, err);
+    console.error(`PUT /api/appointments/${req.params.id} error:`, err);
     res.status(500).json({ error: err.message });
   }
 });

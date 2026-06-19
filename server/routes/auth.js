@@ -31,7 +31,7 @@ router.get(
     if (!passport._strategy || !passport._strategy('google')) {
       return res.status(503).send('Google OAuth is not configured on the server.');
     }
-    return passport.authenticate("google", { failureRedirect: `${CLIENT_URL}/login?error=No%20account%20found.%20Please%20register%20to%20continue.` })(req, res, next);
+    return passport.authenticate("google", { failureRedirect: `${CLIENT_URL}/admin-login?error=No%20account%20found.` })(req, res, next);
   },
   async (req, res) => {
     // If registration data was saved in session, create the user now
@@ -85,7 +85,7 @@ router.get("/me", (req, res) => {
 router.get("/logout", (req, res, next) => {
   req.logout((err) => {
     if (err) return next(err);
-    res.redirect(`${CLIENT_URL}/login`);
+    res.redirect(`${CLIENT_URL}/`);
   });
 });
 

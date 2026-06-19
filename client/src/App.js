@@ -5,87 +5,106 @@ import './styles/admin-animations.css';
 import './styles/responsive.css';
 import initScrollAnimations from './utils/scrollAnimations';
 import { AuthProvider, useAuth } from "./context/AuthContext";
-// CustomerNavbar is now rendered inside CustomerLayout
 import CustomerFooter from './components/CustomerFooter';
 import ProtectedRoute from './components/ProtectedRoute';
 import Skeleton from './components/Skeleton';
 
-const Login = lazy(() => import("./pages/Login"));
-const AdminLayout = lazy(() => import('./components/AdminLayout'));
+const Login        = lazy(() => import("./pages/Login"));
+const AdminLayout  = lazy(() => import('./components/AdminLayout'));
 const CustomerLayout = lazy(() => import('./components/CustomerLayout'));
-const CustomerDashboard = lazy(() => import("./pages/customer/CustomerDashboard"));
-const CustomerServices = lazy(() => import("./pages/customer/CustomerServices"));
-const CustomerOffers = lazy(() => import("./pages/customer/CustomerOffers"));
-const CustomerAppointment = lazy(() => import("./pages/customer/CustomerAppointment"));
-const CustomerSetting = lazy(() => import("./pages/customer/CustomerSetting"));
-const CustomerContactus = lazy(() => import("./pages/customer/CustomerContactus"));
-const Register = lazy(() => import("./pages/Register"));
-const CompleteProfile = lazy(() => import("./pages/CompleteProfile"));
-const NotFound = lazy(() => import('./pages/NotFound'));
 
-const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
-const AdminServicesManagement = lazy(() => import("./pages/admin/AdminServicesManagement"));
+// Customer pages (all public)
+const CustomerDashboard   = lazy(() => import("./pages/customer/CustomerDashboard"));
+const CustomerServices    = lazy(() => import("./pages/customer/CustomerServices"));
+const CustomerOffers      = lazy(() => import("./pages/customer/CustomerOffers"));
+const CustomerAppointment = lazy(() => import("./pages/customer/CustomerAppointment"));
+const CustomerContactus   = lazy(() => import("./pages/customer/CustomerContactus"));
+const NotFound            = lazy(() => import('./pages/NotFound'));
+
+// Admin pages (all protected)
+const AdminDashboard           = lazy(() => import("./pages/admin/AdminDashboard"));
+const AdminServicesManagement  = lazy(() => import("./pages/admin/AdminServicesManagement"));
 const AdminAppointmentManagement = lazy(() => import("./pages/admin/AdminAppointmentManagement"));
-const AdminOfferManagement = lazy(() => import("./pages/admin/AdminOfferManagement"));
-const AdminUserManagement = lazy(() => import("./pages/admin/AdminUserManagement"));
-const AdminSetting = lazy(() => import("./pages/admin/AdminSetting"));
+const AdminOfferManagement     = lazy(() => import("./pages/admin/AdminOfferManagement"));
+const AdminUserManagement      = lazy(() => import("./pages/admin/AdminUserManagement"));
+const AdminSetting             = lazy(() => import("./pages/admin/AdminSetting"));
 
 const AppRoutes = () => {
   const { user, loading } = useAuth();
   const location = useLocation();
-  const hideLayout = ['/login', '/register', '/complete-profile'].includes(location.pathname);
 
-  // Initialize scroll animations once when routes are rendered
-  // and re-run to pick up new elements after navigation
+  // Re-run scroll animations on every navigation
   React.useEffect(() => {
     initScrollAnimations();
   }, [location.pathname]);
 
-  const isLoggedIn = Boolean(user);
   const isAdmin = user?.role === "admin";
-  const defaultAuthedPath = isAdmin ? "/admin" : "/";
+
+  // Admin auth is ready when loading is finished
   const authReady = !loading;
+
+  const isAdminPath = location.pathname.startsWith('/admin');
 
   return (
     <div className="route-wrapper">
-      {/* Nav and footer are mounted outside the route switch so they don't unmount on navigation. CustomerNavbar is rendered inside CustomerLayout to avoid duplication. */}
       <div className="page-fade">
-      <Suspense fallback={<Skeleton /> }>
-      <Routes>
-      <Route
-        path="/login"
-        element={authReady ? (!isLoggedIn ? <Login /> : <Navigate to={defaultAuthedPath} />) : <div />}
-      />
-      <Route path="/admin" element={authReady ? (isAdmin ? <ProtectedRoute><AdminLayout /></ProtectedRoute> : (isLoggedIn ? <Navigate to="/" /> : <Navigate to="/login" />)) : <div />}>
-        <Route index element={<AdminDashboard />} />
-        <Route path="services" element={<AdminServicesManagement />} />
-        <Route path="appointments" element={<AdminAppointmentManagement />} />
-        <Route path="offers" element={<AdminOfferManagement />} />
-        <Route path="users" element={<AdminUserManagement />} />
-        <Route path="settings" element={<AdminSetting />} />
-      </Route>
-      <Route path="/" element={authReady ? (isLoggedIn && !isAdmin ? <CustomerLayout /> : (isLoggedIn ? <Navigate to="/admin" /> : <Navigate to="/login" />)) : <div />}>
-        <Route index element={<CustomerDashboard />} />
-        <Route path="services" element={<CustomerServices />} />
-        <Route path="offers" element={<CustomerOffers />} />
-        <Route path="appointments" element={<CustomerAppointment />} />
-        <Route path="contact" element={<CustomerContactus />} />
-        <Route path="settings" element={<CustomerSetting />} />
-      </Route>
-      {/* root is handled by the customer layout above */}
-      <Route path="*" element={<NotFound />} />
-      <Route 
-      path="/register" 
-      element={<Register />} 
-      />
-      <Route path="/complete-profile" element={<CompleteProfile />} />
-      </Routes>
-      </Suspense>
+        <Suspense fallback={<Skeleton />}>
+          <Routes>
+
+            {/* ── PUBLIC CUSTOMER ROUTES (no login required) ──────────── */}
+            <Route path="/" element={<CustomerLayout />}>
+              <Route index           element={<CustomerDashboard />} />
+              <Route path="services"     element={<CustomerServices />} />
+              <Route path="offers"       element={<CustomerOffers />} />
+              <Route path="appointments" element={<CustomerAppointment />} />
+              <Route path="contact"      element={<CustomerContactus />} />
+            </Route>
+
+            {/* ── ADMIN LOGIN ──────────────────────────────────────────── */}
+            {/* /admin-login: show login form; redirect away if already admin */}
+            <Route
+              path="/admin-login"
+              element={
+                authReady
+                  ? (isAdmin ? <Navigate to="/admin" replace /> : <Login adminOnly />)
+                  : <div />
+              }
+            />
+
+            {/* Legacy /login path — redirect to /admin-login so old links still work */}
+            <Route path="/login" element={<Navigate to="/admin-login" replace />} />
+
+            {/* ── PROTECTED ADMIN ROUTES ───────────────────────────────── */}
+            <Route
+              path="/admin"
+              element={
+                authReady
+                  ? (isAdmin
+                      ? <ProtectedRoute><AdminLayout /></ProtectedRoute>
+                      : <Navigate to="/admin-login" replace />)
+                  : <div />
+              }
+            >
+              <Route index                 element={<AdminDashboard />} />
+              <Route path="services"       element={<AdminServicesManagement />} />
+              <Route path="appointments"   element={<AdminAppointmentManagement />} />
+              <Route path="offers"         element={<AdminOfferManagement />} />
+              <Route path="users"          element={<AdminUserManagement />} />
+              <Route path="settings"       element={<AdminSetting />} />
+            </Route>
+
+            {/* 404 */}
+            <Route path="*" element={<NotFound />} />
+
+          </Routes>
+        </Suspense>
       </div>
 
-      {!hideLayout && !location.pathname.startsWith('/admin') && <CustomerFooter />}
+      {/* Footer: show on all non-admin pages */}
+      {!isAdminPath && <CustomerFooter />}
 
-      {loading && (
+      {/* Full-screen loading overlay only while admin auth is resolving */}
+      {loading && isAdminPath && (
         <div className="loading-overlay" aria-hidden>
           <div className="loader" />
         </div>
@@ -94,14 +113,12 @@ const AppRoutes = () => {
   );
 };
 
-const App = () => {
-  return (
-    <BrowserRouter>
-      <AuthProvider>
-        <AppRoutes />
-      </AuthProvider>
-    </BrowserRouter>
-  );
-};
+const App = () => (
+  <BrowserRouter>
+    <AuthProvider>
+      <AppRoutes />
+    </AuthProvider>
+  </BrowserRouter>
+);
 
 export default App;
