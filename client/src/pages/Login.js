@@ -137,12 +137,6 @@ export default function Login({ adminOnly = false }) {
                   {loading ? "Signing in…" : "Sign In"}
                 </button>
 
-                <div className="flex items-center gap-3 my-2">
-                  <div className="flex-1 h-[1px] bg-gray-200"></div>
-                  <span className="text-[12px] text-gray-400 uppercase tracking-[0.5em]">or</span>
-                  <div className="flex-1 h-[1px] bg-gray-200"></div>
-                </div>
-
                 {!adminOnly && (
                   <div className="mt-4 text-center text-sm text-gray-500">
                     Don't have an account?{' '}
