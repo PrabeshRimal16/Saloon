@@ -131,10 +131,6 @@ export default function Login({ adminOnly = false }) {
                     required
                   />
                 </div>
-
-                  <div className="text-right mt-2">
-                    <span className="text-xs text-gray-400">Contact admin to reset password</span>
-                  </div>
                 </div>
 
                 <button type="submit" disabled={loading} className="w-full bg-amber-700 text-white py-3 font-semibold uppercase rounded-none">
