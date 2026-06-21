@@ -147,11 +147,6 @@ export default function Login({ adminOnly = false }) {
                   <div className="flex-1 h-[1px] bg-gray-200"></div>
                 </div>
 
-                <button type="button" onClick={handleGoogle} className="w-full flex items-center justify-center gap-3 py-2 border border-gray-200 text-sm text-stone-800">
-                  <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-5 h-5" />
-                  <span>Continue with Google</span>
-                </button>
-
                 {!adminOnly && (
                   <div className="mt-4 text-center text-sm text-gray-500">
                     Don't have an account?{' '}
