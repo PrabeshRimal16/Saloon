@@ -83,7 +83,7 @@ router.get('/by-email/:email', async (req, res) => {
   try {
     const { email } = req.params;
     const result = await pool.query(
-      "SELECT * FROM appointments WHERE guest_email = $1 OR email = $2 ORDER BY appointment_date DESC",
+      "SELECT * FROM appointments WHERE email = $1 OR email = $2 ORDER BY appointment_date DESC",
       [email, email]
     );
     res.json(result.rows);
