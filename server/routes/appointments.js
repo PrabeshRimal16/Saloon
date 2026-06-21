@@ -78,6 +78,21 @@ router.post("/", async (req, res) => {
   }
 });
 
+// Get appointments by email (for guest bookings lookup)
+router.get('/by-email/:email', async (req, res) => {
+  try {
+    const { email } = req.params;
+    const result = await pool.query(
+      "SELECT * FROM appointments WHERE guest_email = $1 OR email = $2 ORDER BY appointment_date DESC",
+      [email, email]
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error fetching appointments by email:", err);
+    res.status(500).json({ error: "Failed to fetch appointments" });
+  }
+});
+
 // ─── GET /my/:user_id — Logged-in user's own appointments (kept for compat.) ──
 router.get("/my/:user_id", async (req, res) => {
   try {
