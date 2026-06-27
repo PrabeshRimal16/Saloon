@@ -70,6 +70,7 @@ const CATEGORIES = ['All', 'Hair Sculpting', 'Facial Therapy', 'Nail Artistry', 
 
 export default function CustomerServices() {
   const [services, setServices] = useState([]);
+  const [loading, setLoading]   = useState(true);
   const [bookingModalOpen, setBookingModalOpen] = useState(false);
   const [preSelectedIds, setPreSelectedIds] = useState([]);
   const [activeCategory, setActiveCategory] = useState('All');
@@ -79,7 +80,10 @@ export default function CustomerServices() {
 
   useEffect(() => {
     const API_BASE = process.env.REACT_APP_API_URL || '';
-    fetch(`${API_BASE}/api/services`).then(r => r.json()).then(setServices).catch(() => { });
+    fetch(`${API_BASE}/api/services`)
+      .then(r => r.json())
+      .then(data => { setServices(Array.isArray(data) ? data : []); setLoading(false); })
+      .catch(() => setLoading(false));
   }, []);
 
   const filtered = services.filter(s => {
