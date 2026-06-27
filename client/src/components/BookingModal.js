@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useToast } from './Toast';
 
 const API_BASE = process.env.REACT_APP_API_URL || '';
 
@@ -292,6 +293,7 @@ function ServiceMultiSelect({ services, selectedIds, onChange, error }) {
  *   onSuccess       (booking) => void  — called after successful POST
  */
 export default function BookingModal({ isOpen, onClose, services = [], preSelectedIds = [], onSuccess }) {
+  const toast = useToast();
   const [selectedIds, setSelectedIds]       = useState([]);
   const [name, setName]                     = useState('');
   const [email, setEmail]                   = useState('');
@@ -321,12 +323,14 @@ export default function BookingModal({ isOpen, onClose, services = [], preSelect
 
   const validate = () => {
     const errs = {};
-    if (!name.trim())                              errs.name    = 'Name is required';
-    if (!email.trim())                             errs.email   = 'Email is required';
-    else if (!/\S+@\S+\.\S+/.test(email))          errs.email   = 'Enter a valid email';
+    if (!name.trim())                              errs.name    = 'Full name is required';
+    if (!email.trim())                             errs.email   = 'Email address is required';
+    else if (!/\S+@\S+\.\S+/.test(email))          errs.email   = 'Please enter a valid email address';
     if (!selectedIds.length)                       errs.service = 'Please select at least one service';
     if (!date)                                     errs.date    = 'Please choose a date';
+    else if (date < todayISO())                    errs.date    = 'Date cannot be in the past';
     if (!time)                                     errs.time    = 'Please choose a time';
+    else if (time < '09:00' || time > '20:00')     errs.time    = 'Please choose a time between 9 AM and 8 PM';
     return errs;
   };
 
@@ -365,6 +369,11 @@ export default function BookingModal({ isOpen, onClose, services = [], preSelect
         services:     data.services || selectedServices,
         total_price:  data.total_price || totalPrice,
       });
+
+      toast.success(
+        `Your appointment has been confirmed! We'll be in touch at ${email.trim()}.`,
+        'Booking Confirmed'
+      );
 
       // Reset form
       setName(''); setEmail(''); setPhone('');
@@ -407,6 +416,7 @@ export default function BookingModal({ isOpen, onClose, services = [], preSelect
                   id="bm-name" className={`bm-input${errors.name ? ' bm-err' : ''}`}
                   type="text" placeholder="Jane Smith" value={name}
                   onChange={e => setName(e.target.value)} autoComplete="name"
+                  autoFocus
                 />
                 {errors.name && <span className="bm-field-error">{errors.name}</span>}
               </div>
@@ -427,6 +437,7 @@ export default function BookingModal({ isOpen, onClose, services = [], preSelect
                 id="bm-phone" className="bm-input" type="tel"
                 placeholder="+1 (555) 000-0000" value={phone}
                 onChange={e => setPhone(e.target.value)} autoComplete="tel"
+                inputMode="tel"
               />
             </div>
 
@@ -462,6 +473,7 @@ export default function BookingModal({ isOpen, onClose, services = [], preSelect
                 <input
                   id="bm-time" className={`bm-input${errors.time ? ' bm-err' : ''}`}
                   type="time" value={time}
+                  min="09:00" max="20:00"
                   onChange={e => setTime(e.target.value)}
                 />
                 {errors.time && <span className="bm-field-error">{errors.time}</span>}
