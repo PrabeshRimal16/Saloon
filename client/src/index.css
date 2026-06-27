@@ -59,19 +59,63 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ── Design Tokens ────────────────── */
 :root {
-  --gold:        #B8960C;
-  --gold-light:  #D4AF37;
-  --gold-dark:   #8B7209;
-  --charcoal:    #1C1C1E;
-  --white:       #FFFFFF;
-  --cream:       #F8F7F5;
-  --divider:     #E8E0D5;
-  --text-dark:   #1C1C1E;
-  --text-grey:   #6B6B6B;
-  --text-light:  #AAAAAA;
-  --shadow-card: 0 4px 24px rgba(0,0,0,0.08);
-  --shadow-hover: 0 12px 40px rgba(0,0,0,0.14);
+  --gold:          #B8960C;
+  --gold-light:    #D4AF37;
+  --gold-dark:     #8B7209;
+  --charcoal:      #1C1C1E;
+  --white:         #FFFFFF;
+  --cream:         #F8F7F5;
+  --divider:       #E8E0D5;
+  --text-dark:     #1C1C1E;
+  --text-grey:     #6B6B6B;
+  --text-light:    #AAAAAA;
+  --shadow-card:   0 4px 24px rgba(0,0,0,0.08);
+  --shadow-hover:  0 12px 40px rgba(0,0,0,0.14);
+
+  /* Border-radius tokens — use these everywhere for consistency */
+  --radius-card:   16px;
+  --radius-btn:    50px;
+  --radius-input:  12px;
+  --radius-badge:  50px;
 }
+
+/* ── Touch target utility ────────────────────────── */
+/* Ensures interactive elements are ≥ 44px for WCAG 2.5.5 */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* ── Skeleton loader ──────────────────────────────── */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    #f0ece4 25%,
+    #e8e2d8 37%,
+    #f0ece4 63%
+  );
+  background-size: 400% 100%;
+  animation: skeleton-shimmer 1.4s ease infinite;
+  border-radius: 8px;
+}
+@keyframes skeleton-shimmer {
+  0%   { background-position: 100% 50%; }
+  100% { background-position: 0%   50%; }
+}
+
+/* Skeleton card variant */
+.skeleton-card {
+  background: white;
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+.skeleton-img  { width: 100%; aspect-ratio: 4/5; min-height: 300px; }
+.skeleton-line { height: 14px; margin-bottom: 10px; }
+.skeleton-line.sm  { height: 11px; width: 60%; }
+.skeleton-line.lg  { height: 20px; width: 75%; }
+.skeleton-body { padding: 20px; }
+
 
 /* ── Gold Shimmer Button Animation ── */
 @keyframes shimmer {

@@ -5,6 +5,7 @@ import './styles/admin-animations.css';
 import './styles/responsive.css';
 import initScrollAnimations from './utils/scrollAnimations';
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import { ToastProvider } from './components/Toast';
 import CustomerFooter from './components/CustomerFooter';
 import ProtectedRoute from './components/ProtectedRoute';
 import Skeleton from './components/Skeleton';
@@ -116,7 +117,9 @@ const AppRoutes = () => {
 const App = () => (
   <BrowserRouter>
     <AuthProvider>
-      <AppRoutes />
+      <ToastProvider>
+        <AppRoutes />
+      </ToastProvider>
     </AuthProvider>
   </BrowserRouter>
 );
