@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import CustomerNavbar from '../../components/CustomerNavbar';
 import ConfirmModal from '../../components/ConfirmModal';
+import BookingModal from '../../components/BookingModal';
 
 const API_BASE = process.env.REACT_APP_API_URL || '';
 
@@ -30,37 +31,22 @@ const CSS = `
   .card-subtitle { font-size: 13px; color: #AAAAAA; }
   .card-body { padding: 24px 28px; }
 
-  /* ── Form ── */
-  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  @media (max-width: 560px) { .form-row { grid-template-columns: 1fr; } }
-  .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
-  .field label { font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: #6B6B6B; }
-  .field input, .field select, .field textarea {
-    padding: 12px 14px; border-radius: 10px; border: 1.5px solid #E8E0D5;
-    font-family: 'DM Sans', sans-serif; font-size: 14px; color: #1C1C1E;
-    background: #FDFCFA; outline: none; transition: border-color 0.2s, box-shadow 0.2s;
-    width: 100%; box-sizing: border-box;
-  }
-  .field input:focus, .field select:focus, .field textarea:focus {
-    border-color: #B8960C; box-shadow: 0 0 0 3px rgba(184,150,12,0.12);
-  }
-  .field input.err, .field select.err { border-color: #C0392B; }
-  .field-error { font-size: 12px; color: #C0392B; margin-top: 2px; }
-
-  /* ── Submit button ── */
-  .btn-submit {
-    width: 100%; padding: 15px; border-radius: 50px; border: none; cursor: pointer;
-    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
+  /* ── Open modal CTA card ── */
+  .book-cta-card { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 32px; text-align: center; gap: 20px; }
+  .book-cta-icon { width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(145deg, #F8F5ED, #EDE3C8); display: flex; align-items: center; justify-content: center; }
+  .book-cta-icon .mat-icon { font-size: 32px; color: #B8960C; }
+  .book-cta-title { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 600; color: #1C1C1E; margin: 0; }
+  .book-cta-sub { font-size: 14px; color: #888; margin: 0; line-height: 1.6; }
+  .btn-open-modal {
+    padding: 14px 36px; border-radius: 50px; border: none; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 700;
     text-transform: uppercase; letter-spacing: 1.5px; color: white;
     background: linear-gradient(90deg, #B8960C 0%, #D4AF37 50%, #B8960C 100%);
-    background-size: 200% auto;
-    animation: shimmer 3s linear infinite;
+    background-size: 200% auto; animation: shimmer 3s linear infinite;
     box-shadow: 0 4px 20px rgba(184,150,12,0.35);
-    transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
-    margin-top: 8px;
+    transition: transform 0.2s, box-shadow 0.2s;
   }
-  .btn-submit:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(184,150,12,0.45); }
-  .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; animation: none; background-position: 0; }
+  .btn-open-modal:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(184,150,12,0.45); }
 
   /* ── Success card ── */
   .success-card { text-align: center; padding: 40px 28px; }
@@ -73,10 +59,11 @@ const CSS = `
   .success-row:last-child { border-bottom: none; }
   .success-row span:first-child { color: #AAAAAA; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 11px; }
   .success-row span:last-child { color: #1C1C1E; font-weight: 500; }
+  .success-total { font-size: 16px !important; color: #B8960C !important; font-weight: 700 !important; }
   .btn-book-another { padding: 12px 32px; border-radius: 50px; border: 2px solid #B8960C; background: transparent; color: #B8960C; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; transition: background 0.2s, color 0.2s; }
   .btn-book-another:hover { background: #B8960C; color: white; }
 
-  /* ── Past bookings section ── */
+  /* ── Past bookings ── */
   .lookup-section { margin-top: 16px; }
   .lookup-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; color: #1C1C1E; margin: 0 0 4px; }
   .lookup-sub { font-size: 13px; color: #AAAAAA; margin-bottom: 16px; }
@@ -129,191 +116,29 @@ const statusConfig = (s) => {
 
 const fmtDate = (d) => {
   if (!d) return '';
-  const dt = new Date(d);
-  return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 };
 
-const todayISO = () => new Date().toISOString().split('T')[0];
-
-// ─── Booking Form ─────────────────────────────────────────────────────────────
-const initialForm = {
-  name: '', email: '', phone: '',
-  service_id: '', appointment_date: '', appointment_time: '',
+/** Returns a display label for the services of an appointment row */
+const serviceLabel = (appt) => {
+  if (Array.isArray(appt.services) && appt.services.length) {
+    return appt.services.map(s => s.name).join(', ');
+  }
+  return appt.service_name || 'Service';
 };
 
-function BookingForm({ services, onSuccess }) {
-  const [form, setForm] = useState(initialForm);
-  const [errors, setErrors] = useState({});
-  const [submitting, setSubmitting] = useState(false);
-  const [serverError, setServerError] = useState('');
-
-  const set = (k) => (e) => setForm(f => ({ ...f, [k]: e.target.value }));
-
-  const validate = () => {
-    const errs = {};
-    if (!form.name.trim())             errs.name             = 'Name is required';
-    if (!form.email.trim())            errs.email            = 'Email is required';
-    else if (!/\S+@\S+\.\S+/.test(form.email)) errs.email   = 'Enter a valid email';
-    if (!form.service_id)              errs.service_id       = 'Please select a service';
-    if (!form.appointment_date)        errs.appointment_date = 'Please choose a date';
-    if (!form.appointment_time)        errs.appointment_time = 'Please choose a time';
-    return errs;
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const errs = validate();
-    setErrors(errs);
-    if (Object.keys(errs).length) return;
-
-    setSubmitting(true);
-    setServerError('');
-    try {
-      const res = await fetch(`${API_BASE}/api/appointments`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({
-          name:             form.name.trim(),
-          email:            form.email.trim(),
-          phone:            form.phone.trim(),
-          service_id:       form.service_id,
-          appointment_date: form.appointment_date,
-          appointment_time: form.appointment_time,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Booking failed');
-
-      const svc = services.find(s => String(s.id) === String(form.service_id));
-      onSuccess({ ...data, service_name: svc?.name || 'Service', guest_name: form.name, guest_email: form.email });
-    } catch (err) {
-      setServerError(err.message || 'Something went wrong. Please try again.');
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  return (
-    <div className="card fade-up">
-      <div className="card-header">
-        <p className="card-title">Book an Appointment</p>
-        <p className="card-subtitle">No account needed — just fill in your details</p>
-      </div>
-      <div className="card-body">
-        <form onSubmit={handleSubmit} noValidate>
-
-          {/* Guest info */}
-          <div className="form-row">
-            <div className="field">
-              <label htmlFor="book-name">Full Name *</label>
-              <input
-                id="book-name"
-                type="text"
-                placeholder="Jane Smith"
-                value={form.name}
-                onChange={set('name')}
-                className={errors.name ? 'err' : ''}
-                autoComplete="name"
-              />
-              {errors.name && <span className="field-error">{errors.name}</span>}
-            </div>
-            <div className="field">
-              <label htmlFor="book-email">Email *</label>
-              <input
-                id="book-email"
-                type="email"
-                placeholder="jane@example.com"
-                value={form.email}
-                onChange={set('email')}
-                className={errors.email ? 'err' : ''}
-                autoComplete="email"
-              />
-              {errors.email && <span className="field-error">{errors.email}</span>}
-            </div>
-          </div>
-
-          <div className="field">
-            <label htmlFor="book-phone">Phone Number</label>
-            <input
-              id="book-phone"
-              type="tel"
-              placeholder="+1 (555) 000-0000"
-              value={form.phone}
-              onChange={set('phone')}
-              autoComplete="tel"
-            />
-          </div>
-
-          {/* Service */}
-          <div className="field">
-            <label htmlFor="book-service">Service *</label>
-            <select
-              id="book-service"
-              value={form.service_id}
-              onChange={set('service_id')}
-              className={errors.service_id ? 'err' : ''}
-            >
-              <option value="">— Select a service —</option>
-              {services.map(s => (
-                <option key={s.id} value={s.id}>
-                  {s.name}{s.duration ? ` (${s.duration} min)` : ''}{s.price ? ` — $${Number(s.price).toFixed(2)}` : ''}
-                </option>
-              ))}
-            </select>
-            {errors.service_id && <span className="field-error">{errors.service_id}</span>}
-          </div>
-
-          {/* Date & time */}
-          <div className="form-row">
-            <div className="field">
-              <label htmlFor="book-date">Date *</label>
-              <input
-                id="book-date"
-                type="date"
-                value={form.appointment_date}
-                min={todayISO()}
-                onChange={set('appointment_date')}
-                className={errors.appointment_date ? 'err' : ''}
-              />
-              {errors.appointment_date && <span className="field-error">{errors.appointment_date}</span>}
-            </div>
-            <div className="field">
-              <label htmlFor="book-time">Time *</label>
-              <input
-                id="book-time"
-                type="time"
-                value={form.appointment_time}
-                onChange={set('appointment_time')}
-                className={errors.appointment_time ? 'err' : ''}
-              />
-              {errors.appointment_time && <span className="field-error">{errors.appointment_time}</span>}
-            </div>
-          </div>
-
-          {serverError && (
-            <div style={{ background: 'rgba(192,57,43,0.08)', border: '1px solid rgba(192,57,43,0.25)', borderRadius: 10, padding: '10px 14px', marginBottom: 12, fontSize: 13, color: '#A63020' }}>
-              {serverError}
-            </div>
-          )}
-
-          <button type="submit" className="btn-submit" disabled={submitting}>
-            {submitting
-              ? <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
-                  <span style={{ width: 16, height: 16, border: '2px solid rgba(255,255,255,0.4)', borderTopColor: 'white', borderRadius: '50%', display: 'inline-block', animation: 'spin 0.7s linear infinite' }} />
-                  Booking...
-                </span>
-              : '✦ Confirm Booking'
-            }
-          </button>
-        </form>
-      </div>
-    </div>
-  );
-}
-
-// ─── Success card ─────────────────────────────────────────────────────────────
+// ─── Success Card ─────────────────────────────────────────────────────────────
 function SuccessCard({ booking, onReset }) {
+  const svcs = Array.isArray(booking.services) && booking.services.length
+    ? booking.services
+    : booking.service_name
+      ? [{ name: booking.service_name, price: booking.price }]
+      : [];
+
+  const total = booking.total_price
+    ? Number(booking.total_price)
+    : svcs.reduce((s, x) => s + Number(x.price || 0), 0);
+
   return (
     <div className="card fade-up">
       <div className="success-card">
@@ -334,10 +159,18 @@ function SuccessCard({ booking, onReset }) {
             <span>Name</span>
             <span>{booking.guest_name}</span>
           </div>
-          <div className="success-row">
-            <span>Service</span>
-            <span>{booking.service_name}</span>
-          </div>
+          {svcs.length > 0 && svcs.map((s, i) => (
+            <div key={i} className="success-row">
+              <span>{i === 0 ? 'Services' : ''}</span>
+              <span>{s.name}{s.price ? ` — $${Number(s.price).toFixed(2)}` : ''}</span>
+            </div>
+          ))}
+          {total > 0 && (
+            <div className="success-row">
+              <span>Total</span>
+              <span className="success-total">${total.toFixed(2)}</span>
+            </div>
+          )}
           <div className="success-row">
             <span>Date</span>
             <span>{fmtDate(booking.appointment_date)}</span>
@@ -462,17 +295,23 @@ function BookingLookup() {
             ) : results.map(a => {
               const st = statusConfig(a.status);
               const isCancelled = a.status?.toLowerCase() === 'cancelled';
+              const label = serviceLabel(a);
+              const totalPrice = a.total_price
+                ? Number(a.total_price)
+                : Array.isArray(a.services)
+                  ? a.services.reduce((s, x) => s + Number(x.price || 0), 0)
+                  : Number(a.price || 0);
               return (
                 <div key={a.id} className="appt-item" style={{ opacity: isCancelled ? 0.65 : 1 }}>
                   <div className="appt-icon">
                     <span className="material-symbols-outlined mat-icon">content_cut</span>
                   </div>
                   <div className="appt-info">
-                    <div className="appt-svc">{a.service_name || 'Service'}</div>
+                    <div className="appt-svc">{label}</div>
                     <div className="appt-meta">
                       {fmtDate(a.appointment_date)}
                       {a.appointment_time ? ` · ${a.appointment_time}` : ''}
-                      {a.service_duration ? ` · ${a.service_duration} min` : ''}
+                      {totalPrice > 0 ? ` · $${totalPrice.toFixed(2)}` : ''}
                     </div>
                     <span className={st.cls} style={{ marginTop: 6, display: 'inline-flex' }}>{st.label}</span>
                   </div>
@@ -507,11 +346,12 @@ function BookingLookup() {
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 const AppointmentsPage = () => {
-  const [services, setServices]       = useState([]);
+  const [services, setServices]             = useState([]);
   const [servicesLoading, setServicesLoading] = useState(true);
-  const [confirmed, setConfirmed]     = useState(null); // booking confirmation data
+  const [confirmed, setConfirmed]           = useState(null);
+  const [modalOpen, setModalOpen]           = useState(false);
 
-  // Fetch available services for the dropdown
+  // Fetch available services
   useEffect(() => {
     let mounted = true;
     (async () => {
@@ -520,7 +360,7 @@ const AppointmentsPage = () => {
         const data = await res.json();
         if (mounted) setServices(Array.isArray(data) ? data : []);
       } catch {
-        // silently ignore — form still shows, dropdown just empty
+        // silently ignore — modal still shows, service list just empty
       } finally {
         if (mounted) setServicesLoading(false);
       }
@@ -529,8 +369,8 @@ const AppointmentsPage = () => {
   }, []);
 
   const handleSuccess = useCallback((booking) => {
+    setModalOpen(false);
     setConfirmed(booking);
-    // Scroll to top of main area
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
@@ -554,7 +394,7 @@ const AppointmentsPage = () => {
           {/* ── Two-column grid ── */}
           <div className="appt-grid">
 
-            {/* Left: booking form / confirmation */}
+            {/* Left: CTA card or confirmation */}
             {servicesLoading ? (
               <div className="card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 300 }}>
                 <div style={{ width: 36, height: 36, border: '3px solid #B8960C', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
@@ -562,7 +402,25 @@ const AppointmentsPage = () => {
             ) : confirmed ? (
               <SuccessCard booking={confirmed} onReset={handleReset} />
             ) : (
-              <BookingForm services={services} onSuccess={handleSuccess} />
+              <div className="card fade-up">
+                <div className="book-cta-card">
+                  <div className="book-cta-icon">
+                    <span className="material-symbols-outlined mat-icon">calendar_add_on</span>
+                  </div>
+                  <h2 className="book-cta-title">Ready to book?</h2>
+                  <p className="book-cta-sub">
+                    Choose one or more services, pick your preferred date and time,<br />
+                    and confirm your guest appointment in seconds.
+                  </p>
+                  <button
+                    id="btn-open-booking-modal"
+                    className="btn-open-modal"
+                    onClick={() => setModalOpen(true)}
+                  >
+                    ✦ Book Now
+                  </button>
+                </div>
+              </div>
             )}
 
             {/* Right: email lookup for past bookings */}
@@ -571,6 +429,15 @@ const AppointmentsPage = () => {
           </div>
         </main>
       </div>
+
+      {/* Booking Modal */}
+      <BookingModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        services={services}
+        preSelectedIds={[]}
+        onSuccess={handleSuccess}
+      />
     </>
   );
 };

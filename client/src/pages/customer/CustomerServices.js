@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { useAuth } from '../../context/AuthContext';
 import CustomerNavbar from '../../components/CustomerNavbar';
 import ConfirmModal from '../../components/ConfirmModal';
+import BookingModal from '../../components/BookingModal';
 
 
 const CSS = `
@@ -88,14 +88,12 @@ const CATEGORIES = ['All', 'Hair Sculpting', 'Facial Therapy', 'Nail Artistry', 
 
 export default function CustomerServices() {
   const [services, setServices] = useState([]);
-  const { user } = useAuth();
-  const [bookingService, setBookingService] = useState(null);
-  const [bookingDate, setBookingDate] = useState('');
-  const [bookingTime, setBookingTime] = useState('');
-  const [bookingPhone, setBookingPhone] = useState('');
-  const [bookingLoading, setBookingLoading] = useState(false);
+  const [bookingModalOpen, setBookingModalOpen] = useState(false);
+  const [preSelectedIds, setPreSelectedIds] = useState([]);
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmProps, setConfirmProps] = useState({});
 
   useEffect(() => {
     const API_BASE = process.env.REACT_APP_API_URL || '';
@@ -108,42 +106,25 @@ export default function CustomerServices() {
     return matchCat && matchSearch;
   });
 
-  const submitBooking = async (e) => {
-    e.preventDefault();
-    if (!user?.id) {
-      setConfirmProps({ title: 'Sign in required', message: 'You must be signed in to book.', confirmText: 'OK', confirmColor: '#B8960C', onConfirm: () => setConfirmOpen(false) });
-      setConfirmOpen(true);
-      return;
-    }
-    if (!bookingDate || !bookingTime) {
-      setConfirmProps({ title: 'Missing info', message: 'Please choose a date and time.', confirmText: 'OK', confirmColor: '#B8960C', onConfirm: () => setConfirmOpen(false) });
-      setConfirmOpen(true);
-      return;
-    }
-    setBookingLoading(true);
-    try {
-      const API_BASE = process.env.REACT_APP_API_URL || '';
-      const res = await fetch(`${API_BASE}/api/appointments`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ user_id: user.id, service_id: bookingService.id, appointment_date: bookingDate, appointment_time: bookingTime, phone: bookingPhone })
-      });
-      if (!res.ok) {
-        setConfirmProps({ title: 'Booking failed', message: 'Booking failed: ' + await res.text(), confirmText: 'OK', confirmColor: '#C0392B', onConfirm: () => setConfirmOpen(false) });
-        setConfirmOpen(true);
-      } else {
-        setConfirmProps({ title: 'Booked', message: 'Booking confirmed!', confirmText: 'OK', confirmColor: '#2D7A4F', onConfirm: () => { setConfirmOpen(false); setBookingService(null); } });
-        setConfirmOpen(true);
-      }
-    } catch {
-      setConfirmProps({ title: 'Booking failed', message: 'Booking failed', confirmText: 'OK', confirmColor: '#C0392B', onConfirm: () => setConfirmOpen(false) });
-      setConfirmOpen(true);
-    }
-    finally { setBookingLoading(false); }
+  const openBooking = (service) => {
+    setPreSelectedIds([service.id]);
+    setBookingModalOpen(true);
   };
 
-  const [confirmOpen, setConfirmOpen] = useState(false);
-  const [confirmProps, setConfirmProps] = useState({});
+  const handleBookingSuccess = (booking) => {
+    setBookingModalOpen(false);
+    const names = Array.isArray(booking.services) && booking.services.length
+      ? booking.services.map(s => s.name).join(', ')
+      : (booking.service_name || 'your service');
+    setConfirmProps({
+      title: 'Booking Confirmed!',
+      message: `Your appointment for ${names} is pending confirmation. We'll be in touch soon.`,
+      confirmText: 'Great, thanks!',
+      confirmColor: '#2D7A4F',
+      onConfirm: () => setConfirmOpen(false),
+    });
+    setConfirmOpen(true);
+  };
 
   return (
     <>
@@ -208,7 +189,7 @@ export default function CustomerServices() {
                         {s.duration && <p className="svc-dur"><span className="material-symbols-outlined" style={{ fontSize: 14 }}>schedule</span>{s.duration} min</p>}
                         <div className="svc-footer">
                           <span className="svc-price">{'$' + Number(s.price || 0).toLocaleString()}</span>
-                          <button className="btn-book" onClick={() => setBookingService(s)}>Book Now</button>
+                          <button className="btn-book" onClick={() => openBooking(s)}>Book Now</button>
                         </div>
                       </div>
                     </div>
@@ -244,44 +225,14 @@ export default function CustomerServices() {
 
       </div>
 
-      {/* Booking Modal */}
-      {bookingService && (
-        <div className="modal-overlay" onClick={e => e.target === e.currentTarget && setBookingService(null)}>
-          <div className="modal-box">
-            <div className="modal-header">
-              <div>
-                <h3 className="modal-title">Book Appointment</h3>
-                <p className="modal-sub">{bookingService.name}</p>
-              </div>
-              <button className="modal-close" onClick={() => setBookingService(null)}>
-                <span className="material-symbols-outlined" style={{ fontSize: 20 }}>close</span>
-              </button>
-            </div>
-            <div className="modal-body">
-              <form onSubmit={submitBooking}>
-                <div className="modal-grid">
-                  <div>
-                    <label className="modal-label">Date *</label>
-                    <input required type="date" className="modal-input" value={bookingDate} onChange={e => setBookingDate(e.target.value)} />
-                  </div>
-                  <div>
-                    <label className="modal-label">Time *</label>
-                    <input required type="time" className="modal-input" value={bookingTime} onChange={e => setBookingTime(e.target.value)} />
-                  </div>
-                </div>
-                <div>
-                  <label className="modal-label">Phone (Optional)</label>
-                  <input type="tel" className="modal-input" value={bookingPhone} onChange={e => setBookingPhone(e.target.value)} placeholder="+1 (555) 000-0000" />
-                </div>
-                <div className="modal-actions">
-                  <button type="button" className="btn-cancel-modal" onClick={() => setBookingService(null)}>Cancel</button>
-                  <button type="submit" className="btn-confirm" disabled={bookingLoading}>{bookingLoading ? 'Processing...' : 'Confirm Booking'}</button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Shared Booking Modal */}
+      <BookingModal
+        isOpen={bookingModalOpen}
+        onClose={() => setBookingModalOpen(false)}
+        services={services}
+        preSelectedIds={preSelectedIds}
+        onSuccess={handleBookingSuccess}
+      />
       <ConfirmModal
         isOpen={confirmOpen}
         title={confirmProps.title}
