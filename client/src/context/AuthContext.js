@@ -35,11 +35,12 @@ export const AuthProvider = ({ children }) => {
 
 			clearTimeout(timeoutId);
 
-			if (!response.ok) {
-				throw new Error(`Failed to fetch /auth/me (HTTP ${response.status})`);
-			}
-
 			const data = await response.json();
+			// 401 just means the user isn't logged in — not an error for guests
+			if (!response.ok) {
+				setUser(null);
+				return;
+			}
 			if (data && typeof data === "object" && !data.role) {
 				data.role = "customer";
 			}
