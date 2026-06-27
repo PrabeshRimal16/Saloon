@@ -342,7 +342,6 @@ export default function BookingModal({ isOpen, onClose, services = [], preSelect
       const res = await fetch(`${API_BASE}/api/appointments`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
         body: JSON.stringify({
           name:             name.trim(),
           email:            email.trim(),
