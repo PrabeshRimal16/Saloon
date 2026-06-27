@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import CustomerNavbar from '../../components/CustomerNavbar';
+import { useToast } from '../../components/Toast';
 
 const CSS = `
   .contact-page { background: #FFFFFF; min-height: 100vh; font-family: 'DM Sans', sans-serif; }
@@ -29,29 +30,29 @@ const CSS = `
   .info-title { font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: #B8960C; margin: 0 0 6px; }
   .info-text { font-size: 14px; color: #1C1C1E; line-height: 1.4; margin: 0; }
 
-  /* Main body */
-  .contact-main { max-width: 1200px; margin: 0 auto; padding: 56px 40px 80px; display: grid; grid-template-columns: 1fr; gap: 48px; }
+  /* Main layout */
+  .contact-main { max-width: 1200px; margin: 0 auto; padding: 56px 40px 80px; display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
   @media (max-width: 880px) { .contact-main { grid-template-columns: 1fr; padding: 40px 24px 60px; } }
 
-  /* Form card */
+  /* ── Contact Form ── */
   .contact-form-card { background: white; border-radius: 20px; padding: 48px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
   @media (max-width: 600px) { .contact-form-card { padding: 32px 24px; } }
   .form-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; color: #B8960C; margin-bottom: 10px; }
   .form-title { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 36px; font-weight: 400; color: #1C1C1E; margin: 0 0 32px; }
 
-  /* Floating input style */
-  .field-wrap { position: relative; margin-bottom: 32px; }
+  /* Floating-label inputs */
+  .field-wrap { position: relative; margin-bottom: 28px; }
   .field-input, .field-select, .field-textarea {
     width: 100%; background: transparent; border: none;
     border-bottom: 1.5px solid #E8E0D5; padding: 12px 0 10px;
     font-family: 'DM Sans', sans-serif; font-size: 15px; color: #1C1C1E;
-    outline: none; transition: border-color 0.25s; box-sizing: border-box;
-    display: block;
+    outline: none; transition: border-color 0.25s; box-sizing: border-box; display: block;
   }
   .field-input:focus, .field-select:focus, .field-textarea:focus { border-bottom-color: #B8960C; }
+  .field-input.err, .field-textarea.err { border-bottom-color: #C0392B; }
   .field-input::placeholder, .field-textarea::placeholder { color: transparent; }
-  .field-textarea { resize: vertical; min-height: 100px; }
-  .field-select { cursor: pointer; background: transparent; }
+  .field-textarea { resize: vertical; min-height: 110px; }
+  .field-select { cursor: pointer; }
   .field-label {
     position: absolute; left: 0; top: 12px;
     font-family: 'DM Sans', sans-serif; font-size: 13px; color: #AAAAAA;
@@ -63,24 +64,44 @@ const CSS = `
   .field-select:focus ~ .field-label,
   .field-textarea:focus ~ .field-label,
   .field-textarea:not(:placeholder-shown) ~ .field-label { top: -14px; font-size: 10px; color: #B8960C; letter-spacing: 2px; font-weight: 600; }
+  .field-err-text { font-size: 12px; color: #C0392B; margin-top: 4px; display: block; }
 
   .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
   @media (max-width: 500px) { .form-row-2 { grid-template-columns: 1fr; } }
 
-  .btn-send { display: inline-flex; align-items: center; gap: 8px; padding: 14px 40px; border-radius: 50px; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: white; background: linear-gradient(90deg, #B8960C 0%, #D4AF37 50%, #B8960C 100%); background-size: 200% auto; animation: shimmer 3s linear infinite; box-shadow: 0 4px 20px rgba(184,150,12,0.35); transition: transform 0.2s, box-shadow 0.2s; }
-  .btn-send:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(184,150,12,0.45); }
+  /* Submit button */
+  .btn-send {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 14px 40px; border-radius: 50px; border: none; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 1.5px; color: white;
+    background: linear-gradient(90deg, #B8960C 0%, #D4AF37 50%, #B8960C 100%);
+    background-size: 200% auto; animation: contact-shimmer 3s linear infinite;
+    box-shadow: 0 4px 20px rgba(184,150,12,0.35); transition: transform 0.2s, box-shadow 0.2s;
+    min-height: 52px; min-width: 160px;
+  }
+  .btn-send:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(184,150,12,0.45); }
+  .btn-send:disabled { opacity: 0.6; cursor: not-allowed; animation: none; }
+  @keyframes contact-shimmer { to { background-position: 200% center; } }
 
-  .success-toast { background: rgba(45,122,79,0.1); border: 1px solid rgba(45,122,79,0.25); border-radius: 10px; padding: 14px 18px; display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
-  .success-toast-text { font-size: 13px; color: #1E6B40; font-weight: 500; }
+  /* Spinner (inline) */
+  .contact-spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.4); border-top-color: white; border-radius: 50%; display: inline-block; animation: contact-spin 0.7s linear infinite; }
+  @keyframes contact-spin { to { transform: rotate(360deg); } }
+
+  /* Success banner (inside form) */
+  .form-success-banner {
+    background: rgba(45,122,79,0.08); border: 1px solid rgba(45,122,79,0.2);
+    border-radius: 12px; padding: 16px 20px; margin-bottom: 28px;
+    display: flex; align-items: center; gap: 12px;
+    animation: fade-up 0.35s ease;
+  }
+  .form-success-banner .mat-icon { font-size: 22px; color: #2D7A4F; flex-shrink: 0; }
+  .form-success-banner p { font-size: 14px; color: #1E6B40; margin: 0; line-height: 1.5; font-weight: 500; }
+  @keyframes fade-up { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
 
   /* Right column */
   .contact-right { display: flex; flex-direction: column; gap: 24px; }
-
-  .map-card { border-radius: 20px; overflow: hidden; border: 4px solid #B8960C; box-shadow: 0 4px 24px rgba(0,0,0,0.1); position: relative; flex-shrink: 0; }
-  .map-card img { width: 100%; height: 260px; object-fit: cover; display: block; filter: grayscale(0.3); transition: filter 0.4s; }
-  .map-card:hover img { filter: grayscale(0); }
-  .map-overlay-card { position: absolute; bottom: 14px; left: 14px; right: 14px; background: rgba(255,255,255,0.96); backdrop-filter: blur(6px); border-radius: 10px; padding: 12px 16px; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.1); }
-
+  .map-card { border-radius: 20px; overflow: hidden; border: 4px solid #B8960C; box-shadow: 0 4px 24px rgba(0,0,0,0.1); }
   .hours-card { background: white; border-radius: 20px; padding: 32px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
   .hours-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
   .hours-line { width: 40px; height: 2px; background: #B8960C; }
@@ -92,19 +113,74 @@ const CSS = `
   .hours-closed { font-size: 14px; font-weight: 700; color: #C0392B; }
   .hours-note { font-size: 12px; color: #AAAAAA; font-style: italic; margin-top: 12px; line-height: 1.6; }
   .hours-dot { width: 10px; height: 10px; border-radius: 50%; background: #B8960C; display: inline-block; margin-right: 10px; }
-  .hours-today .hours-day { font-weight: 700; color: #B8960C; display: inline-flex; align-items: center; }
+  .hours-today .hours-day { font-weight: 700; color: #B8960C; }
   .hours-sunday-note { display: block; font-size: 12px; color: #AAAAAA; font-style: italic; margin-top: 4px; }
 `;
 
+const SUBJECTS = [
+  '', 'General Inquiry', 'Appointment Question',
+  'Service Information', 'Pricing & Offers', 'Feedback', 'Other',
+];
+
 const ContactUsPage = () => {
-  
+  const toast = useToast();
+
+  // Form state
+  const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  const set = (field) => (e) => {
+    setForm(prev => ({ ...prev, [field]: e.target.value }));
+    // Clear error for this field as user types
+    if (errors[field]) setErrors(prev => ({ ...prev, [field]: '' }));
+  };
+
+  const validate = () => {
+    const errs = {};
+    if (!form.name.trim())    errs.name    = 'Please enter your name';
+    if (!form.email.trim())   errs.email   = 'Please enter your email address';
+    else if (!/\S+@\S+\.\S+/.test(form.email)) errs.email = 'Please enter a valid email address';
+    if (!form.message.trim()) errs.message = 'Please write your message';
+    return errs;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const errs = validate();
+    if (Object.keys(errs).length) { setErrors(errs); return; }
+
+    setLoading(true);
+    // Simulate network request (replace with real API call when available)
+    await new Promise(r => setTimeout(r, 1200));
+    setLoading(false);
+    setSuccess(true);
+    setForm({ name: '', email: '', subject: '', message: '' });
+    setErrors({});
+    toast.success(
+      "We've received your message and will get back to you within 24 hours.",
+      "Message Sent!"
+    );
+  };
 
   const infoCards = [
     { icon: 'location_on', title: 'Address', lines: ['1613 Washington Plaza N, Reston, VA 20190, United States', 'Located in Lake Anne Plaza - Main Parking lot'] },
-    { icon: 'call', title: 'Phone', lines: ['+1 571-519-6741'] },
-    { icon: 'mail', title: 'Email', lines: ['thesalonatreston@gmail.com'] },
-    { icon: 'schedule', title: 'Hours', lines: ['Mon–Sat: 10AM – 8PM', 'Sunday: Closed'] },
+    { icon: 'call',        title: 'Phone',   lines: ['+1 571-519-6741'] },
+    { icon: 'mail',        title: 'Email',   lines: ['thesalonatreston@gmail.com'] },
+    { icon: 'schedule',    title: 'Hours',   lines: ['Tue–Sat: 11AM – 6PM', 'Sun: 11AM – 5PM', 'Mon: Closed'] },
   ];
+
+  const hoursData = [
+    { day: 'Monday',    time: 'CLOSED',            closed: true },
+    { day: 'Tuesday',   time: '11:00 AM – 6:00 PM' },
+    { day: 'Wednesday', time: '11:00 AM – 6:00 PM' },
+    { day: 'Thursday',  time: '11:00 AM – 6:00 PM' },
+    { day: 'Friday',    time: '11:00 AM – 6:00 PM' },
+    { day: 'Saturday',  time: '11:00 AM – 6:00 PM' },
+    { day: 'Sunday',    time: '11:00 AM – 5:00 PM', note: 'Shorter hours on Sundays' },
+  ];
+  const todayName = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][new Date().getDay()];
 
   return (
     <>
@@ -137,26 +213,13 @@ const ContactUsPage = () => {
                     <p className="info-title">{card.title}</p>
                     {card.lines.map((l, i) => {
                       if (card.title === 'Phone') {
-                        const tel = l.replace(/[^+\d]/g, '');
-                        return (
-                          <p key={i} className="info-text" style={{ marginTop: i === 0 ? 0 : 4 }}>{
-                            <a href={`tel:${tel}`} style={{ color: '#1C1C1E', textDecoration: 'none', fontWeight: 700 }}>{l}</a>
-                          }</p>
-                        );
+                        const tel = l.replace(/[^\d+]/g, '');
+                        return <p key={i} className="info-text" style={{ marginTop: i ? 4 : 0 }}><a href={`tel:${tel}`} style={{ color: '#1C1C1E', textDecoration: 'none', fontWeight: 700 }}>{l}</a></p>;
                       }
                       if (card.title === 'Email') {
-                        return (
-                          <p key={i} className="info-text" style={{ marginTop: i === 0 ? 0 : 4 }}>
-                            <a href={`mailto:${l}`} style={{ color: '#1C1C1E', textDecoration: 'none', fontWeight: 700 }}>{l}</a>
-                          </p>
-                        );
+                        return <p key={i} className="info-text"><a href={`mailto:${l}`} style={{ color: '#1C1C1E', textDecoration: 'none', fontWeight: 700 }}>{l}</a></p>;
                       }
-                      if (card.title === 'Address' && i === 1) {
-                        return (
-                          <p key={i} className="info-text" style={{ marginTop: 4, color: '#777777', fontSize: 13 }}>{l}</p>
-                        );
-                      }
-                      return <p key={i} className="info-text" style={{ marginTop: i === 0 ? 0 : 4 }}>{l}</p>;
+                      return <p key={i} className="info-text" style={{ marginTop: i ? 4 : 0, color: i === 1 && card.title === 'Address' ? '#777' : undefined, fontSize: i === 1 && card.title === 'Address' ? 13 : undefined }}>{l}</p>;
                     })}
                   </div>
                 </div>
@@ -164,36 +227,120 @@ const ContactUsPage = () => {
             ))}
           </div>
 
-          {/* Main content */}
+          {/* Main: form + map/hours */}
           <div className="contact-main">
+
+            {/* ── Contact Form ── */}
+            <div className="contact-form-card">
+              <p className="form-eyebrow">Send a Message</p>
+              <h2 className="form-title">We'd Love to Hear From You</h2>
+
+              {success && (
+                <div className="form-success-banner" role="status">
+                  <span className="material-symbols-outlined mat-icon">check_circle</span>
+                  <p>Thank you, <strong>{form.name || 'friend'}</strong>! Your message has been sent. We'll reply within 24 hours.</p>
+                </div>
+              )}
+
+              <form onSubmit={handleSubmit} noValidate>
+                <div className="form-row-2">
+                  {/* Name */}
+                  <div className="field-wrap">
+                    <input
+                      id="contact-name"
+                      className={`field-input${errors.name ? ' err' : ''}`}
+                      type="text"
+                      placeholder="Jane Smith"
+                      value={form.name}
+                      onChange={set('name')}
+                      autoComplete="name"
+                      aria-required="true"
+                      aria-describedby={errors.name ? 'name-err' : undefined}
+                    />
+                    <label className="field-label" htmlFor="contact-name">Full Name *</label>
+                    {errors.name && <span id="name-err" className="field-err-text" role="alert">{errors.name}</span>}
+                  </div>
+                  {/* Email */}
+                  <div className="field-wrap">
+                    <input
+                      id="contact-email"
+                      className={`field-input${errors.email ? ' err' : ''}`}
+                      type="email"
+                      placeholder="jane@example.com"
+                      value={form.email}
+                      onChange={set('email')}
+                      autoComplete="email"
+                      aria-required="true"
+                      aria-describedby={errors.email ? 'email-err' : undefined}
+                    />
+                    <label className="field-label" htmlFor="contact-email">Email Address *</label>
+                    {errors.email && <span id="email-err" className="field-err-text" role="alert">{errors.email}</span>}
+                  </div>
+                </div>
+
+                {/* Subject */}
+                <div className="field-wrap">
+                  <select
+                    id="contact-subject"
+                    className="field-select"
+                    value={form.subject}
+                    onChange={set('subject')}
+                    aria-label="Subject"
+                  >
+                    {SUBJECTS.map(s => (
+                      <option key={s} value={s} disabled={s === ''}>{s || 'Subject (optional)'}</option>
+                    ))}
+                  </select>
+                  <label className="field-label" htmlFor="contact-subject">Subject</label>
+                </div>
+
+                {/* Message */}
+                <div className="field-wrap">
+                  <textarea
+                    id="contact-message"
+                    className={`field-textarea${errors.message ? ' err' : ''}`}
+                    placeholder="Tell us how we can help…"
+                    value={form.message}
+                    onChange={set('message')}
+                    aria-required="true"
+                    aria-describedby={errors.message ? 'msg-err' : undefined}
+                    rows={5}
+                  />
+                  <label className="field-label" htmlFor="contact-message">Your Message *</label>
+                  {errors.message && <span id="msg-err" className="field-err-text" role="alert">{errors.message}</span>}
+                </div>
+
+                <button type="submit" className="btn-send" disabled={loading} aria-label="Send message">
+                  {loading
+                    ? <><span className="contact-spinner" /> Sending…</>
+                    : <><span className="material-symbols-outlined" style={{ fontSize: 18 }}>send</span> Send Message</>
+                  }
+                </button>
+              </form>
+            </div>
+
+            {/* ── Right: Map + Hours ── */}
             <div className="contact-right">
               {/* Map */}
               <div className="map-card">
                 <iframe
                   title="The Salon At Reston - Map"
                   src="https://maps.google.com/maps?q=The+Salon+At+Reston,+1613+Washington+Plaza+N,+Reston,+VA+20190&t=&z=16&ie=UTF8&iwloc=&output=embed"
-                  width="100%"
-                  height="500"
+                  width="100%" height="320"
                   style={{ border: 0, display: 'block' }}
-                  allowFullScreen=""
-                  loading="lazy"
+                  allowFullScreen="" loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
                 />
               </div>
-              <div style={{ marginTop: 12 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
-                  <span className="material-symbols-outlined" style={{ fontSize: 22, color: '#B8960C' }}>explore</span>
-                  <div>
-                    <p style={{ fontFamily:'DM Sans,sans-serif', fontSize:13, fontWeight:600, color:'#1C1C1E', margin:0 }}>1613 Washington Plaza N, Reston, VA 20190</p>
-                    <p style={{ fontFamily:'DM Sans,sans-serif', fontSize:11, color:'#AAAAAA', margin:'2px 0 0', textTransform:'uppercase', letterSpacing:'1px' }}>
-                      Located in Lake Anne Plaza - Main Parking lot
-                    </p>
-                  </div>
-                </div>
-                <a href="https://www.google.com/maps/place/The+Salon+At+Reston/@38.9688042,-77.3408522,17z" target="_blank" rel="noreferrer" style={{ textDecoration: 'none', display: 'block' }}>
-                  <button style={{ width: '100%', background: '#B8960C', color: '#ffffff', border: 'none', padding: '12px 16px', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}>CLICK TO OPEN IN MAPS</button>
-                </a>
-              </div>
+              <a href="https://www.google.com/maps/place/The+Salon+At+Reston/@38.9688042,-77.3408522,17z" target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
+                <button style={{ width: '100%', background: '#1C1C1E', color: '#fff', border: 'none', padding: '13px 16px', borderRadius: 10, fontWeight: 700, cursor: 'pointer', fontFamily: 'DM Sans,sans-serif', fontSize: 13, letterSpacing: '0.5px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, transition: 'background 0.2s', minHeight: 48 }}
+                  onMouseEnter={e => e.currentTarget.style.background = '#B8960C'}
+                  onMouseLeave={e => e.currentTarget.style.background = '#1C1C1E'}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 18 }}>explore</span>
+                  Open in Google Maps
+                </button>
+              </a>
 
               {/* Hours */}
               <div className="hours-card">
@@ -201,47 +348,30 @@ const ContactUsPage = () => {
                   <span className="hours-line" />
                   <h3 className="hours-title">Opening Hours</h3>
                 </div>
-                {(() => {
-                  const dayNames = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
-                  const hoursData = [
-                    { day: 'Monday', time: 'CLOSED', closed: true },
-                    { day: 'Tuesday', time: '11:00 AM – 6:00 PM' },
-                    { day: 'Wednesday', time: '11:00 AM – 6:00 PM' },
-                    { day: 'Thursday', time: '11:00 AM – 6:00 PM' },
-                    { day: 'Friday', time: '11:00 AM – 6:00 PM' },
-                    { day: 'Saturday', time: '11:00 AM – 6:00 PM' },
-                    { day: 'Sunday', time: '11:00 AM – 5:00 PM', note: 'Shorter hours on Sundays' },
-                  ];
-                  const jsDayIndex = new Date().getDay(); // 0 = Sunday
-                  const todayName = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][jsDayIndex];
+                {hoursData.map(h => {
+                  const isToday = h.day === todayName;
                   return (
-                    <>
-                      {hoursData.map(h => {
-                        const isToday = h.day === todayName;
-                        return (
-                          <div key={h.day} className={`hours-row ${isToday ? 'hours-today' : ''}`}>
-                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                              {isToday && <span className="hours-dot" aria-hidden="true" />}
-                              <span className="hours-day">{h.day}</span>
-                            </div>
-                            <div style={{ textAlign: 'right' }}>
-                              {h.closed ? <span className="hours-closed">CLOSED</span> : <span className="hours-time">{h.time}</span>}
-                              {h.note && <span className="hours-sunday-note">{h.note}</span>}
-                            </div>
-                          </div>
-                        );
-                      })}
-                      <p className="hours-note">* Hours may vary on holidays</p>
-                    </>
+                    <div key={h.day} className={`hours-row${isToday ? ' hours-today' : ''}`}>
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                        {isToday && <span className="hours-dot" aria-hidden="true" />}
+                        <span className="hours-day">{h.day}</span>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        {h.closed
+                          ? <span className="hours-closed">CLOSED</span>
+                          : <span className="hours-time">{h.time}</span>
+                        }
+                        {h.note && <span className="hours-sunday-note">{h.note}</span>}
+                      </div>
+                    </div>
                   );
-                })()}
+                })}
+                <p className="hours-note">* Hours may vary on holidays. Call ahead to confirm.</p>
               </div>
             </div>
 
           </div>
         </main>
-
-        
       </div>
     </>
   );
