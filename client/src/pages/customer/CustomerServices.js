@@ -63,26 +63,8 @@ const CSS = `
   .sig-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
   @media (max-width: 800px) { .sig-inner { grid-template-columns: 1fr; gap: 48px; } }
 
-  /* Booking Modal */
-  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; z-index: 200; padding: 24px; }
-  .modal-box { background: white; border-radius: 20px; max-width: 480px; width: 100%; box-shadow: 0 24px 80px rgba(0,0,0,0.2); overflow: hidden; }
-  .modal-header { padding: 28px 32px 24px; border-bottom: 1px solid #E8E0D5; display: flex; align-items: center; justify-content: space-between; }
-  .modal-title { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 28px; font-weight: 600; color: #1C1C1E; margin: 0; }
-  .modal-sub { font-family: 'DM Sans', sans-serif; font-size: 13px; color: #6B6B6B; margin: 4px 0 0; }
-  .modal-close { width: 32px; height: 32px; border-radius: 50%; border: none; background: #F8F7F5; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #6B6B6B; transition: background 0.2s; }
-  .modal-close:hover { background: #E8E0D5; }
-  .modal-body { padding: 28px 32px 32px; }
-  .modal-label { display: block; font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: #AAAAAA; margin-bottom: 8px; }
-  .modal-input { width: 100%; background: #F8F7F5; border: 1.5px solid #E8E0D5; border-radius: 10px; padding: 12px 16px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: #1C1C1E; outline: none; transition: border-color 0.2s, box-shadow 0.2s; box-sizing: border-box; }
-  .modal-input:focus { border-color: #B8960C; box-shadow: 0 0 0 3px rgba(184,150,12,0.1); background: white; }
-  .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
-  .modal-actions { display: flex; gap: 12px; justify-content: flex-end; padding-top: 24px; border-top: 1px solid #E8E0D5; margin-top: 24px; }
-  .btn-cancel-modal { padding: 12px 24px; border-radius: 50px; background: none; border: 1.5px solid #E8E0D5; color: #6B6B6B; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; transition: border-color 0.2s; }
-  .btn-cancel-modal:hover { border-color: #1C1C1E; color: #1C1C1E; }
-  .btn-confirm { padding: 12px 32px; border-radius: 50px; background: #B8960C; border: none; color: white; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; transition: background 0.2s; }
-  .btn-confirm:hover { background: #8B7209; }
-  .btn-confirm:disabled { opacity: 0.5; cursor: not-allowed; }
 `;
+
 
 const CATEGORIES = ['All', 'Hair Sculpting', 'Facial Therapy', 'Nail Artistry', 'Grooming'];
 
