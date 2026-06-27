@@ -349,15 +349,22 @@ export default function AdminAppointmentManagement() {
                               </div>
                             </div>
                           </td>
-                          <td className="px-6 py-4 align-middle whitespace-nowrap">
-                            <div className="font-medium text-[14px] text-[#1A1A1A]">
-                              {app.service_name || "General"}
+                          <td className="px-6 py-4 align-middle">
+                            <div className="font-medium text-[14px] text-[#1A1A1A] leading-snug">
+                              {Array.isArray(app.services) && app.services.length
+                                ? app.services.map(s => s.name).join(', ')
+                                : (app.service_name || 'General')}
                             </div>
-                            {app.service_duration && (
-                              <div className="text-[12px] text-[#6B6B6B]">
-                                {app.service_duration} min
-                              </div>
-                            )}
+                            {(() => {
+                              const total = app.total_price
+                                ? Number(app.total_price)
+                                : Array.isArray(app.services) && app.services.length
+                                  ? app.services.reduce((s, x) => s + Number(x.price || 0), 0)
+                                  : Number(app.service_price || 0);
+                              return total > 0
+                                ? <div className="text-[12px] text-[#C9A84C] font-semibold">${total.toFixed(2)}</div>
+                                : null;
+                            })()}
                           </td>
                           <td className="px-6 py-4 align-middle whitespace-nowrap">
                             <div className="font-medium text-[14px] text-[#1A1A1A]">
@@ -507,11 +514,34 @@ export default function AdminAppointmentManagement() {
               {/* Service Card */}
               <div className="bg-[#F4F4F6] rounded-[10px] p-5">
                 <div className="text-[10px] font-bold text-[#C9A84C] uppercase tracking-[0.3em] mb-3">
-                  Service
+                  {Array.isArray(selectedAppointment.services) && selectedAppointment.services.length > 1 ? 'Services' : 'Service'}
                 </div>
-                <div className="font-bold text-[17px] text-[#1A1A1A] mb-4">
-                  {selectedAppointment.service_name || "General Service"}
-                </div>
+                {/* Services list */}
+                {Array.isArray(selectedAppointment.services) && selectedAppointment.services.length ? (
+                  <div className="flex flex-col gap-2 mb-4">
+                    {selectedAppointment.services.map((s, i) => (
+                      <div key={i} className="flex justify-between items-center text-[14px]">
+                        <span className="font-medium text-[#1A1A1A]">{s.name}</span>
+                        {s.price && <span className="text-[#6B6B6B]">${Number(s.price).toFixed(2)}</span>}
+                      </div>
+                    ))}
+                    {(() => {
+                      const total = selectedAppointment.total_price
+                        ? Number(selectedAppointment.total_price)
+                        : selectedAppointment.services.reduce((sum, s) => sum + Number(s.price || 0), 0);
+                      return total > 0 ? (
+                        <div className="flex justify-between items-center pt-2 border-t border-[#EDE8DC] mt-1">
+                          <span className="font-bold text-[14px] text-[#1A1A1A]">Total</span>
+                          <span className="font-bold text-[15px] text-[#C9A84C]">${total.toFixed(2)}</span>
+                        </div>
+                      ) : null;
+                    })()}
+                  </div>
+                ) : (
+                  <div className="font-bold text-[17px] text-[#1A1A1A] mb-4">
+                    {selectedAppointment.service_name || 'General Service'}
+                  </div>
+                )}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-white rounded-[8px] p-3 border border-[#EDE8DC]">
                     <div className="text-[10px] text-[#6B6B6B] uppercase font-bold tracking-wider mb-1.5 flex items-center gap-1">
